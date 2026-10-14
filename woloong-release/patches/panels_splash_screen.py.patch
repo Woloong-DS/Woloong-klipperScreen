@@ -1,5 +1,5 @@
---- woloong-release/baseline/panels/splash_screen.py	2026-10-14 20:24:18.983988300 +0800
-+++ panels/splash_screen.py	2026-07-10 02:06:56.590004600 +0800
+--- a/panels/splash_screen.py
++++ b/panels/splash_screen.py
 @@ -12,17 +12,8 @@
  class Panel(ScreenPanel):
      def __init__(self, screen, title):
