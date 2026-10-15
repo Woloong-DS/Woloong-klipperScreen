@@ -1,3 +1,2 @@
-pre-commit
-ruff
+pycodestyle
 pygobject-stubs --config-settings=config=Gtk3,Gdk3

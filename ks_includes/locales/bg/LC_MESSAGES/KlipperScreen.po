@@ -7,8 +7,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: KlipperScreen\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-06-21 12:14-0300\n"
-"PO-Revision-Date: 2026-06-24 07:01+0000\n"
+"POT-Creation-Date: 2026-04-23 22:27-0300\n"
+"PO-Revision-Date: 2026-04-25 14:09+0000\n"
 "Last-Translator: Niolay Danov <nikdan@abv.bg>\n"
 "Language-Team: Bulgarian <https://hosted.weblate.org/projects/klipperscreen/"
 "klipperscreen/bg/>\n"
@@ -17,7 +17,7 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=n != 1;\n"
-"X-Generator: Weblate 2026.7.dev0\n"
+"X-Generator: Weblate 5.17.1-dev\n"
 
 msgid "Main Menu"
 msgstr "Главно меню"
@@ -174,11 +174,8 @@ msgstr "24 часово време"
 msgid "Disable for 12hs with am / pm"
 msgstr "Деактивирайте за 12 часа с am / pm"
 
-msgid "Action bar Shortcut"
-msgstr "Бърз достъп на лентата с действия"
-
-msgid "LEDs"
-msgstr "LED"
+msgid "Macro shortcut on sidebar"
+msgstr "Покажи макроси в панела"
 
 msgid "Font Size"
 msgstr "Размер на шрифта"
@@ -249,18 +246,6 @@ msgstr "Показване на курсора"
 msgid "For mouse control or to verify touchscreen accuracy"
 msgstr "За управление с мишка или за проверка на точността на сензорния екран"
 
-msgid "Screen wake delay"
-msgstr "Забавяне на събуждане на екрана"
-
-msgid "Helps to prevent unwanted touchs during screen wake up"
-msgstr ""
-"Помага за предотвратяване на нежелани докосвания при събуждане на екрана"
-
-msgid "second"
-msgid_plural "seconds"
-msgstr[0] "секунда"
-msgstr[1] "секунди"
-
 msgid "Invert X"
 msgstr "Инверсиране X"
 
@@ -289,15 +274,6 @@ msgid_plural "minutes"
 msgstr[0] "минута"
 msgstr[1] "минути"
 
-msgid "Temperature too low to extrude"
-msgstr "Температурата е твърде ниска за екструдиране"
-
-msgid "Klipper will reboot"
-msgstr "Klipper се рестартира"
-
-msgid "Save configuration?"
-msgstr "Запиши конфигурацията?"
-
 msgid "Are you sure you want to run Emergency Stop?"
 msgstr "Сигурни ли сте, че искате да стартирате аварийно спиране?"
 
@@ -305,6 +281,11 @@ msgid "day"
 msgid_plural "days"
 msgstr[0] "ден"
 msgstr[1] "дни"
+
+msgid "second"
+msgid_plural "seconds"
+msgstr[0] "секунда"
+msgstr[1] "секунди"
 
 msgid "Network not found"
 msgstr "Мрежата не е намерена"
@@ -345,8 +326,11 @@ msgstr "Връзката е неуспешна"
 msgid "No mesh has been loaded"
 msgstr "Не е заредена мрежа"
 
-msgid "Invalid Number"
-msgstr "Невалиден номер"
+msgid "Calibrate"
+msgstr "Калибриране"
+
+msgid "Invalid temperature"
+msgstr "Невалидна температура"
 
 msgid "Password"
 msgstr "Паролата"
@@ -389,9 +373,6 @@ msgstr "Връзка"
 
 msgid "Add profile"
 msgstr "Добавете профил"
-
-msgid "Calibrate"
-msgstr "Калибриране"
 
 msgid "Clear"
 msgstr "Изчисти"
@@ -533,6 +514,12 @@ msgstr "Измерете Y"
 
 msgid "Measure Both"
 msgstr "Измерете и двете"
+
+msgid "Klipper will reboot"
+msgstr "Klipper се рестартира"
+
+msgid "Save configuration?"
+msgstr "Запиши конфигурацията?"
 
 msgid "Check ADXL Wiring"
 msgstr "Проверете ADXL свързването"
@@ -694,9 +681,6 @@ msgstr ""
 msgid "Temp (°C)"
 msgstr "Темп (°С)"
 
-msgid "Invalid temperature"
-msgstr "Невалидна температура"
-
 msgid "Home"
 msgstr "Паркирай X"
 
@@ -721,32 +705,17 @@ msgstr "Само за панела за движение"
 msgid "Z Speed (mm/s)"
 msgstr "Z скорост (mm/s)"
 
-msgid "Advanced Move"
-msgstr "Усъвършенстван ход"
-
-msgid "Query Endstops"
-msgstr "Запитване на крайните позиции"
-
-msgid "Invalid position"
-msgstr "Невалидна позиция"
-
 msgid "Failed to initialize"
 msgstr "Неуспешно инициализиране"
 
 msgid "Interface"
 msgstr "Интерфейс"
 
-msgid "No network devices have been found"
-msgstr "Не са открити мрежови устройства"
-
-msgid "No network devices available"
-msgstr "Няма налични мрежови устройства"
+msgid "No wireless interface has been found"
+msgstr "Не е открит безжичен интерфейс"
 
 msgid "Connected"
 msgstr "Свързан"
-
-msgid "Channel"
-msgstr "Канал"
 
 #, python-format
 msgid "Do you want to forget or disconnect %s?"
@@ -767,6 +736,9 @@ msgstr "Потребител"
 #, python-format
 msgid "Connecting to %s"
 msgstr "Свързан с  %s"
+
+msgid "Channel"
+msgstr "Канал"
 
 msgid "Hostname"
 msgstr "Име на хоста"
@@ -852,74 +824,29 @@ msgstr "Повтори"
 msgid "Power On Printer"
 msgstr "Вкл. принтера"
 
-msgid "Spool editor"
-msgstr "Редактор на макари"
+msgid "ID"
+msgstr "ID"
 
-msgid "No spool selected"
-msgstr "Няма избрана макара"
-
-msgid "Measured weight"
-msgstr "Измерено тегло"
-
-msgid "Remaining weight"
-msgstr "Оставащо тегло"
-
-msgid "Initial weight"
-msgstr "Начално тегло"
-
-msgid "Empty weight"
-msgstr "Тегло на празната макара"
-
-msgid "Invalid weight"
-msgstr "Невалидно тегло"
-
-msgid "Restore"
-msgstr "Възстанови"
-
-msgid "No"
-msgstr "Не"
-
-msgid "Yes"
-msgstr "Да"
-
-msgid "Vendor"
-msgstr "Производител"
-
-msgid "Material"
-msgstr "Материал"
-
-msgid "Used"
-msgstr "Използвано"
-
-msgid "Location"
-msgstr "Местоположение"
+msgid "Last Used"
+msgstr "Използване на филамента"
 
 msgid "Archived"
 msgstr "Архивирано"
 
-msgid "Price"
-msgstr "Цена"
+msgid "Filter"
+msgstr "Филтър"
+
+msgid "Material"
+msgstr "Материал"
 
 msgid "Comment"
 msgstr "Коментар"
 
-msgid "Measured weight is below empty spool weight"
-msgstr "Измереното тегло е под теглото на празната макара"
+msgid "Last used"
+msgstr "Последно използвано"
 
-msgid "Value must be positive"
-msgstr "Стойността трябва да е положителна"
-
-msgid "Error updating filament weight"
-msgstr "Грешка при актуализиране на теглото на филамента"
-
-msgid "Filament weight updated"
-msgstr "Теглото на филамента е актуализирано"
-
-msgid "ID"
-msgstr "ID"
-
-msgid "Filter"
-msgstr "Филтър"
+msgid "Remaining weight"
+msgstr "Оставащо тегло"
 
 msgid "Remaining length"
 msgstr "Оставаща дължина"
@@ -936,14 +863,11 @@ msgstr "Грешка при изчистване на активния спул"
 msgid "Error setting active spool"
 msgstr "Грешка при настройване на активен спул"
 
+msgid "Error getting active spool"
+msgstr "Грешка при активиране на спула"
+
 msgid "No info available"
 msgstr "Няма налична информация"
-
-msgid "Disk"
-msgstr "Диск"
-
-msgid "Cores"
-msgstr "Ядра"
 
 msgid "IP Address"
 msgstr "IP Адрес"
@@ -1045,9 +969,6 @@ msgstr "Спусни дюзата"
 msgid "Abort"
 msgstr "Прекъсване"
 
-msgid "Calibration commands not available yet"
-msgstr "Команди за калибриране още не са налични"
-
 msgid "Error: Couldn't get a position to probe"
 msgstr "Грешка: Не може да се намери позиция за сондиране"
 
@@ -1063,12 +984,6 @@ msgstr "Минимум:"
 msgid "System:"
 msgstr "Система:"
 
-msgid "Waiting connection closure"
-msgstr "Очакване на затваряне на връзката"
-
-msgid "Initializing KlipperScreen"
-msgstr "Инициализиране на KlipperScreen"
-
 msgid "Provide KlipperScreen.log when asking for help.\n"
 msgstr "Осигурете KlipperScreen.log, когато поискате помощ.\n"
 
@@ -1078,11 +993,11 @@ msgstr "Затваряне"
 msgid "DPMS has failed and has been disabled"
 msgstr "DPMS се провали и е деактивиран"
 
-msgid "Moonraker Connected"
-msgstr "Moonraker свързан"
+msgid "Cannot connect to Moonraker"
+msgstr "Не може да се свърже с Moonraker"
 
-msgid "Retrying"
-msgstr "Повторен опит"
+msgid "Lost Connection to Moonraker"
+msgstr "Не може да се свърже с Moonraker"
 
 msgid "Klipper has disconnected"
 msgstr "Няма връзка с Klipper"
@@ -1102,14 +1017,108 @@ msgstr "Klipper е готов"
 msgid "Klipper has shutdown"
 msgstr "Klipper се изключи"
 
-msgid "Waiting for Moonraker connection to close"
-msgstr "Очакване на затваряне на връзката с Moonraker"
+msgid "No eligible macros:"
+msgstr "Няма подходящи макроси:"
+
+msgid "macros with a name starting with '_' are hidden"
+msgstr "макросите с име, започващо с '_' са скрити"
+
+msgid "macros that use 'rename_existing' are hidden"
+msgstr "макросите, които използват 'rename_existing' са скрити"
+
+msgid ""
+"LOAD_FILAMENT/UNLOAD_FILAMENT are hidden and should be used from extrude"
+msgstr ""
+"LOAD_FILAMENT/UNLOAD_FILAMENT са скрити и трябва да се използват от "
+"екструдиране"
+
+msgid "Temperature too low to extrude"
+msgstr "Температурата е твърде ниска за екструдиране"
+
+msgid "Retrying"
+msgstr "Повторен опит"
 
 msgid "Moonraker: connected"
 msgstr "Moonraker: Свързан"
 
-msgid "Initializing Klipper Connection"
-msgstr "Инициализиране на връзка с Klipper"
+#~ msgid "Max:"
+#~ msgstr "Макс:"
 
-msgid "Klipper not responding after multiple attempts"
-msgstr "Klipper не отговаря след множество опити"
+#~ msgid "Password saved"
+#~ msgstr "Паролата е записана"
+
+#~ msgid "Hide temp."
+#~ msgstr "Скрий температурата."
+
+#~ msgid "PSK for"
+#~ msgstr "PSK за"
+
+#~ msgid "Actions"
+#~ msgstr "Действия"
+
+#~ msgid "Bed screw configuration:"
+#~ msgstr "Конфигурация на винта на леглото:"
+
+#~ msgid "Calibrated, save configuration to make it permanent"
+#~ msgstr "Калибриран, запазете конфигурацията, за да стане постоянна"
+
+#~ msgid "Configuration"
+#~ msgstr "Конфигурация"
+
+#~ msgid "Continue"
+#~ msgstr "Продължи"
+
+#~ msgid "Decrease"
+#~ msgstr "Намали"
+
+#~ msgid "Deselect"
+#~ msgstr "Отмени"
+
+#~ msgid "Disable XY"
+#~ msgstr "Изключи XY"
+
+#~ msgid "Hidden"
+#~ msgstr "Скрит"
+
+#~ msgid "Homing"
+#~ msgstr "Паркирай"
+
+#~ msgid "Increase"
+#~ msgstr "Повдигане"
+
+#~ msgid "KlipperScreen will reboot"
+#~ msgstr "KlipperScreen ще се рестартира"
+
+#~ msgid "Max Acceleration to Deceleration"
+#~ msgstr "Ускорение на забавяне"
+
+#~ msgid "Mesh calibrate"
+#~ msgstr "Калибриране на мрежата"
+
+#~ msgid ""
+#~ "Not supported for auto-detection, it needs to be configured in "
+#~ "klipperscreen.conf"
+#~ msgstr ""
+#~ "Не се поддържа за автоматично откриване, трябва да се конфигурира в "
+#~ "klipperscreen.conf"
+
+#~ msgid "Print Time"
+#~ msgstr "Време за печат"
+
+#~ msgid "Select"
+#~ msgstr "Избери"
+
+#~ msgid "Sending Power ON signal to: %s"
+#~ msgstr "Изпращане на сигнал за включване до: %s"
+
+#~ msgid "Slicer Time correction (%)"
+#~ msgstr "Корекция на времето на слайсера (%)"
+
+#~ msgid "Unknown screw position"
+#~ msgstr "Неизвестна позиция на винта"
+
+#~ msgid "Uploaded"
+#~ msgstr "Качено"
+
+#~ msgid "dBm"
+#~ msgstr "dBm"

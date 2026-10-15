@@ -1,10 +1,9 @@
 import gi
 
 gi.require_version("Gtk", "3.0")
-from datetime import datetime
-
 from gi.repository import Gtk, Pango
 
+from datetime import datetime
 from ks_includes.screen_panel import ScreenPanel
 from ks_includes.widgets.keypad import Keypad
 
@@ -14,26 +13,15 @@ class Panel(ScreenPanel):
         title = _("Spool editor")
         super().__init__(screen, title)
         self.selected_weight_mode = "filament"
+        self.saved_weight = 0
         self.numpad_visible = False
         self._measurement_buttons = {}
         self._progress_bar = None
-        self.grid = Gtk.Grid(
-            row_homogeneous=True, column_homogeneous=True, hexpand=True, vexpand=True
-        )
+        self.grid = Gtk.Grid(row_homogeneous=True, column_homogeneous=True, hexpand=True, vexpand=True)
         self.set_extra(extra)
 
     def set_extra(self, extra):
         self.spool = extra
-        self._pending_update_spool_id = None
-        self._pending_update_value = None
-        if extra is not None:
-            self._initial_remaining_weight = getattr(extra, "remaining_weight", None) or 0
-            self._initial_spool_weight = getattr(extra, "spool_weight", None) or 0
-            self._initial_initial_weight = getattr(extra, "initial_weight", None) or 0
-        else:
-            self._initial_remaining_weight = 0
-            self._initial_spool_weight = 0
-            self._initial_initial_weight = 0
         for child in self.content.get_children():
             self.content.remove(child)
         self._build_grid()
@@ -41,15 +29,11 @@ class Panel(ScreenPanel):
         self.content.show_all()
 
     def _build_grid(self):
-        self.grid = Gtk.Grid(
-            row_homogeneous=True, column_homogeneous=True, hexpand=True, vexpand=True
-        )
+        self.grid = Gtk.Grid(row_homogeneous=True, column_homogeneous=True, hexpand=True, vexpand=True)
 
         if self.spool is None:
             box = Gtk.Box(orientation=Gtk.Orientation.VERTICAL, vexpand=True)
-            label = Gtk.Label(
-                label=_("No spool selected"), wrap=True, wrap_mode=Pango.WrapMode.WORD_CHAR
-            )
+            label = Gtk.Label(label=_("No spool selected"), wrap=True, wrap_mode=Pango.WrapMode.WORD_CHAR)
             box.set_valign(Gtk.Align.CENTER)
             box.add(label)
             self.grid.attach(box, 0, 0, 1, 1)
@@ -86,9 +70,7 @@ class Panel(ScreenPanel):
         return info
 
     def _build_measurement_details_box(self):
-        buttons = Gtk.Box(
-            orientation=Gtk.Orientation.VERTICAL, spacing=4, hexpand=True, vexpand=True
-        )
+        buttons = Gtk.Box(orientation=Gtk.Orientation.VERTICAL, spacing=4, hexpand=True, vexpand=True)
         buttons.set_margin_start(24)
         buttons.set_margin_end(12)
 
@@ -115,52 +97,42 @@ class Panel(ScreenPanel):
                 if empty_spool_weight is not None
                 else remaining_weight
             )
-            rows.append(
-                {
-                    "mode": "measured",
-                    "label": _("Measured weight"),
-                    "value": measured_weight,
-                }
-            )
-            rows.append(
-                {
-                    "mode": "remaining",
-                    "label": _("Remaining weight"),
-                    "value": remaining_weight,
-                }
-            )
+            rows.append({
+                "mode": "measured",
+                "label": _("Measured weight"),
+                "value": measured_weight,
+            })
+            rows.append({
+                "mode": "remaining",
+                "label": _("Remaining weight"),
+                "value": remaining_weight,
+            })
 
         initial_weight = self._get_initial_weight()
         if initial_weight is not None:
-            rows.append(
-                {
-                    "mode": "initial",
-                    "label": _("Initial weight"),
-                    "value": initial_weight,
-                }
-            )
+            rows.append({
+                "mode": "initial",
+                "label": _("Initial weight"),
+                "value": initial_weight,
+            })
         if empty_spool_weight is not None:
-            rows.append(
-                {
-                    "mode": "empty",
-                    "label": _("Empty weight"),
-                    "value": empty_spool_weight,
-                }
-            )
+            rows.append({
+                "mode": "empty",
+                "label": _("Empty weight"),
+                "value": empty_spool_weight,
+            })
         return rows
 
     def _format_measurement_row_markup(self, row):
-        formatted_value = f"{round(row['value'], 2)} g"
-        return f"{row['label']}: {formatted_value}"
+        formatted_value = f'{round(row["value"], 2)} g'
+        return f'{row["label"]}: {formatted_value}'
 
     def _get_initial_weight(self):
         return getattr(self.spool, "initial_weight", None)
 
     def _get_empty_spool_weight(self):
         spool_weight = getattr(self.spool, "spool_weight", None)
-        vendor_spool_weight = getattr(
-            getattr(self.spool.filament, "vendor", None), "empty_spool_weight", None
-        )
+        vendor_spool_weight = getattr(getattr(self.spool.filament, "vendor", None), "empty_spool_weight", None)
         return spool_weight if spool_weight is not None else vendor_spool_weight
 
     def _get_full_filament_weight(self):
@@ -174,9 +146,7 @@ class Panel(ScreenPanel):
     def _get_display_name(self):
         parts = []
         vendor_name = getattr(getattr(self.spool.filament, "vendor", None), "name", None)
-        filament_name = getattr(self.spool.filament, "name", None) or getattr(
-            self.spool, "name", None
-        )
+        filament_name = getattr(self.spool.filament, "name", None) or getattr(self.spool, "name", None)
         if vendor_name:
             parts.append(vendor_name)
         if filament_name:
@@ -197,10 +167,12 @@ class Panel(ScreenPanel):
                 ok_cb=self._submit_entry,
                 cancel_cb=self._hide_numpad,
                 entry_max=8,
-                error_msg=_("Invalid weight"),
+                error_msg=_("Invalid weight")
             )
             self.labels["keypad"].add_extra_button(
-                self._restore_value, icon="refresh", label=_("Restore")
+                self._restore_value,
+                icon="refresh",
+                label=_("Restore")
             )
         return self.labels["keypad"]
 
@@ -237,10 +209,7 @@ class Panel(ScreenPanel):
         # Info Labels
         info_box = Gtk.Box(orientation=Gtk.Orientation.VERTICAL, spacing=5, hexpand=True)
 
-        vendor = (
-            getattr(getattr(getattr(self.spool, "filament", None), "vendor", None), "name", None)
-            or "-"
-        )
+        vendor = getattr(getattr(getattr(self.spool, "filament", None), "vendor", None), "name", None) or "-"
         material = getattr(getattr(self.spool, "filament", None), "material", None) or "-"
         location = getattr(self.spool, "location", None) or "-"
         last_used = self._format_last_used(getattr(self.spool, "last_used", None))
@@ -283,6 +252,7 @@ class Panel(ScreenPanel):
     def _submit_entry(self, value):
         if self.spool is None:
             return
+        result = {}
         if self.selected_weight_mode == "measured":
             empty_spool_weight = self._get_empty_spool_weight() or 0
             if empty_spool_weight:
@@ -290,62 +260,59 @@ class Panel(ScreenPanel):
             if value < 0:
                 self._screen.show_popup_message(_("Measured weight is below empty spool weight"))
                 return
-        if self.selected_weight_mode in ("remaining", "empty", "initial"):
+            result = self._screen.spoolman_api.update_spool(
+                spool_id=self.spool.id,
+                payload={"remaining_weight": value}
+
+            )
+        if self.selected_weight_mode == "remaining":
             if value < 0:
                 self._screen.show_popup_message(_("Value must be positive"))
                 return
-        self._pending_update_value = value
-        self._pending_update_spool_id = self.spool.id
-        self._screen.spoolman_api.update_spool(
-            spool_id=self.spool.id,
-            payload=self._get_update_payload(),
-            callback=self._update_spool_cb,
-        )
-
-    def _get_update_payload(self):
-        value = self._pending_update_value
-        if self.selected_weight_mode == "measured":
-            empty_spool_weight = self._get_empty_spool_weight() or 0
-            if empty_spool_weight:
-                value -= empty_spool_weight
-            return {"remaining_weight": value}
-        elif self.selected_weight_mode == "remaining":
-            return {"remaining_weight": value}
-        elif self.selected_weight_mode == "empty":
-            return {"spool_weight": value}
-        elif self.selected_weight_mode == "initial":
-            return {"initial_weight": value}
-        return {}
-
-    def _update_spool_cb(self, result):
-        value = self._pending_update_value
-        pending_id = self._pending_update_spool_id
-        self._pending_update_value = None
-        self._pending_update_spool_id = None
-
-        if self.spool is None:
-            return
-
-        if result and pending_id and self.spool.id != pending_id:
-            return
-
+            result = self._screen.spoolman_api.update_spool(
+                spool_id=self.spool.id,
+                payload={"remaining_weight": value}
+            )
+        if self.selected_weight_mode == "empty":
+            if value < 0:
+                self._screen.show_popup_message(_("Value must be positive"))
+                return
+            result = self._screen.spoolman_api.update_spool(
+                spool_id=self.spool.id,
+                payload={"spool_weight": value}
+            )
+        if self.selected_weight_mode == "initial":
+            if value < 0:
+                self._screen.show_popup_message(_("Value must be positive"))
+                return
+            result = self._screen.spoolman_api.update_spool(
+                spool_id=self.spool.id,
+                payload={"initial_weight": value}
+            )
         if not result:
             self._screen.show_popup_message(_("Error updating filament weight"))
             return
 
+        if result.get("error"):
+            self._screen.show_popup_message(
+                _("Error updating filament weight") + f"\n{result['error'].get('message', '')}"
+            )
+            return
+
         self.spool.remaining_weight = result.get("remaining_weight", value)
+
         if "used_weight" in result:
             self.spool.used_weight = result["used_weight"]
+
         if "spool_weight" in result:
             self.spool.spool_weight = result["spool_weight"]
+
         if "initial_weight" in result:
             self.spool.initial_weight = result["initial_weight"]
-        if (
-            self._screen.printer is not None
-            and getattr(self._screen.printer, "active_spool_id", None) == self.spool.id
-        ):
-            self._screen.printer.active_spool["remaining_weight"] = result.get("remaining_weight")
-            self._screen.process_update("notify_active_spool_set", {"spool_id": self.spool.id})
+
+        if self._screen.printer is not None and getattr(self._screen.printer, 'active_spool_id', None) == self.spool.id:
+            self._screen.printer.active_spool['remaining_weight'] = result.get("remaining_weight")
+
         self._refresh_values()
         self._screen.show_popup_message(_("Filament weight updated"), 1)
         self._hide_numpad(None)
@@ -364,24 +331,22 @@ class Panel(ScreenPanel):
             self._progress_bar.set_text(f"{round(used, 1)} / {round(initial, 1)} g")
 
     def _restore_value(self, entry_val):
-        if self.selected_weight_mode == "measured":
-            restore_val = self._initial_remaining_weight + self._initial_spool_weight
-        elif self.selected_weight_mode == "remaining":
-            restore_val = self._initial_remaining_weight
-        elif self.selected_weight_mode == "empty":
-            restore_val = self._initial_spool_weight
-        elif self.selected_weight_mode == "initial":
-            restore_val = self._initial_initial_weight
-        else:
-            restore_val = 0
         if "keypad" in self.labels:
-            self.labels["keypad"].entry.set_text(f"{restore_val:.1f}")
+            self.labels['keypad'].entry.set_text(f"{self.saved_weight:.1f}")
 
     def back(self):
         return False
 
     def _show_numpad(self, widget, mode):
         self.selected_weight_mode = mode
+        if mode == "measured":
+            self.saved_weight = (self.spool.remaining_weight or 0) + (self.spool.spool_weight or 0)
+        if mode == "remaining":
+            self.saved_weight = self.spool.remaining_weight or 0
+        if mode == "empty":
+            self.saved_weight = self.spool.spool_weight or 0
+        if mode == "initial":
+            self.saved_weight = self.spool.initial_weight or 0
         self.numpad_visible = True
         if self._screen.vertical_mode:
             self.grid.remove(self.grid.get_child_at(0, 2))

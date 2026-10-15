@@ -12,6 +12,16 @@ class Panel(ScreenPanel):
 
     def __init__(self, screen, title):
         super().__init__(screen, title)
+        image = self._gtk.Image(
+            "klipper", self._gtk.content_width * 0.2, self._gtk.content_height * 0.5
+        )
+        self.labels["text"] = Gtk.Label(
+            label=_("Initializing printer..."),
+            wrap=True,
+            wrap_mode=Pango.WrapMode.WORD_CHAR,
+            halign=Gtk.Align.CENTER,
+            valign=Gtk.Align.CENTER,
+        )
 
         self.labels["menu"] = self._gtk.Button("settings", _("Menu"), "color4")
         self.labels["menu"].connect("clicked", self._screen._go_to_submenu, "")
@@ -36,53 +46,16 @@ class Panel(ScreenPanel):
 
         self.labels["actions"] = Gtk.Box(hexpand=True, vexpand=False, homogeneous=True)
 
-        # --- Woloong 品牌启动画面（本 fork 的唯一代码定制）---
-        # 上游若改动本段，woloong-fork-sync 会报基线漂移，需人工重锚定后再重跑。
-        main = Gtk.Box(orientation=Gtk.Orientation.VERTICAL, spacing=0)
-        main.set_homogeneous(False)
+        scroll = self._gtk.ScrolledWindow()
+        scroll.set_policy(Gtk.PolicyType.NEVER, Gtk.PolicyType.AUTOMATIC)
+        scroll.add(self.labels["text"])
 
-        top_spacer = Gtk.Box()
-        top_spacer.set_vexpand(True)
-        main.pack_start(top_spacer, True, True, 0)
+        info = Gtk.Box()
+        info.pack_start(image, False, True, 8)
+        info.pack_end(scroll, True, True, 8)
 
-        # Logo：取屏幕短边 25%（垂直居中偏上）
-        logo_size = min(self._gtk.content_width, self._gtk.content_height) * 0.25
-        image = self._gtk.Image("klipper", logo_size, logo_size)
-        image.set_halign(Gtk.Align.CENTER)
-        image.set_valign(Gtk.Align.CENTER)
-
-        self.labels["brand"] = Gtk.Label(
-            label="WOOLONG",
-            halign=Gtk.Align.CENTER,
-            valign=Gtk.Align.CENTER,
-        )
-        self.labels["brand"].get_style_context().add_class("splash_brand")
-
-        self.labels["text"] = Gtk.Label(
-            label=_("Initializing printer..."),
-            wrap=True,
-            wrap_mode=Pango.WrapMode.WORD_CHAR,
-            halign=Gtk.Align.CENTER,
-            valign=Gtk.Align.CENTER,
-        )
-        self.labels["text"].get_style_context().add_class("splash_status")
-
-        self.labels["dots"] = Gtk.Label(label="●  ○  ○", halign=Gtk.Align.CENTER)
-        self.labels["dots"].get_style_context().add_class("splash_dots")
-
-        content_box = Gtk.Box(orientation=Gtk.Orientation.VERTICAL, spacing=12)
-        content_box.set_halign(Gtk.Align.CENTER)
-        content_box.set_valign(Gtk.Align.CENTER)
-        content_box.pack_start(image, False, True, 0)
-        content_box.pack_start(self.labels["brand"], False, True, 0)
-        content_box.pack_start(self.labels["text"], False, True, 0)
-        content_box.pack_start(self.labels["dots"], False, True, 0)
-        main.pack_start(content_box, False, True, 0)
-
-        bottom_spacer = Gtk.Box()
-        bottom_spacer.set_vexpand(True)
-        main.pack_start(bottom_spacer, True, True, 0)
-
+        main = Gtk.Box(orientation=Gtk.Orientation.VERTICAL)
+        main.pack_start(info, True, True, 8)
         main.pack_end(self.labels["actions"], False, False, 0)
 
         self.show_restart_buttons()

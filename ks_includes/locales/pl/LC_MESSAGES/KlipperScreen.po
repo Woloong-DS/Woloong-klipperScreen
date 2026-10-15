@@ -3,8 +3,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Polish (KlipperScreen)\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-06-21 12:14-0300\n"
-"PO-Revision-Date: 2026-05-31 20:01+0000\n"
+"POT-Creation-Date: 2026-04-23 22:27-0300\n"
+"PO-Revision-Date: 2026-04-26 20:09+0000\n"
 "Last-Translator: Julia <juliazero2@gmail.com>\n"
 "Language-Team: Polish <https://hosted.weblate.org/projects/klipperscreen/"
 "klipperscreen/pl/>\n"
@@ -14,7 +14,7 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=3; plural=(n==1 ? 0 : n%10>=2 && n%10<=4 && (n%100<10 "
 "|| n%100>=20) ? 1 : 2);\n"
-"X-Generator: Weblate 2026.6.dev0\n"
+"X-Generator: Weblate 5.17.1-dev\n"
 
 msgid "Main Menu"
 msgstr "Menu główne"
@@ -171,13 +171,8 @@ msgstr "Zegar 24-godzinny"
 msgid "Disable for 12hs with am / pm"
 msgstr "Wyłącz dla czasu 12-godzinnego (ze wskazaniem am/pm)"
 
-#, fuzzy
-msgid "Action bar Shortcut"
-msgstr "Skrót paska akcji"
-
-#, fuzzy
-msgid "LEDs"
-msgstr "Diody LED"
+msgid "Macro shortcut on sidebar"
+msgstr "Skrót do makr na pasku bocznym"
 
 msgid "Font Size"
 msgstr "Rozmiar czcionki"
@@ -248,18 +243,6 @@ msgstr "Pokaż kursor"
 msgid "For mouse control or to verify touchscreen accuracy"
 msgstr "Do obsługi myszą lub zweryfikowania dokładności ekranu dotykowego"
 
-msgid "Screen wake delay"
-msgstr "Opóźnienie wybudzenia ekranu"
-
-msgid "Helps to prevent unwanted touchs during screen wake up"
-msgstr "Pomaga zapobiegać niepożądanym dotknięciom podczas wybudzania ekranu"
-
-msgid "second"
-msgid_plural "seconds"
-msgstr[0] "sekunda"
-msgstr[1] "sekundy"
-msgstr[2] "sekund"
-
 msgid "Invert X"
 msgstr "Odwróć X"
 
@@ -290,15 +273,6 @@ msgstr[0] "minuta"
 msgstr[1] "minuty"
 msgstr[2] "minut"
 
-msgid "Temperature too low to extrude"
-msgstr "Zbyt niska temperatura do wytłaczania"
-
-msgid "Klipper will reboot"
-msgstr "Klipper uruchomi się ponownie"
-
-msgid "Save configuration?"
-msgstr "Zapisać konfigurację?"
-
 msgid "Are you sure you want to run Emergency Stop?"
 msgstr "Czy na pewno chcesz zatrzymać awaryjnie?"
 
@@ -307,6 +281,12 @@ msgid_plural "days"
 msgstr[0] "dzień"
 msgstr[1] "dni"
 msgstr[2] "dni"
+
+msgid "second"
+msgid_plural "seconds"
+msgstr[0] "sekunda"
+msgstr[1] "sekundy"
+msgstr[2] "sekund"
 
 msgid "Network not found"
 msgstr "Nie znaleziono sieci"
@@ -347,8 +327,11 @@ msgstr "Błąd połączenia"
 msgid "No mesh has been loaded"
 msgstr "Nie załadowano żadnej siatki"
 
-msgid "Invalid Number"
-msgstr "Nieprawidłowa liczba"
+msgid "Calibrate"
+msgstr "Kalibruj"
+
+msgid "Invalid temperature"
+msgstr "Nieprawidłowa temperatura"
 
 msgid "Password"
 msgstr "Hasło"
@@ -391,9 +374,6 @@ msgstr "Odniesienie"
 
 msgid "Add profile"
 msgstr "Dodaj profil"
-
-msgid "Calibrate"
-msgstr "Kalibruj"
 
 msgid "Clear"
 msgstr "Wyczyść"
@@ -535,6 +515,12 @@ msgstr "Pomiar osi Y"
 
 msgid "Measure Both"
 msgstr "Pomiar obu osi"
+
+msgid "Klipper will reboot"
+msgstr "Klipper uruchomi się ponownie"
+
+msgid "Save configuration?"
+msgstr "Zapisać konfigurację?"
 
 msgid "Check ADXL Wiring"
 msgstr "Sprawdź okablowanie ADXL"
@@ -695,9 +681,6 @@ msgstr "Może to potrwać dłużej niż 5 minut w zależności od mocy grzałki.
 msgid "Temp (°C)"
 msgstr "Temperatura (°C)"
 
-msgid "Invalid temperature"
-msgstr "Nieprawidłowa temperatura"
-
 msgid "Home"
 msgstr "Bazuj"
 
@@ -722,37 +705,17 @@ msgstr "Tylko dla panelu ruchu"
 msgid "Z Speed (mm/s)"
 msgstr "Prędkość Z (mm/s)"
 
-#, fuzzy
-msgid "Advanced Move"
-msgstr "Zaawansowany ruch"
-
-#, fuzzy
-msgid "Query Endstops"
-msgstr "Zapytaj o krańcówki"
-
-#, fuzzy
-msgid "Invalid position"
-msgstr "Nieprawidłowa pozycja"
-
 msgid "Failed to initialize"
 msgstr "Nie udało się zainicjalizować"
 
 msgid "Interface"
 msgstr "Interfejs"
 
-#, fuzzy
-msgid "No network devices have been found"
-msgstr "Nie znaleziono urządzeń sieciowych"
-
-#, fuzzy
-msgid "No network devices available"
-msgstr "Brak dostępnych urządzeń sieciowych"
+msgid "No wireless interface has been found"
+msgstr "Nie znaleziono żadnego bezprzewodowego interfejsu"
 
 msgid "Connected"
 msgstr "Połączono"
-
-msgid "Channel"
-msgstr "Kanał"
 
 #, python-format
 msgid "Do you want to forget or disconnect %s?"
@@ -773,6 +736,9 @@ msgstr "Użytkownik"
 #, python-format
 msgid "Connecting to %s"
 msgstr "Łączenie z %s"
+
+msgid "Channel"
+msgstr "Kanał"
 
 msgid "Hostname"
 msgstr "Nazwa hosta"
@@ -858,74 +824,29 @@ msgstr "Ponów"
 msgid "Power On Printer"
 msgstr "Zasilanie włączone"
 
-msgid "Spool editor"
-msgstr "Edytor szpuli"
+msgid "ID"
+msgstr "ID"
 
-msgid "No spool selected"
-msgstr "Nie wybrano szpuli"
-
-msgid "Measured weight"
-msgstr "Zmierzona waga"
-
-msgid "Remaining weight"
-msgstr "Pozostała waga"
-
-msgid "Initial weight"
-msgstr "Waga początkowa"
-
-msgid "Empty weight"
-msgstr "Waga pustej szpuli"
-
-msgid "Invalid weight"
-msgstr "Nieprawidłowa waga"
-
-msgid "Restore"
-msgstr "Przywróć"
-
-msgid "No"
-msgstr "Nie"
-
-msgid "Yes"
-msgstr "Tak"
-
-msgid "Vendor"
-msgstr "Producent"
-
-msgid "Material"
-msgstr "Materiał"
-
-msgid "Used"
-msgstr "Użyto"
-
-msgid "Location"
-msgstr "Lokalizacja"
+msgid "Last Used"
+msgstr "Ostatnie użycie"
 
 msgid "Archived"
 msgstr "Zarchiwizowane"
 
-msgid "Price"
-msgstr "Cena"
+msgid "Filter"
+msgstr "Filtruj"
+
+msgid "Material"
+msgstr "Materiał"
 
 msgid "Comment"
 msgstr "Komentarz"
 
-msgid "Measured weight is below empty spool weight"
-msgstr "Zmierzona waga jest mniejsza niż waga pustej szpuli"
+msgid "Last used"
+msgstr "Ostatnio użyto"
 
-msgid "Value must be positive"
-msgstr "Wartość musi być dodatnia"
-
-msgid "Error updating filament weight"
-msgstr "Błąd aktualizacji wagi filamentu"
-
-msgid "Filament weight updated"
-msgstr "Waga filamentu zaktualizowana"
-
-msgid "ID"
-msgstr "ID"
-
-msgid "Filter"
-msgstr "Filtruj"
+msgid "Remaining weight"
+msgstr "Pozostała waga"
 
 msgid "Remaining length"
 msgstr "Pozostała długość"
@@ -942,16 +863,11 @@ msgstr "Błąd czyszczenia aktywnej szpuli"
 msgid "Error setting active spool"
 msgstr "Błąd ustawiania aktywnej szpuli"
 
+msgid "Error getting active spool"
+msgstr "Błąd pobierania aktywnej szpuli"
+
 msgid "No info available"
 msgstr "Brak informacji"
-
-#, fuzzy
-msgid "Disk"
-msgstr "Dysk"
-
-#, fuzzy
-msgid "Cores"
-msgstr "Rdzenie"
 
 msgid "IP Address"
 msgstr "Adres IP"
@@ -1055,10 +971,6 @@ msgstr "Obniż dyszę"
 msgid "Abort"
 msgstr "Przerwij"
 
-#, fuzzy
-msgid "Calibration commands not available yet"
-msgstr "Polecenia kalibracji jeszcze niedostępne"
-
 msgid "Error: Couldn't get a position to probe"
 msgstr "Błąd: Nie mogę odczytać pozycji sondy"
 
@@ -1074,13 +986,6 @@ msgstr "Minimum:"
 msgid "System:"
 msgstr "System:"
 
-#, fuzzy
-msgid "Waiting connection closure"
-msgstr "Oczekiwanie na zamknięcie połączenia"
-
-msgid "Initializing KlipperScreen"
-msgstr "Inicjalizowanie KlipperScreen"
-
 msgid "Provide KlipperScreen.log when asking for help.\n"
 msgstr "Dołącz KlipperScreen.log prosząc o pomoc.\n"
 
@@ -1090,11 +995,11 @@ msgstr "Zamknij"
 msgid "DPMS has failed and has been disabled"
 msgstr "DPMS nie powiodło się i zostało wyłączone"
 
-msgid "Moonraker Connected"
-msgstr "Połączono z Moonraker"
+msgid "Cannot connect to Moonraker"
+msgstr "Nie można połączyć się z Moonrakerem"
 
-msgid "Retrying"
-msgstr "Ponawianie próby"
+msgid "Lost Connection to Moonraker"
+msgstr "Utracono połączenie z Moonraker"
 
 msgid "Klipper has disconnected"
 msgstr "Klipper został odłączony"
@@ -1114,16 +1019,105 @@ msgstr "Klipper próbuje się uruchomić"
 msgid "Klipper has shutdown"
 msgstr "Klipper został wyłączony"
 
-#, fuzzy
-msgid "Waiting for Moonraker connection to close"
-msgstr "Oczekiwanie na zamknięcie połączenia Moonraker"
+msgid "No eligible macros:"
+msgstr "Brak kwalifikujących się makr:"
+
+msgid "macros with a name starting with '_' are hidden"
+msgstr "makra z nazwą zaczynającą się od \"_\" są ukryte"
+
+msgid "macros that use 'rename_existing' are hidden"
+msgstr "makra używające \"rename_existing\" są ukryte"
+
+msgid ""
+"LOAD_FILAMENT/UNLOAD_FILAMENT are hidden and should be used from extrude"
+msgstr ""
+"LOAD_FILAMENT/UNLOAD_FILAMENT są ukryte i powinny być używane z menu "
+"wytłaczania"
+
+msgid "Temperature too low to extrude"
+msgstr "Zbyt niska temperatura do wytłaczania"
+
+msgid "Retrying"
+msgstr "Ponawianie próby"
 
 msgid "Moonraker: connected"
 msgstr "Moonraker: połączony"
 
-msgid "Initializing Klipper Connection"
-msgstr "Inicjalizowanie połączenia Klipper"
+#~ msgid "Max:"
+#~ msgstr "Maks:"
 
-#, fuzzy
-msgid "Klipper not responding after multiple attempts"
-msgstr "Klipper nie odpowiada po wielu próbach"
+#~ msgid "Password saved"
+#~ msgstr "Hasło zostało zapisane"
+
+#~ msgid "Hide temp."
+#~ msgstr "Ukryj temp."
+
+#~ msgid "PSK for"
+#~ msgstr "PSK dla"
+
+#~ msgid "Mesh calibrate"
+#~ msgstr "Kalibracja siatki"
+
+#~ msgid "Uploaded"
+#~ msgstr "Przesłane"
+
+#~ msgid "Ended official support in June 2023"
+#~ msgstr "Oficjalne wsparcie zakończyło się w czerwcu 2023"
+
+#~ msgid "Hidden"
+#~ msgstr "Ukryte"
+
+#~ msgid "KlipperScreen will drop support in June 2024"
+#~ msgstr "KlipperScreen zakończy wsparcie w czerwcu 2024"
+
+#~ msgid "Print Time"
+#~ msgstr "Czas druku"
+
+#~ msgid "Warning"
+#~ msgstr "Ostrzeżenie"
+
+#~ msgid "dBm"
+#~ msgstr "dBm"
+
+#~ msgid "Deselect"
+#~ msgstr "Odznacz"
+
+#~ msgid "Select"
+#~ msgstr "Zaznacz"
+
+#~ msgid "Bed screw configuration:"
+#~ msgstr "Konfiguracja śrub stołu:"
+
+#~ msgid ""
+#~ "Not supported for auto-detection, it needs to be configured in "
+#~ "klipperscreen.conf"
+#~ msgstr ""
+#~ "Nieobsługiwany do automatycznego wykrywania, musi być skonfigurowany w "
+#~ "pliku klipperscreen.conf"
+
+#~ msgid "Unknown screw position"
+#~ msgstr "Nieznana pozycja śruby"
+
+#~ msgid "Max Acceleration to Deceleration"
+#~ msgstr "Maks. przyśpieszenie do hamowania"
+
+#~ msgid "Continue"
+#~ msgstr "Kontynuuj"
+
+#~ msgid "Fullscreen"
+#~ msgstr "Pełny ekran"
+
+#~ msgid "Actions"
+#~ msgstr "Akcje"
+
+#~ msgid "Configuration"
+#~ msgstr "Konfiguracja"
+
+#~ msgid "Homing"
+#~ msgstr "Bazowanie"
+
+#~ msgid "Disable XY"
+#~ msgstr "Wyłącz XY"
+
+#~ msgid "Slicer Time correction (%)"
+#~ msgstr "Korekta czasu Slicera (%)"

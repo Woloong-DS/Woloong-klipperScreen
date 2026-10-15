@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-06-21 12:14-0300\n"
+"POT-Creation-Date: 2026-04-23 22:27-0300\n"
 "PO-Revision-Date: 2026-04-23 15:17-0300\n"
 "Last-Translator: Pouriya Zolghadry <merdasss@yahoo.com>\n"
 "Language-Team: Persian <https://hosted.weblate.org/projects/klipperscreen/"
@@ -214,12 +214,8 @@ msgid "Disable for 12hs with am / pm"
 msgstr "فعال‌سازی فرمت ۱۲ ساعته (AM/PM)"
 
 #, fuzzy
-msgid "Action bar Shortcut"
-msgstr "میانبر نوار عملیات"
-
-#, fuzzy
-msgid "LEDs"
-msgstr "LEDs"
+msgid "Macro shortcut on sidebar"
+msgstr "میانبر مکرو در نوار کناری"
 
 #, fuzzy
 msgid "Font Size"
@@ -307,20 +303,6 @@ msgid "For mouse control or to verify touchscreen accuracy"
 msgstr "برای کنترل ماوس یا بررسی دقت صفحه لمسی"
 
 #, fuzzy
-msgid "Screen wake delay"
-msgstr "تاخیر بیدار شدن صفحه"
-
-#, fuzzy
-msgid "Helps to prevent unwanted touchs during screen wake up"
-msgstr "به جلوگیری از لمس‌های ناخواسته هنگام بیدار شدن صفحه کمک می‌کند"
-
-#, fuzzy
-msgid "second"
-msgid_plural "seconds"
-msgstr[0] "ثانیه"
-msgstr[1] "ثانیه‌ها"
-
-#, fuzzy
 msgid "Invert X"
 msgstr "معکوس X"
 
@@ -356,18 +338,6 @@ msgid_plural "minutes"
 msgstr[0] "دقیقه"
 msgstr[1] "دقیقه‌ها"
 
-#, fuzzy
-msgid "Temperature too low to extrude"
-msgstr "دما برای اکسترود پایین است"
-
-#, fuzzy
-msgid "Klipper will reboot"
-msgstr "Klipper بازنشانی خواهد شد"
-
-#, fuzzy
-msgid "Save configuration?"
-msgstr "ذخیره پیکربندی؟"
-
 msgid "Are you sure you want to run Emergency Stop?"
 msgstr "مطمئنید میخواهید توقف اضطراری را فعال نمایید؟"
 
@@ -376,6 +346,12 @@ msgid "day"
 msgid_plural "days"
 msgstr[0] "روز"
 msgstr[1] "روزها"
+
+#, fuzzy
+msgid "second"
+msgid_plural "seconds"
+msgstr[0] "ثانیه"
+msgstr[1] "ثانیه‌ها"
 
 #, fuzzy
 msgid "Network not found"
@@ -426,9 +402,12 @@ msgstr "فرایند اتصال ناموفق بود"
 msgid "No mesh has been loaded"
 msgstr "هیچ مشی بارگذاری نشده است"
 
+msgid "Calibrate"
+msgstr "کالیبراسیون"
+
 #, fuzzy
-msgid "Invalid Number"
-msgstr "عدد نامعتبر"
+msgid "Invalid temperature"
+msgstr "دما نامعتبر است"
 
 #, fuzzy
 msgid "Password"
@@ -482,9 +461,6 @@ msgstr "مرجع"
 
 msgid "Add profile"
 msgstr "اضافه کردن پروفایل"
-
-msgid "Calibrate"
-msgstr "کالیبراسیون"
 
 msgid "Clear"
 msgstr "پاکسازی"
@@ -663,6 +639,14 @@ msgstr "اندازه‌گیری Y"
 #, fuzzy
 msgid "Measure Both"
 msgstr "اندازه‌گیری هر دو"
+
+#, fuzzy
+msgid "Klipper will reboot"
+msgstr "Klipper بازنشانی خواهد شد"
+
+#, fuzzy
+msgid "Save configuration?"
+msgstr "ذخیره پیکربندی؟"
 
 msgid "Check ADXL Wiring"
 msgstr "بررسی سیم کشی ADXL"
@@ -859,10 +843,6 @@ msgid "Temp (°C)"
 msgstr "دما (°C)"
 
 #, fuzzy
-msgid "Invalid temperature"
-msgstr "دما نامعتبر است"
-
-#, fuzzy
 msgid "Home"
 msgstr "خانه"
 
@@ -894,18 +874,6 @@ msgid "Z Speed (mm/s)"
 msgstr "سرعت Z (میلی‌متر/ثانیه)"
 
 #, fuzzy
-msgid "Advanced Move"
-msgstr "حرکت پیشرفته"
-
-#, fuzzy
-msgid "Query Endstops"
-msgstr "بررسی ان‌ستاپ‌ها"
-
-#, fuzzy
-msgid "Invalid position"
-msgstr "موقعیت نامعتبر"
-
-#, fuzzy
 msgid "Failed to initialize"
 msgstr "شکست در راه‌اندازی"
 
@@ -914,18 +882,11 @@ msgid "Interface"
 msgstr "رابط کاربری"
 
 #, fuzzy
-msgid "No network devices have been found"
-msgstr "هیچ دستگاه شبکه‌ای یافت نشد"
-
-#, fuzzy
-msgid "No network devices available"
-msgstr "هیچ دستگاه شبکه‌ای در دسترس نیست"
+msgid "No wireless interface has been found"
+msgstr "هیچ رابط بی‌سیم یافت نشد"
 
 msgid "Connected"
 msgstr "متصل شد"
-
-msgid "Channel"
-msgstr "کانال"
 
 #, python-format
 msgid "Do you want to forget or disconnect %s?"
@@ -949,6 +910,9 @@ msgstr "کاربر"
 #, python-format
 msgid "Connecting to %s"
 msgstr "در حال اتصال به %s"
+
+msgid "Channel"
+msgstr "کانال"
 
 #, fuzzy
 msgid "Hostname"
@@ -1057,95 +1021,35 @@ msgid "Power On Printer"
 msgstr "روشن کردن پرینتر"
 
 #, fuzzy
-msgid "Spool editor"
-msgstr "ویرایشگر رول"
+msgid "ID"
+msgstr "شناسه"
 
 #, fuzzy
-msgid "No spool selected"
-msgstr "هیچ رولی انتخاب نشده است"
+msgid "Last Used"
+msgstr "آخرین استفاده"
+
+msgid "Archived"
+msgstr "آرشیو شد"
 
 #, fuzzy
-msgid "Measured weight"
-msgstr "وزن اندازه‌گیری شده"
-
-#, fuzzy
-msgid "Remaining weight"
-msgstr "وزن باقی‌مانده"
-
-#, fuzzy
-msgid "Initial weight"
-msgstr "وزن اولیه"
-
-#, fuzzy
-msgid "Empty weight"
-msgstr "وزن خالی"
-
-#, fuzzy
-msgid "Invalid weight"
-msgstr "وزن نامعتبر"
-
-#, fuzzy
-msgid "Restore"
-msgstr "بازیابی"
-
-#, fuzzy
-msgid "No"
-msgstr "خیر"
-
-#, fuzzy
-msgid "Yes"
-msgstr "بله"
-
-#, fuzzy
-msgid "Vendor"
-msgstr "تولیدکننده"
+msgid "Filter"
+msgstr "فیلتر"
 
 #, fuzzy
 msgid "Material"
 msgstr "جنس"
 
 #, fuzzy
-msgid "Used"
-msgstr "استفاده شده"
-
-#, fuzzy
-msgid "Location"
-msgstr "مکان"
-
-msgid "Archived"
-msgstr "آرشیو شد"
-
-#, fuzzy
-msgid "Price"
-msgstr "قیمت"
-
-#, fuzzy
 msgid "Comment"
 msgstr "توضیح"
 
 #, fuzzy
-msgid "Measured weight is below empty spool weight"
-msgstr "وزن اندازه‌گیری شده کمتر از وزن رول خالی است"
+msgid "Last used"
+msgstr "آخرین استفاده"
 
 #, fuzzy
-msgid "Value must be positive"
-msgstr "مقدار باید مثبت باشد"
-
-#, fuzzy
-msgid "Error updating filament weight"
-msgstr "خطا در به‌روزرسانی وزن فیلامنت"
-
-#, fuzzy
-msgid "Filament weight updated"
-msgstr "وزن فیلامنت به‌روز شد"
-
-#, fuzzy
-msgid "ID"
-msgstr "شناسه"
-
-#, fuzzy
-msgid "Filter"
-msgstr "فیلتر"
+msgid "Remaining weight"
+msgstr "وزن باقی‌مانده"
 
 #, fuzzy
 msgid "Remaining length"
@@ -1167,16 +1071,12 @@ msgid "Error setting active spool"
 msgstr "خطا در تنظیم استوانه فعال"
 
 #, fuzzy
+msgid "Error getting active spool"
+msgstr "خطا در دریافت استوانه فعال"
+
+#, fuzzy
 msgid "No info available"
 msgstr "اطلاعاتی موجود نیست"
-
-#, fuzzy
-msgid "Disk"
-msgstr "دیسک"
-
-#, fuzzy
-msgid "Cores"
-msgstr "هسته ها"
 
 #, fuzzy
 msgid "IP Address"
@@ -1304,10 +1204,6 @@ msgid "Abort"
 msgstr "لغو"
 
 #, fuzzy
-msgid "Calibration commands not available yet"
-msgstr "دستورات کالیبراسیون هنوز در دسترس نیستند"
-
-#, fuzzy
 msgid "Error: Couldn't get a position to probe"
 msgstr "خطا: نمی‌توان موقعیت پروب را دریافت کرد"
 
@@ -1328,14 +1224,6 @@ msgid "System:"
 msgstr "سیستم:"
 
 #, fuzzy
-msgid "Waiting connection closure"
-msgstr "در انتظار بستن اتصال"
-
-#, fuzzy
-msgid "Initializing KlipperScreen"
-msgstr "در حال راه‌اندازی KlipperScreen"
-
-#, fuzzy
 msgid "Provide KlipperScreen.log when asking for help.\n"
 msgstr "هنگام درخواست کمک، KlipperScreen.log را ارائه دهید.\n"
 
@@ -1346,13 +1234,12 @@ msgstr "بستن"
 msgid "DPMS has failed and has been disabled"
 msgstr "DPMS شکست خورد و غیرفعال شد"
 
-#, fuzzy
-msgid "Moonraker Connected"
-msgstr "Moonraker متصل شد"
+msgid "Cannot connect to Moonraker"
+msgstr "اتصال به Moonraker میسر نیست"
 
 #, fuzzy
-msgid "Retrying"
-msgstr "تلاش مجدد"
+msgid "Lost Connection to Moonraker"
+msgstr "اتصال به Moonraker قطع شد"
 
 #, fuzzy
 msgid "Klipper has disconnected"
@@ -1378,17 +1265,31 @@ msgid "Klipper has shutdown"
 msgstr "Klipper خاموش شد"
 
 #, fuzzy
-msgid "Waiting for Moonraker connection to close"
-msgstr "در انتظار بستن اتصال Moonraker"
+msgid "No eligible macros:"
+msgstr "ماکروهای واجد شرایطی وجود ندارد:"
+
+#, fuzzy
+msgid "macros with a name starting with '_' are hidden"
+msgstr "ماکروهایی که نام آن‌ها با '_' شروع می‌شود، پنهان هستند"
+
+#, fuzzy
+msgid "macros that use 'rename_existing' are hidden"
+msgstr "ماکروهایی که از 'rename_existing' استفاده می‌کنند، پنهان هستند"
+
+#, fuzzy
+msgid ""
+"LOAD_FILAMENT/UNLOAD_FILAMENT are hidden and should be used from extrude"
+msgstr ""
+"LOAD_FILAMENT/UNLOAD_FILAMENT پنهان هستند و باید از طریق اکسترود استفاده شوند"
+
+#, fuzzy
+msgid "Temperature too low to extrude"
+msgstr "دما برای اکسترود پایین است"
+
+#, fuzzy
+msgid "Retrying"
+msgstr "تلاش مجدد"
 
 #, fuzzy
 msgid "Moonraker: connected"
 msgstr "Moonraker: متصل"
-
-#, fuzzy
-msgid "Initializing Klipper Connection"
-msgstr "در حال راه‌اندازی اتصال Klipper"
-
-#, fuzzy
-msgid "Klipper not responding after multiple attempts"
-msgstr "Klipper پس از چندین تلاش پاسخ نمی‌دهد"

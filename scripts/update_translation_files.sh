@@ -17,13 +17,8 @@ for FILE in ks_includes/locales/*; do
         msgmerge -q --no-fuzzy-matching \
                  -U "$FILE/LC_MESSAGES/KlipperScreen.po" \
                  ks_includes/locales/KlipperScreen.pot
-        msgattrib --no-obsolete "$FILE/LC_MESSAGES/KlipperScreen.po" -o "$FILE/LC_MESSAGES/KlipperScreen.po"
 
-# Compile mo
+        # Compile mo
         msgfmt -o "$FILE/LC_MESSAGES/KlipperScreen.mo" "$FILE/LC_MESSAGES/KlipperScreen.po"
-        rm "$FILE/LC_MESSAGES/KlipperScreen.po~" 2>/dev/null
     fi
 done
-
-# Remove any remaining backup files
-find ks_includes/locales -name "*~" -delete

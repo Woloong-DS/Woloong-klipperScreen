@@ -4,10 +4,9 @@ import gi
 
 gi.require_version("Gtk", "3.0")
 from gi.repository import Gtk
-
-from ks_includes.KlippyGtk import find_widget
 from ks_includes.screen_panel import ScreenPanel
 from ks_includes.widgets.autogrid import AutoGrid
+from ks_includes.KlippyGtk import find_widget
 
 
 class Panel(ScreenPanel):
@@ -45,8 +44,8 @@ class Panel(ScreenPanel):
         self._screen.connect_printer(name)
 
     def activate(self):
-        if self._screen._ws and self._screen.state.connected:
-            self._screen.close_connection()
+        if self._screen._ws and self._screen._ws.connected:
+            self._screen.close_websocket()
             logging.debug("Waiting for disconnect")
             self._screen.base_panel.set_title(_("Please wait"))
             b: Gtk.Button

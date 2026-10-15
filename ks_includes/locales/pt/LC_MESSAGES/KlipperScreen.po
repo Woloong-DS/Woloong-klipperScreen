@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-06-21 12:14-0300\n"
+"POT-Creation-Date: 2026-04-23 22:27-0300\n"
 "PO-Revision-Date: 2025-06-10 01:04+0000\n"
 "Last-Translator: Juverley Junior <juverley@gmail.com>\n"
 "Language-Team: Portuguese <https://hosted.weblate.org/projects/klipperscreen/"
@@ -174,13 +174,8 @@ msgstr "Relógio de 24 Horas"
 msgid "Disable for 12hs with am / pm"
 msgstr "Desativar por 12h com am/pm"
 
-#, fuzzy
-msgid "Action bar Shortcut"
-msgstr "Atalho da barra de ação"
-
-#, fuzzy
-msgid "LEDs"
-msgstr "LEDs"
+msgid "Macro shortcut on sidebar"
+msgstr "Atalho dedicado para Macros"
 
 msgid "Font Size"
 msgstr "Tamanho da fonte"
@@ -253,19 +248,6 @@ msgid "For mouse control or to verify touchscreen accuracy"
 msgstr ""
 "Para controle do mouse ou para verificar a precisão da tela sensível ao toque"
 
-#, fuzzy
-msgid "Screen wake delay"
-msgstr "Atraso para despertar a tela"
-
-#, fuzzy
-msgid "Helps to prevent unwanted touchs during screen wake up"
-msgstr "Ajuda a prevenir toques indesejados durante o despertar da tela"
-
-msgid "second"
-msgid_plural "seconds"
-msgstr[0] "Segundo"
-msgstr[1] "Segundos"
-
 msgid "Invert X"
 msgstr "Inverter X"
 
@@ -294,15 +276,6 @@ msgid_plural "minutes"
 msgstr[0] "minuto"
 msgstr[1] "minutos"
 
-msgid "Temperature too low to extrude"
-msgstr "Temperatura muito baixa para extrudar"
-
-msgid "Klipper will reboot"
-msgstr "Klipper será reiniciado"
-
-msgid "Save configuration?"
-msgstr "Salvar configuração?"
-
 msgid "Are you sure you want to run Emergency Stop?"
 msgstr "Executar Parada de Emergência ?"
 
@@ -310,6 +283,11 @@ msgid "day"
 msgid_plural "days"
 msgstr[0] "Dia"
 msgstr[1] "Dias"
+
+msgid "second"
+msgid_plural "seconds"
+msgstr[0] "Segundo"
+msgstr[1] "Segundos"
 
 msgid "Network not found"
 msgstr "Rede não encontrada"
@@ -351,9 +329,11 @@ msgstr "Falha na Conexão"
 msgid "No mesh has been loaded"
 msgstr "Nenhuma malha foi carregada"
 
-#, fuzzy
-msgid "Invalid Number"
-msgstr "Número inválido"
+msgid "Calibrate"
+msgstr "Calibrar"
+
+msgid "Invalid temperature"
+msgstr "Temperatura inválida"
 
 msgid "Password"
 msgstr "Senha"
@@ -397,9 +377,6 @@ msgstr "Referência"
 
 msgid "Add profile"
 msgstr "Adicionar perfil"
-
-msgid "Calibrate"
-msgstr "Calibrar"
 
 msgid "Clear"
 msgstr "Limpar"
@@ -542,6 +519,12 @@ msgstr "Medida Y"
 
 msgid "Measure Both"
 msgstr "Medir ambos"
+
+msgid "Klipper will reboot"
+msgstr "Klipper será reiniciado"
+
+msgid "Save configuration?"
+msgstr "Salvar configuração?"
 
 msgid "Check ADXL Wiring"
 msgstr "Verifique a fiação ADXL"
@@ -703,9 +686,6 @@ msgstr ""
 msgid "Temp (°C)"
 msgstr "Temperatura (°C)"
 
-msgid "Invalid temperature"
-msgstr "Temperatura inválida"
-
 msgid "Home"
 msgstr "Zerar"
 
@@ -733,37 +713,17 @@ msgstr "Apenas para o painel de movimento"
 msgid "Z Speed (mm/s)"
 msgstr "Velocidade Z (mm/s)"
 
-#, fuzzy
-msgid "Advanced Move"
-msgstr "Movimento avançado"
-
-#, fuzzy
-msgid "Query Endstops"
-msgstr "Consultar endstops"
-
-#, fuzzy
-msgid "Invalid position"
-msgstr "Posição inválida"
-
 msgid "Failed to initialize"
 msgstr "Falha ao inicializar"
 
 msgid "Interface"
 msgstr "Interface"
 
-#, fuzzy
-msgid "No network devices have been found"
-msgstr "Nenhum dispositivo de rede foi encontrado"
-
-#, fuzzy
-msgid "No network devices available"
-msgstr "Nenhum dispositivo de rede disponível"
+msgid "No wireless interface has been found"
+msgstr "Nenhuma interface sem fio foi encontrada"
 
 msgid "Connected"
 msgstr "Conectado"
-
-msgid "Channel"
-msgstr "Canal"
 
 #, python-format
 msgid "Do you want to forget or disconnect %s?"
@@ -784,6 +744,9 @@ msgstr "Usuário"
 #, python-format
 msgid "Connecting to %s"
 msgstr "Conectando %s"
+
+msgid "Channel"
+msgstr "Canal"
 
 msgid "Hostname"
 msgstr "Nome do Host"
@@ -872,93 +835,32 @@ msgstr "Tentar Novamente"
 msgid "Power On Printer"
 msgstr "Ligar a impressora"
 
-#, fuzzy
-msgid "Spool editor"
-msgstr "Editor de carretéis"
+msgid "ID"
+msgstr "ID"
 
-#, fuzzy
-msgid "No spool selected"
-msgstr "Nenhum carretel selecionado"
-
-#, fuzzy
-msgid "Measured weight"
-msgstr "Peso medido"
-
-#, fuzzy
-msgid "Remaining weight"
-msgstr "Peso restante"
-
-#, fuzzy
-msgid "Initial weight"
-msgstr "Peso inicial"
-
-#, fuzzy
-msgid "Empty weight"
-msgstr "Peso do carretel vazio"
-
-#, fuzzy
-msgid "Invalid weight"
-msgstr "Peso inválido"
-
-#, fuzzy
-msgid "Restore"
-msgstr "Restaurar"
-
-#, fuzzy
-msgid "No"
-msgstr "Não"
-
-#, fuzzy
-msgid "Yes"
-msgstr "Sim"
-
-#, fuzzy
-msgid "Vendor"
-msgstr "Fabricante"
-
-msgid "Material"
-msgstr "Material"
-
-#, fuzzy
-msgid "Used"
-msgstr "Usado"
-
-#, fuzzy
-msgid "Location"
-msgstr "Localização"
+msgid "Last Used"
+msgstr "Último Usado"
 
 msgid "Archived"
 msgstr "Arquivado"
 
-#, fuzzy
-msgid "Price"
-msgstr "Preço"
+msgid "Filter"
+msgstr "Filtro"
+
+msgid "Material"
+msgstr "Material"
 
 #, fuzzy
 msgid "Comment"
 msgstr "Comentário"
 
 #, fuzzy
-msgid "Measured weight is below empty spool weight"
-msgstr "O peso medido é inferior ao peso do carretel vazio"
+msgid "Last used"
+msgstr "Último uso"
 
 #, fuzzy
-msgid "Value must be positive"
-msgstr "O valor deve ser positivo"
-
-#, fuzzy
-msgid "Error updating filament weight"
-msgstr "Erro ao atualizar o peso do filamento"
-
-#, fuzzy
-msgid "Filament weight updated"
-msgstr "Peso do filamento atualizado"
-
-msgid "ID"
-msgstr "ID"
-
-msgid "Filter"
-msgstr "Filtro"
+msgid "Remaining weight"
+msgstr "Peso restante"
 
 #, fuzzy
 msgid "Remaining length"
@@ -976,16 +878,11 @@ msgstr "Erro ao limpar a fila ativa"
 msgid "Error setting active spool"
 msgstr "Erro ao definir a fila ativa"
 
+msgid "Error getting active spool"
+msgstr "Erro ao obter a fila ativa"
+
 msgid "No info available"
 msgstr "Sem informações disponíveis"
-
-#, fuzzy
-msgid "Disk"
-msgstr "Disco"
-
-#, fuzzy
-msgid "Cores"
-msgstr "Núcleos"
 
 #, fuzzy
 msgid "IP Address"
@@ -1089,10 +986,6 @@ msgstr "Descer Extrusor"
 msgid "Abort"
 msgstr "Cancelar"
 
-#, fuzzy
-msgid "Calibration commands not available yet"
-msgstr "Comandos de calibração ainda não disponíveis"
-
 msgid "Error: Couldn't get a position to probe"
 msgstr "Erro: Não foi possível obter uma posição para a sonda"
 
@@ -1108,14 +1001,6 @@ msgstr "Minimo:"
 msgid "System:"
 msgstr "Sistema:"
 
-#, fuzzy
-msgid "Waiting connection closure"
-msgstr "Aguardando fechamento da conexão"
-
-#, fuzzy
-msgid "Initializing KlipperScreen"
-msgstr "Inicializando KlipperScreen"
-
 msgid "Provide KlipperScreen.log when asking for help.\n"
 msgstr "Forneça o KlipperScreen.log quando pedir ajuda.\n"
 
@@ -1126,12 +1011,11 @@ msgstr "Fechar"
 msgid "DPMS has failed and has been disabled"
 msgstr "DPMS falhou e foi desativado"
 
-#, fuzzy
-msgid "Moonraker Connected"
-msgstr "Moonraker Conectado"
+msgid "Cannot connect to Moonraker"
+msgstr "Não foi possível conectar ao Moonraker"
 
-msgid "Retrying"
-msgstr "Tentando Novamente"
+msgid "Lost Connection to Moonraker"
+msgstr "Conexão Perdida com Moonraker"
 
 msgid "Klipper has disconnected"
 msgstr "Klipper foi desconectado"
@@ -1152,16 +1036,124 @@ msgid "Klipper has shutdown"
 msgstr "Klipper foi desligado"
 
 #, fuzzy
-msgid "Waiting for Moonraker connection to close"
-msgstr "Aguardando fechamento da conexão com Moonraker"
+msgid "No eligible macros:"
+msgstr "Sem macros elegíveis:"
+
+msgid "macros with a name starting with '_' are hidden"
+msgstr "macros que iniciam com '_' são ocultos"
+
+msgid "macros that use 'rename_existing' are hidden"
+msgstr "macros que usam 'rename_existing' são ocultos"
+
+msgid ""
+"LOAD_FILAMENT/UNLOAD_FILAMENT are hidden and should be used from extrude"
+msgstr ""
+"LOAD_FILAMENT/UNLOAD_FILAMENT estão ocultos e devem ser usados a partir do "
+"extrusor"
+
+msgid "Temperature too low to extrude"
+msgstr "Temperatura muito baixa para extrudar"
+
+msgid "Retrying"
+msgstr "Tentando Novamente"
 
 msgid "Moonraker: connected"
 msgstr "Moonraker: Conectado"
 
-#, fuzzy
-msgid "Initializing Klipper Connection"
-msgstr "Inicializando conexão com Klipper"
+#~ msgid "Max:"
+#~ msgstr "Max:"
 
-#, fuzzy
-msgid "Klipper not responding after multiple attempts"
-msgstr "Klipper não responde após várias tentativas"
+#~ msgid "Password saved"
+#~ msgstr "Senha Salva"
+
+#~ msgid "Hide temp."
+#~ msgstr "Ocultar Temp."
+
+#~ msgid "PSK for"
+#~ msgstr "PSK por"
+
+#~ msgid "Mesh calibrate"
+#~ msgstr "Calibrar Malha"
+
+#~ msgid "Uploaded"
+#~ msgstr "Carregado"
+
+#~ msgid "Ended official support in June 2023"
+#~ msgstr "Suporte oficial encerrado em Junho de 2023"
+
+#~ msgid "Hidden"
+#~ msgstr "Oculto"
+
+#~ msgid "KlipperScreen will drop support in June 2024"
+#~ msgstr "KlipperScreen perderá o suporte em Junho de 2024"
+
+#~ msgid "Print Time"
+#~ msgstr "Tempo de impressão"
+
+#~ msgid "Warning"
+#~ msgstr "Aviso"
+
+#~ msgid "dBm"
+#~ msgstr "dBm"
+
+#~ msgid "Deselect"
+#~ msgstr "Deselecionar"
+
+#~ msgid "Select"
+#~ msgstr "Selecionar"
+
+#~ msgid "Bed screw configuration:"
+#~ msgstr "Configuração da Porca de Mesa:"
+
+#~ msgid ""
+#~ "Not supported for auto-detection, it needs to be configured in "
+#~ "klipperscreen.conf"
+#~ msgstr ""
+#~ "Não é compatível com detecção automática, precisa ser configurado no "
+#~ "klipperscreen.conf"
+
+#~ msgid "Unknown screw position"
+#~ msgstr "Posição desconhecida do parafuso"
+
+#~ msgid "Max Acceleration to Deceleration"
+#~ msgstr "Max. aceleração de desaceleração"
+
+#~ msgid "Continue"
+#~ msgstr "Continuar"
+
+#~ msgid "Actions"
+#~ msgstr "Ações"
+
+#~ msgid "Configuration"
+#~ msgstr "Configuração"
+
+#~ msgid "Homing"
+#~ msgstr "Zerar"
+
+#~ msgid "Disable XY"
+#~ msgstr "Desabilitar YX"
+
+#~ msgid "Slicer Time correction (%)"
+#~ msgstr "Correção do tempo do fatiador (%)"
+
+#~ msgid "Calibrated, save configuration to make it permanent"
+#~ msgstr "Calibrado, use o comando para salvar"
+
+#~ msgid "Decrease"
+#~ msgstr "Diminuir"
+
+#~ msgid "Feeder"
+#~ msgstr "Alimentador"
+
+#~ msgid "Increase"
+#~ msgstr "Aumentar"
+
+#, python-format
+#~ msgid "Sending Power ON signal to: %s"
+#~ msgstr "Enviando sinal de energia para: %s"
+
+#~ msgid "Sort:"
+#~ msgstr "Ordenar:"
+
+#~ msgid "Calibrating..."
+#~ msgstr "Calibrando..."

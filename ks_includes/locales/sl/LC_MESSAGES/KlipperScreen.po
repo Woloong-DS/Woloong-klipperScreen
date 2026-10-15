@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-06-21 12:14-0300\n"
+"POT-Creation-Date: 2026-04-23 22:27-0300\n"
 "PO-Revision-Date: 2024-04-13 16:48+0000\n"
 "Last-Translator: Dominik <dominik.sostar@gmail.com>\n"
 "Language-Team: Slovenian <https://hosted.weblate.org/projects/klipperscreen/"
@@ -181,13 +181,8 @@ msgstr "24 urni čas"
 msgid "Disable for 12hs with am / pm"
 msgstr "Onemogoči za 12 ur z am/pm"
 
-#, fuzzy
-msgid "Action bar Shortcut"
-msgstr "Prekratica vrstice dejavnosti"
-
-#, fuzzy
-msgid "LEDs"
-msgstr "LED"
+msgid "Macro shortcut on sidebar"
+msgstr "Makro bližnjica na stranski vrstici"
 
 msgid "Font Size"
 msgstr "Velikost pisave"
@@ -269,22 +264,6 @@ msgstr "Prikaži kazalec"
 msgid "For mouse control or to verify touchscreen accuracy"
 msgstr "Za upravljanje z miško ali preverjanje natančnosti zaslona na dotik"
 
-#, fuzzy
-msgid "Screen wake delay"
-msgstr "Zakasna pribuditev zaslona"
-
-#, fuzzy
-msgid "Helps to prevent unwanted touchs during screen wake up"
-msgstr "Preprečuje neželene dotike med pribuditvijo zaslona"
-
-#, fuzzy
-msgid "second"
-msgid_plural "seconds"
-msgstr[0] "sekunda"
-msgstr[1] "sekundi"
-msgstr[2] "sekund"
-msgstr[3] "sekund"
-
 msgid "Invert X"
 msgstr "Zrcali X"
 
@@ -317,16 +296,6 @@ msgstr[1] "minuti"
 msgstr[2] "minute"
 msgstr[3] "minut"
 
-#, fuzzy
-msgid "Temperature too low to extrude"
-msgstr "Temperatura prenizka za ekstruzijo"
-
-msgid "Klipper will reboot"
-msgstr "Klipper se bo ponovno zagnal"
-
-msgid "Save configuration?"
-msgstr "Shrani konfiguracijo?"
-
 msgid "Are you sure you want to run Emergency Stop?"
 msgstr "Ali ste prepričani, da želite zagnati zaustavitev v sili?"
 
@@ -337,6 +306,14 @@ msgstr[0] "dan"
 msgstr[1] "dneva"
 msgstr[2] "dni"
 msgstr[3] "dni"
+
+#, fuzzy
+msgid "second"
+msgid_plural "seconds"
+msgstr[0] "sekunda"
+msgstr[1] "sekundi"
+msgstr[2] "sekund"
+msgstr[3] "sekund"
 
 #, fuzzy
 msgid "Network not found"
@@ -387,9 +364,12 @@ msgstr "Povezava ni uspela"
 msgid "No mesh has been loaded"
 msgstr "Mreža ni naložena"
 
+msgid "Calibrate"
+msgstr "Umerite"
+
 #, fuzzy
-msgid "Invalid Number"
-msgstr "Neveljavna številka"
+msgid "Invalid temperature"
+msgstr "Neveljavna temperatura"
 
 #, fuzzy
 msgid "Password"
@@ -439,9 +419,6 @@ msgstr "Referenca"
 
 msgid "Add profile"
 msgstr "Dodaj profil"
-
-msgid "Calibrate"
-msgstr "Umerite"
 
 msgid "Clear"
 msgstr "Počisti"
@@ -593,6 +570,12 @@ msgstr "Izmeri Y"
 
 msgid "Measure Both"
 msgstr "Izmeri oboje"
+
+msgid "Klipper will reboot"
+msgstr "Klipper se bo ponovno zagnal"
+
+msgid "Save configuration?"
+msgstr "Shrani konfiguracijo?"
 
 msgid "Check ADXL Wiring"
 msgstr "Preverite ožičenje ADXL"
@@ -759,10 +742,6 @@ msgstr "Lahko traja več kot 5 minut, odvisno od moči grelnika."
 msgid "Temp (°C)"
 msgstr "Temperatura (°C)"
 
-#, fuzzy
-msgid "Invalid temperature"
-msgstr "Neveljavna temperatura"
-
 msgid "Home"
 msgstr "Nuliraj"
 
@@ -791,37 +770,17 @@ msgid "Z Speed (mm/s)"
 msgstr "Z hitrost (mm/s)"
 
 #, fuzzy
-msgid "Advanced Move"
-msgstr "Napredno premikanje"
-
-#, fuzzy
-msgid "Query Endstops"
-msgstr "Preveri končna stikala"
-
-#, fuzzy
-msgid "Invalid position"
-msgstr "Neveljaven položaj"
-
-#, fuzzy
 msgid "Failed to initialize"
 msgstr "Inicializacija ni uspela"
 
 msgid "Interface"
 msgstr "Vmesnik"
 
-#, fuzzy
-msgid "No network devices have been found"
-msgstr "Ni bilo najdeno nobene mrežne naprave"
-
-#, fuzzy
-msgid "No network devices available"
-msgstr "Ni mrežnih naprav na voljo"
+msgid "No wireless interface has been found"
+msgstr "Brezžičnega vmesnika ni bilo mogoče najti"
 
 msgid "Connected"
 msgstr "Povezano"
-
-msgid "Channel"
-msgstr "Kanal"
 
 #, python-format
 msgid "Do you want to forget or disconnect %s?"
@@ -846,6 +805,9 @@ msgstr "Uporabnik"
 #, python-format
 msgid "Connecting to %s"
 msgstr "Povezujem s/z %s"
+
+msgid "Channel"
+msgstr "Kanal"
 
 msgid "Hostname"
 msgstr "Ime gostitelja"
@@ -939,93 +901,32 @@ msgstr "Poskusi znova"
 msgid "Power On Printer"
 msgstr "Vklopite tiskalnik"
 
-#, fuzzy
-msgid "Spool editor"
-msgstr "Urejevalnik špul"
+msgid "ID"
+msgstr "ID"
 
-#, fuzzy
-msgid "No spool selected"
-msgstr "Izbrana ni nobena špula"
-
-#, fuzzy
-msgid "Measured weight"
-msgstr "Izmerjena teža"
-
-#, fuzzy
-msgid "Remaining weight"
-msgstr "Preostala teža"
-
-#, fuzzy
-msgid "Initial weight"
-msgstr "Začetna teža"
-
-#, fuzzy
-msgid "Empty weight"
-msgstr "Teža prazne špule"
-
-#, fuzzy
-msgid "Invalid weight"
-msgstr "Neveljavna teža"
-
-#, fuzzy
-msgid "Restore"
-msgstr "Obnovi"
-
-#, fuzzy
-msgid "No"
-msgstr "Ne"
-
-#, fuzzy
-msgid "Yes"
-msgstr "Da"
-
-#, fuzzy
-msgid "Vendor"
-msgstr "Proizvajalec"
-
-msgid "Material"
-msgstr "Materijal"
-
-#, fuzzy
-msgid "Used"
-msgstr "Uporabljeno"
-
-#, fuzzy
-msgid "Location"
-msgstr "Lokacija"
+msgid "Last Used"
+msgstr "Nazadnje uporabljeno"
 
 msgid "Archived"
 msgstr "Arhivirano"
 
-#, fuzzy
-msgid "Price"
-msgstr "Cena"
+msgid "Filter"
+msgstr "Filter"
+
+msgid "Material"
+msgstr "Materijal"
 
 #, fuzzy
 msgid "Comment"
 msgstr "Komentar"
 
 #, fuzzy
-msgid "Measured weight is below empty spool weight"
-msgstr "Izmerjena teža je pod težo prazne špule"
+msgid "Last used"
+msgstr "Zadnja uporaba"
 
 #, fuzzy
-msgid "Value must be positive"
-msgstr "Vrednost mora biti pozitivna"
-
-#, fuzzy
-msgid "Error updating filament weight"
-msgstr "Napaka posodobitve teže filamenta"
-
-#, fuzzy
-msgid "Filament weight updated"
-msgstr "Teža filamenta posodobljena"
-
-msgid "ID"
-msgstr "ID"
-
-msgid "Filter"
-msgstr "Filter"
+msgid "Remaining weight"
+msgstr "Preostala teža"
 
 #, fuzzy
 msgid "Remaining length"
@@ -1047,16 +948,12 @@ msgid "Error setting active spool"
 msgstr "Napaka pri nastavljanju aktivnega vretenca"
 
 #, fuzzy
+msgid "Error getting active spool"
+msgstr "Napaka pri pridobivanju aktivnega vretenca"
+
+#, fuzzy
 msgid "No info available"
 msgstr "Ni na voljo nobena informacija"
-
-#, fuzzy
-msgid "Disk"
-msgstr "Disk"
-
-#, fuzzy
-msgid "Cores"
-msgstr "Jezgra"
 
 #, fuzzy
 msgid "IP Address"
@@ -1169,10 +1066,6 @@ msgid "Abort"
 msgstr "Prekini"
 
 #, fuzzy
-msgid "Calibration commands not available yet"
-msgstr "Kalibracijski ukredi še niso na voljo"
-
-#, fuzzy
 msgid "Error: Couldn't get a position to probe"
 msgstr "Napaka: Ni mogoče dobiti položaja za preizkuševanje"
 
@@ -1191,14 +1084,6 @@ msgstr "Min:"
 msgid "System:"
 msgstr "Sistem:"
 
-#, fuzzy
-msgid "Waiting connection closure"
-msgstr "Čakanje na zapiranje povezave"
-
-#, fuzzy
-msgid "Initializing KlipperScreen"
-msgstr "Inicializacija KlipperScreen"
-
 msgid "Provide KlipperScreen.log when asking for help.\n"
 msgstr "Ko prosite za pomoč, navedite KlipperScreen.log.\n"
 
@@ -1209,12 +1094,11 @@ msgstr "Zapri"
 msgid "DPMS has failed and has been disabled"
 msgstr "DPMS je spodletel in onemogočen"
 
-#, fuzzy
-msgid "Moonraker Connected"
-msgstr "Moonraker povezan"
+msgid "Cannot connect to Moonraker"
+msgstr "Ne morem se povezati z Moonrakerjem"
 
-msgid "Retrying"
-msgstr "Poskušam znova"
+msgid "Lost Connection to Moonraker"
+msgstr "Izgubljena poveza z Moonrakerjem"
 
 msgid "Klipper has disconnected"
 msgstr "Poveza s Klipperjem je prekinjena"
@@ -1236,16 +1120,82 @@ msgid "Klipper has shutdown"
 msgstr "Klipper se je ugasnil"
 
 #, fuzzy
-msgid "Waiting for Moonraker connection to close"
-msgstr "Čakanje na zapirje Moonraker povezave"
+msgid "No eligible macros:"
+msgstr "Ni ustreznih makrov:"
+
+msgid "macros with a name starting with '_' are hidden"
+msgstr "makri z imenom, ki se začne z '_', so skriti"
+
+msgid "macros that use 'rename_existing' are hidden"
+msgstr "makri, ki uporabljajo 'rename_existing' so skriti"
+
+msgid ""
+"LOAD_FILAMENT/UNLOAD_FILAMENT are hidden and should be used from extrude"
+msgstr ""
+"LOAD_FILAMENT/UNLOAD_FILAMENT sta skrita in ju je treba uporabiti pri "
+"ekstrudiranju"
+
+#, fuzzy
+msgid "Temperature too low to extrude"
+msgstr "Temperatura prenizka za ekstruzijo"
+
+msgid "Retrying"
+msgstr "Poskušam znova"
 
 msgid "Moonraker: connected"
 msgstr "Moonraker: povezan"
 
-#, fuzzy
-msgid "Initializing Klipper Connection"
-msgstr "Inicializacija povezave z Klipperjem"
+#~ msgid "Password saved"
+#~ msgstr "Geslo shranjeno"
 
-#, fuzzy
-msgid "Klipper not responding after multiple attempts"
-msgstr "Klipper se ne odziva po več poskusih"
+#~ msgid "Hide temp."
+#~ msgstr "Skrij temp."
+
+#~ msgid "PSK for"
+#~ msgstr "PSK za"
+
+#~ msgid "Mesh calibrate"
+#~ msgstr "Umeritev mreže"
+
+#~ msgid "Uploaded"
+#~ msgstr "Naloženo"
+
+#~ msgid "Ended official support in June 2023"
+#~ msgstr "Konec uradne podpore junija 2023"
+
+#~ msgid "Hidden"
+#~ msgstr "Skrito"
+
+#~ msgid "KlipperScreen will drop support in June 2024"
+#~ msgstr "KlipperScreen bo do junija 2024 opustil podporo"
+
+#~ msgid "Print Time"
+#~ msgstr "Čas tiskanja"
+
+#~ msgid "Warning"
+#~ msgstr "Opozorilo"
+
+#~ msgid "dBm"
+#~ msgstr "dBm"
+
+#~ msgid "Deselect"
+#~ msgstr "Prekliči izbiro"
+
+#~ msgid "Select"
+#~ msgstr "Izberi"
+
+#~ msgid "Bed screw configuration:"
+#~ msgstr "Umerjanje vijakov plošče:"
+
+#~ msgid ""
+#~ "Not supported for auto-detection, it needs to be configured in "
+#~ "klipperscreen.conf"
+#~ msgstr ""
+#~ "Ni podprto za samodejno zaznavanje, treba ga je konfigurirati v "
+#~ "klipperscreen.conf"
+
+#~ msgid "Unknown screw position"
+#~ msgstr "Neznan položaj vijaka"
+
+#~ msgid "Max Acceleration to Deceleration"
+#~ msgstr "Največji pospešek do pojemka"

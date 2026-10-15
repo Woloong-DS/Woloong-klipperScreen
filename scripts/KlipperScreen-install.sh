@@ -5,8 +5,7 @@ KSPATH=$(dirname "$SCRIPTPATH")
 KSENV="${KLIPPERSCREEN_VENV:-${HOME}/.KlipperScreen-env}"
 
 XSERVER="xinit xinput x11-xserver-utils xserver-xorg-input-evdev xserver-xorg-input-libinput xserver-xorg-legacy xserver-xorg-video-fbdev"
-CAGE="cage seatd"
-WESTON="weston seatd"
+CAGE="cage seatd xwayland"
 PYGOBJECT="libgirepository1.0-dev gcc libcairo2-dev pkg-config python3-dev gir1.2-gtk-3.0"
 MISC="librsvg2-common libopenjp2-7 libdbus-glib-1-dev autoconf python3-venv"
 OPTIONAL="fonts-nanum fonts-ipafont libmpv-dev"
@@ -37,14 +36,14 @@ install_graphical_backend()
     if [ -z "$BACKEND" ]; then
       echo_text ""
       echo_text "Choose graphical backend"
+      echo_ok "Default is Xserver"
+      echo_text "Wayland is EXPERIMENTAL, needs kms/drm drivers, and doesn't support DPMS"
       echo_text ""
-      echo_text "Wayland requires working KMS/DRM drivers"
-      echo_text ""
-      echo_ok "Press enter to install X11/Xserver"
-      read -r -e -p "Backend X11 or Wayland (cage)? [X/w]" BACKEND
+      echo "Press enter for default (Xserver)"
+      read -r -e -p "Backend Xserver or Wayland (cage)? [X/w]" BACKEND
     fi
     if [[ "$BACKEND" =~ ^[wW]$ ]]; then
-        echo_text "Installing Cage"
+        echo_text "Installing Wayland Cage Kiosk"
         if sudo apt install -y $CAGE; then
             echo_ok "Installed Cage"
             BACKEND="W"
@@ -125,7 +124,7 @@ create_virtualenv()
         echo_text "Removing old virtual environment"
         rm -rf "${KSENV}"
     fi
-
+    
     echo_text "Creating virtual environment"
     python3 -m venv "${KSENV}"
 
@@ -182,51 +181,46 @@ install_systemd_service()
 
 create_policy()
 {
-    local POLKIT_DIR="/etc/polkit-1/rules.d"
-    local POLKIT_USR_DIR="/usr/share/polkit-1/rules.d"
-    local RULE_FILE="${POLKIT_DIR}/KlipperScreen.rules"
+    POLKIT_DIR="/etc/polkit-1/rules.d"
+    POLKIT_USR_DIR="/usr/share/polkit-1/rules.d"
 
     echo_text "Installing KlipperScreen PolicyKit Rules"
-
     sudo groupadd -f klipperscreen
     sudo groupadd -f network
-
     sudo adduser "$USER" netdev
     sudo adduser "$USER" network
-    sudo adduser "$USER" klipperscreen
-
-    if ! command -v pkaction >/dev/null 2>&1; then
+    if [ ! -x "$(command -v pkaction)" ]; then
         echo "PolicyKit not installed"
         return
     fi
 
-    POLKIT_VERSION="$(pkaction --version | grep -Po '(\d+\.?\d*)')"
+    POLKIT_VERSION="$( pkaction --version | grep -Po "(\d+\.?\d*)" )"
     echo_text "PolicyKit Version ${POLKIT_VERSION} Detected"
-
-    if [[ "$POLKIT_VERSION" == 0.105* ]]; then
+    if [ "$POLKIT_VERSION" = "0.105" ]; then
+        # install legacy pkla
         create_policy_legacy
         return
     fi
 
-    if [ ! -d "$POLKIT_DIR" ]; then
+    RULE_FILE=""
+    if [ -d $POLKIT_USR_DIR ]; then
+        RULE_FILE="${POLKIT_USR_DIR}/KlipperScreen.rules"
+    elif [ -d $POLKIT_DIR ]; then
+        RULE_FILE="${POLKIT_DIR}/KlipperScreen.rules"
+    else
         echo "PolicyKit rules folder not detected"
         exit 1
     fi
-
-    # Remove old rules from both possible locations
-    sudo rm -f "${POLKIT_DIR}/KlipperScreen.rules"
-    sudo rm -f "${POLKIT_USR_DIR}/KlipperScreen.rules"
-
     echo_text "Installing PolicyKit Rules to ${RULE_FILE}..."
+    sudo rm ${RULE_FILE}
 
-    sudo tee "$RULE_FILE" > /dev/null <<EOF
+    KS_GID=$( getent group klipperscreen | awk -F: '{printf "%d", $3}' )
+    sudo tee ${RULE_FILE} > /dev/null << EOF
 polkit.addRule(function(action, subject) {
-    if (action.id.indexOf("org.freedesktop.NetworkManager.") == 0 &&
-        subject.isInGroup("network")) {
+    if (action.id.indexOf("org.freedesktop.NetworkManager.") == 0 && subject.isInGroup("network")) {
         return polkit.Result.YES;
     }
 });
-
 polkit.addRule(function(action, subject) {
     if ((action.id == "org.freedesktop.login1.power-off" ||
          action.id == "org.freedesktop.login1.power-off-multiple-sessions" ||
@@ -235,9 +229,9 @@ polkit.addRule(function(action, subject) {
          action.id == "org.freedesktop.login1.halt" ||
          action.id == "org.freedesktop.login1.halt-multiple-sessions" ||
          action.id.startsWith("org.freedesktop.NetworkManager.")) &&
-        subject.isInGroup("klipperscreen")) {
+        subject.user == "$USER") {
         return polkit.Result.YES;
-    }
+        }
 });
 EOF
 }
@@ -299,7 +293,7 @@ install_network_manager()
         echo "Press enter for default (Yes)"
         read -r -e -p "Install NetworkManager for the network panel [Y/n]" NETWORK
     fi
-
+    
     if [[ $NETWORK =~ ^[nN]$ ]]; then
         echo_error "Not installing NetworkManager for the network panel"
     else
@@ -309,6 +303,10 @@ install_network_manager()
         echo_text "You will need to reconnect to the network using KlipperScreen or nmtui or nmcli"
         sudo apt install network-manager
         sudo mkdir -p /etc/NetworkManager/conf.d
+        sudo tee /etc/NetworkManager/conf.d/any-user.conf > /dev/null << EOF
+[main]
+auth-polkit=false
+EOF
         sudo systemctl -q disable dhcpcd 2> /dev/null
         sudo systemctl -q stop dhcpcd 2> /dev/null
         sudo systemctl enable NetworkManager

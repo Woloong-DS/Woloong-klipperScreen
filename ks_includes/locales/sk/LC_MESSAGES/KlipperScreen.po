@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-06-21 12:14-0300\n"
+"POT-Creation-Date: 2026-04-23 22:27-0300\n"
 "PO-Revision-Date: 2026-05-07 00:11+0000\n"
 "Last-Translator: Pavol Vrba <pvrba2000@gmail.com>\n"
 "Language-Team: Slovak <https://hosted.weblate.org/projects/klipperscreen/"
@@ -173,13 +173,8 @@ msgstr "24 hodinový čas"
 msgid "Disable for 12hs with am / pm"
 msgstr "Zakázať na 12 hodín s am / pm"
 
-#, fuzzy
-msgid "Action bar Shortcut"
-msgstr "Skratka panela akcií"
-
-#, fuzzy
-msgid "LEDs"
-msgstr "LED"
+msgid "Macro shortcut on sidebar"
+msgstr "Skratka makra na bočnom paneli"
 
 msgid "Font Size"
 msgstr "Veľkosť písma"
@@ -250,21 +245,6 @@ msgstr "Zobraziť kurzor"
 msgid "For mouse control or to verify touchscreen accuracy"
 msgstr "Na ovládanie myšou alebo na overenie presnosti dotykovej obrazovky"
 
-#, fuzzy
-msgid "Screen wake delay"
-msgstr "Oneskorenie prebúdzania obrazovky"
-
-#, fuzzy
-msgid "Helps to prevent unwanted touchs during screen wake up"
-msgstr ""
-"Pomáha predchádzať nechtenej dotykovej obsluhe pri prebúdzaní obrazovky"
-
-msgid "second"
-msgid_plural "seconds"
-msgstr[0] "sekunda"
-msgstr[1] "sekundy"
-msgstr[2] "sekúnd"
-
 msgid "Invert X"
 msgstr "Invertovať X"
 
@@ -295,15 +275,6 @@ msgstr[0] "minúta"
 msgstr[1] "minúty"
 msgstr[2] "minút"
 
-msgid "Temperature too low to extrude"
-msgstr "Príliš nízka teplota na vytlačenie"
-
-msgid "Klipper will reboot"
-msgstr "Klipper sa reštartuje"
-
-msgid "Save configuration?"
-msgstr "Uložiť konfiguráciu?"
-
 msgid "Are you sure you want to run Emergency Stop?"
 msgstr "Naozaj chcete spustiť núdzové zastavenie?"
 
@@ -312,6 +283,12 @@ msgid_plural "days"
 msgstr[0] "deň"
 msgstr[1] "dni"
 msgstr[2] "dní"
+
+msgid "second"
+msgid_plural "seconds"
+msgstr[0] "sekunda"
+msgstr[1] "sekundy"
+msgstr[2] "sekúnd"
 
 msgid "Network not found"
 msgstr "Sieť sa nenašla"
@@ -352,9 +329,11 @@ msgstr "Pripojenie zlyhalo"
 msgid "No mesh has been loaded"
 msgstr "Nebola načítaná žiadna sieť"
 
-#, fuzzy
-msgid "Invalid Number"
-msgstr "Neplatné číslo"
+msgid "Calibrate"
+msgstr "Kalibrovať"
+
+msgid "Invalid temperature"
+msgstr "Nesprávna teplota"
 
 msgid "Password"
 msgstr "Heslo"
@@ -397,9 +376,6 @@ msgstr "Referencia"
 
 msgid "Add profile"
 msgstr "Pridať profil"
-
-msgid "Calibrate"
-msgstr "Kalibrovať"
 
 msgid "Clear"
 msgstr "Vyčistiť"
@@ -541,6 +517,12 @@ msgstr "Zmerať Y"
 
 msgid "Measure Both"
 msgstr "Zmerať Oba"
+
+msgid "Klipper will reboot"
+msgstr "Klipper sa reštartuje"
+
+msgid "Save configuration?"
+msgstr "Uložiť konfiguráciu?"
 
 msgid "Check ADXL Wiring"
 msgstr "Skontrolujte zapojenie ADXL"
@@ -701,9 +683,6 @@ msgstr "V závislosti od výkonu ohrievača to môže trvať aj viac ako 5 minú
 msgid "Temp (°C)"
 msgstr "Teplota (°C)"
 
-msgid "Invalid temperature"
-msgstr "Nesprávna teplota"
-
 msgid "Home"
 msgstr "Domov"
 
@@ -728,37 +707,17 @@ msgstr "Iba pre panel posuvu"
 msgid "Z Speed (mm/s)"
 msgstr "Z Rýchlosť (mm/s)"
 
-#, fuzzy
-msgid "Advanced Move"
-msgstr "Pokročilé posunutie"
-
-#, fuzzy
-msgid "Query Endstops"
-msgstr "Vyžiadať stav koncových spínačov"
-
-#, fuzzy
-msgid "Invalid position"
-msgstr "Neplatná poloha"
-
 msgid "Failed to initialize"
 msgstr "Inicializácia zlyhala"
 
 msgid "Interface"
 msgstr "Rozhranie"
 
-#, fuzzy
-msgid "No network devices have been found"
-msgstr "Nenašli sa žiadne sieťové zariadenia"
-
-#, fuzzy
-msgid "No network devices available"
-msgstr "Nie sú dostupné žiadne sieťové zariadenia"
+msgid "No wireless interface has been found"
+msgstr "Bezdrôtové rozhranie sa nenašlo"
 
 msgid "Connected"
 msgstr "Pripojenie"
-
-msgid "Channel"
-msgstr "Kanál"
 
 #, python-format
 msgid "Do you want to forget or disconnect %s?"
@@ -779,6 +738,9 @@ msgstr "Používateľ"
 #, python-format
 msgid "Connecting to %s"
 msgstr "Pripájanie k %s"
+
+msgid "Channel"
+msgstr "Kanál"
 
 msgid "Hostname"
 msgstr "Názov hosta"
@@ -864,91 +826,29 @@ msgstr "Zopakovať"
 msgid "Power On Printer"
 msgstr "Zapnutie tlačiarne"
 
-#, fuzzy
-msgid "Spool editor"
-msgstr "Editor cievok"
+msgid "ID"
+msgstr "ID"
 
-#, fuzzy
-msgid "No spool selected"
-msgstr "Nie je vybraná žiadna cievka"
-
-#, fuzzy
-msgid "Measured weight"
-msgstr "Nameraná hmotnosť"
-
-msgid "Remaining weight"
-msgstr "Zostávajúca hmotnosť"
-
-#, fuzzy
-msgid "Initial weight"
-msgstr "Počiatočná hmotnosť"
-
-#, fuzzy
-msgid "Empty weight"
-msgstr "Hmotnosť prázdnej cievky"
-
-#, fuzzy
-msgid "Invalid weight"
-msgstr "Neplatná hmotnosť"
-
-#, fuzzy
-msgid "Restore"
-msgstr "Obnoviť"
-
-#, fuzzy
-msgid "No"
-msgstr "Nie"
-
-#, fuzzy
-msgid "Yes"
-msgstr "Áno"
-
-#, fuzzy
-msgid "Vendor"
-msgstr "Výrobca"
-
-msgid "Material"
-msgstr "Materiál"
-
-#, fuzzy
-msgid "Used"
-msgstr "Použité"
-
-#, fuzzy
-msgid "Location"
-msgstr "Lokalita"
+msgid "Last Used"
+msgstr "Naposledy Použité"
 
 msgid "Archived"
 msgstr "Archivované"
 
-#, fuzzy
-msgid "Price"
-msgstr "Cena"
+msgid "Filter"
+msgstr "Filter"
+
+msgid "Material"
+msgstr "Materiál"
 
 msgid "Comment"
 msgstr "Komentár"
 
-#, fuzzy
-msgid "Measured weight is below empty spool weight"
-msgstr "Nameraná hmotnosť je nižšia ako hmotnosť prázdnej cievky"
+msgid "Last used"
+msgstr "Naposledy použité"
 
-#, fuzzy
-msgid "Value must be positive"
-msgstr "Hodnota musí byť kladná"
-
-#, fuzzy
-msgid "Error updating filament weight"
-msgstr "Chyba pri aktualizácii hmotnosti filamentu"
-
-#, fuzzy
-msgid "Filament weight updated"
-msgstr "Hmotnosť filamentu aktualizovaná"
-
-msgid "ID"
-msgstr "ID"
-
-msgid "Filter"
-msgstr "Filter"
+msgid "Remaining weight"
+msgstr "Zostávajúca hmotnosť"
 
 msgid "Remaining length"
 msgstr "Zostávajúca dĺžka"
@@ -965,16 +865,11 @@ msgstr "Chyba pri čistení aktívnej cievky"
 msgid "Error setting active spool"
 msgstr "Chyba pri nastavovaní aktívnej cievky"
 
+msgid "Error getting active spool"
+msgstr "Chyba pri získavaní aktívnej cievky"
+
 msgid "No info available"
 msgstr "Žiadne informácie nie sú k dispozícii"
-
-#, fuzzy
-msgid "Disk"
-msgstr "Disk"
-
-#, fuzzy
-msgid "Cores"
-msgstr "Jadrá"
 
 msgid "IP Address"
 msgstr "IP adresa"
@@ -1078,10 +973,6 @@ msgstr "Spodná Tryska"
 msgid "Abort"
 msgstr "Prerušiť"
 
-#, fuzzy
-msgid "Calibration commands not available yet"
-msgstr "Príkazy na kalibráciu ešte nie sú k dispozícii"
-
 msgid "Error: Couldn't get a position to probe"
 msgstr "Chyba: Nepodarilo sa nájsť polohu na sondovanie"
 
@@ -1097,14 +988,6 @@ msgstr "Minimum:"
 msgid "System:"
 msgstr "Systém:"
 
-#, fuzzy
-msgid "Waiting connection closure"
-msgstr "Čakanie na zatvorenie pripojenia"
-
-#, fuzzy
-msgid "Initializing KlipperScreen"
-msgstr "Inicializácia KlipperScreen"
-
 msgid "Provide KlipperScreen.log when asking for help.\n"
 msgstr "Pri žiadosti o pomoc poskytnite súbor KlipperScreen.log.\n"
 
@@ -1114,12 +997,11 @@ msgstr "Zatvoriť"
 msgid "DPMS has failed and has been disabled"
 msgstr "DPMS zlyhalo a bolo zakázané"
 
-#, fuzzy
-msgid "Moonraker Connected"
-msgstr "Moonraker pripojený"
+msgid "Cannot connect to Moonraker"
+msgstr "Nedá sa pripojiť k Moonrakeru"
 
-msgid "Retrying"
-msgstr "Opakovanie"
+msgid "Lost Connection to Moonraker"
+msgstr "Stratené spojenie s Moonrakerom"
 
 msgid "Klipper has disconnected"
 msgstr "Klipper sa odpojil"
@@ -1139,17 +1021,45 @@ msgstr "Klipper sa pokúša naštartovať"
 msgid "Klipper has shutdown"
 msgstr "Klipper sa vypol"
 
-#, fuzzy
-msgid "Waiting for Moonraker connection to close"
-msgstr "Čakanie na zatvorenie pripojenia Moonraker"
+msgid "No eligible macros:"
+msgstr "Žiadne vhodné makrá:"
+
+msgid "macros with a name starting with '_' are hidden"
+msgstr "makrá s názvom začínajúcim na ‘_’ sú skryté"
+
+msgid "macros that use 'rename_existing' are hidden"
+msgstr "makrá, ktoré používajú ‘rename_existing’, sú skryté"
+
+msgid ""
+"LOAD_FILAMENT/UNLOAD_FILAMENT are hidden and should be used from extrude"
+msgstr ""
+"LOAD_FILAMENT/UNLOAD_FILAMENT sú skryté a mali by sa použiť z vysunutia"
+
+msgid "Temperature too low to extrude"
+msgstr "Príliš nízka teplota na vytlačenie"
+
+msgid "Retrying"
+msgstr "Opakovanie"
 
 msgid "Moonraker: connected"
 msgstr "Moonraker: pripojený"
 
-#, fuzzy
-msgid "Initializing Klipper Connection"
-msgstr "Inicializácia pripojenia Klipper"
+#, python-format
+#~ msgid "Apply %s%.3f offset to Endstop?"
+#~ msgstr "Potvrdiť %s%.3f offset koncového spínača?"
 
-#, fuzzy
-msgid "Klipper not responding after multiple attempts"
-msgstr "Klipper nereaguje po niekoľkých pokusoch"
+#, python-format
+#~ msgid "Apply %s%.3f offset to Probe?"
+#~ msgstr "Potvrdiť %s%.3f offset sondy?"
+
+#~ msgid "DPMS has failed to load and has been disabled"
+#~ msgstr "Načítanie systému DPMS sa nepodarilo a systém bol deaktivovaný"
+
+#~ msgid "Max:"
+#~ msgstr "Max:"
+
+#~ msgid "No elegible macros:"
+#~ msgstr "Žiadne použiteľné makrá:"
+
+#~ msgid "Password saved"
+#~ msgstr "Heslo uložené"

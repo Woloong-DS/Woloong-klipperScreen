@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-06-21 12:14-0300\n"
+"POT-Creation-Date: 2026-04-23 22:27-0300\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -171,10 +171,7 @@ msgstr ""
 msgid "Disable for 12hs with am / pm"
 msgstr ""
 
-msgid "Action bar Shortcut"
-msgstr ""
-
-msgid "LEDs"
+msgid "Macro shortcut on sidebar"
 msgstr ""
 
 msgid "Font Size"
@@ -246,17 +243,6 @@ msgstr ""
 msgid "For mouse control or to verify touchscreen accuracy"
 msgstr ""
 
-msgid "Screen wake delay"
-msgstr ""
-
-msgid "Helps to prevent unwanted touchs during screen wake up"
-msgstr ""
-
-msgid "second"
-msgid_plural "seconds"
-msgstr[0] ""
-msgstr[1] ""
-
 msgid "Invert X"
 msgstr ""
 
@@ -285,20 +271,16 @@ msgid_plural "minutes"
 msgstr[0] ""
 msgstr[1] ""
 
-msgid "Temperature too low to extrude"
-msgstr ""
-
-msgid "Klipper will reboot"
-msgstr ""
-
-msgid "Save configuration?"
-msgstr ""
-
 msgid "Are you sure you want to run Emergency Stop?"
 msgstr ""
 
 msgid "day"
 msgid_plural "days"
+msgstr[0] ""
+msgstr[1] ""
+
+msgid "second"
+msgid_plural "seconds"
 msgstr[0] ""
 msgstr[1] ""
 
@@ -341,7 +323,10 @@ msgstr ""
 msgid "No mesh has been loaded"
 msgstr ""
 
-msgid "Invalid Number"
+msgid "Calibrate"
+msgstr ""
+
+msgid "Invalid temperature"
 msgstr ""
 
 msgid "Password"
@@ -384,9 +369,6 @@ msgid "Reference"
 msgstr ""
 
 msgid "Add profile"
-msgstr ""
-
-msgid "Calibrate"
 msgstr ""
 
 msgid "Clear"
@@ -528,6 +510,12 @@ msgid "Measure Y"
 msgstr ""
 
 msgid "Measure Both"
+msgstr ""
+
+msgid "Klipper will reboot"
+msgstr ""
+
+msgid "Save configuration?"
 msgstr ""
 
 msgid "Check ADXL Wiring"
@@ -689,9 +677,6 @@ msgstr ""
 msgid "Temp (°C)"
 msgstr ""
 
-msgid "Invalid temperature"
-msgstr ""
-
 msgid "Home"
 msgstr ""
 
@@ -716,31 +701,16 @@ msgstr ""
 msgid "Z Speed (mm/s)"
 msgstr ""
 
-msgid "Advanced Move"
-msgstr ""
-
-msgid "Query Endstops"
-msgstr ""
-
-msgid "Invalid position"
-msgstr ""
-
 msgid "Failed to initialize"
 msgstr ""
 
 msgid "Interface"
 msgstr ""
 
-msgid "No network devices have been found"
-msgstr ""
-
-msgid "No network devices available"
+msgid "No wireless interface has been found"
 msgstr ""
 
 msgid "Connected"
-msgstr ""
-
-msgid "Channel"
 msgstr ""
 
 #, python-format
@@ -761,6 +731,9 @@ msgstr ""
 
 #, python-format
 msgid "Connecting to %s"
+msgstr ""
+
+msgid "Channel"
 msgstr ""
 
 msgid "Hostname"
@@ -847,73 +820,28 @@ msgstr ""
 msgid "Power On Printer"
 msgstr ""
 
-msgid "Spool editor"
+msgid "ID"
 msgstr ""
 
-msgid "No spool selected"
-msgstr ""
-
-msgid "Measured weight"
-msgstr ""
-
-msgid "Remaining weight"
-msgstr ""
-
-msgid "Initial weight"
-msgstr ""
-
-msgid "Empty weight"
-msgstr ""
-
-msgid "Invalid weight"
-msgstr ""
-
-msgid "Restore"
-msgstr ""
-
-msgid "No"
-msgstr ""
-
-msgid "Yes"
-msgstr ""
-
-msgid "Vendor"
-msgstr ""
-
-msgid "Material"
-msgstr ""
-
-msgid "Used"
-msgstr ""
-
-msgid "Location"
+msgid "Last Used"
 msgstr ""
 
 msgid "Archived"
 msgstr ""
 
-msgid "Price"
+msgid "Filter"
+msgstr ""
+
+msgid "Material"
 msgstr ""
 
 msgid "Comment"
 msgstr ""
 
-msgid "Measured weight is below empty spool weight"
+msgid "Last used"
 msgstr ""
 
-msgid "Value must be positive"
-msgstr ""
-
-msgid "Error updating filament weight"
-msgstr ""
-
-msgid "Filament weight updated"
-msgstr ""
-
-msgid "ID"
-msgstr ""
-
-msgid "Filter"
+msgid "Remaining weight"
 msgstr ""
 
 msgid "Remaining length"
@@ -931,13 +859,10 @@ msgstr ""
 msgid "Error setting active spool"
 msgstr ""
 
+msgid "Error getting active spool"
+msgstr ""
+
 msgid "No info available"
-msgstr ""
-
-msgid "Disk"
-msgstr ""
-
-msgid "Cores"
 msgstr ""
 
 msgid "IP Address"
@@ -1040,9 +965,6 @@ msgstr ""
 msgid "Abort"
 msgstr ""
 
-msgid "Calibration commands not available yet"
-msgstr ""
-
 msgid "Error: Couldn't get a position to probe"
 msgstr ""
 
@@ -1058,12 +980,6 @@ msgstr ""
 msgid "System:"
 msgstr ""
 
-msgid "Waiting connection closure"
-msgstr ""
-
-msgid "Initializing KlipperScreen"
-msgstr ""
-
 msgid "Provide KlipperScreen.log when asking for help.\n"
 msgstr ""
 
@@ -1073,10 +989,10 @@ msgstr ""
 msgid "DPMS has failed and has been disabled"
 msgstr ""
 
-msgid "Moonraker Connected"
+msgid "Cannot connect to Moonraker"
 msgstr ""
 
-msgid "Retrying"
+msgid "Lost Connection to Moonraker"
 msgstr ""
 
 msgid "Klipper has disconnected"
@@ -1097,14 +1013,24 @@ msgstr ""
 msgid "Klipper has shutdown"
 msgstr ""
 
-msgid "Waiting for Moonraker connection to close"
+msgid "No eligible macros:"
+msgstr ""
+
+msgid "macros with a name starting with '_' are hidden"
+msgstr ""
+
+msgid "macros that use 'rename_existing' are hidden"
+msgstr ""
+
+msgid ""
+"LOAD_FILAMENT/UNLOAD_FILAMENT are hidden and should be used from extrude"
+msgstr ""
+
+msgid "Temperature too low to extrude"
+msgstr ""
+
+msgid "Retrying"
 msgstr ""
 
 msgid "Moonraker: connected"
-msgstr ""
-
-msgid "Initializing Klipper Connection"
-msgstr ""
-
-msgid "Klipper not responding after multiple attempts"
 msgstr ""

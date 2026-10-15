@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-06-21 12:14-0300\n"
+"POT-Creation-Date: 2026-04-23 22:27-0300\n"
 "PO-Revision-Date: 2026-05-05 19:16+0000\n"
 "Last-Translator: Selim <technical50@users.noreply.hosted.weblate.org>\n"
 "Language-Team: Turkish <https://hosted.weblate.org/projects/klipperscreen/"
@@ -172,13 +172,8 @@ msgstr "24 Saatlik Zaman"
 msgid "Disable for 12hs with am / pm"
 msgstr "12 saat boyunca am / pm ile devre dışı bırakın"
 
-#, fuzzy
-msgid "Action bar Shortcut"
-msgstr "Eylem çubuğu Kısayolu"
-
-#, fuzzy
-msgid "LEDs"
-msgstr "LED'ler"
+msgid "Macro shortcut on sidebar"
+msgstr "Kenar çubuğunda makro kısayolu"
 
 msgid "Font Size"
 msgstr "Yazı boyutu"
@@ -249,19 +244,6 @@ msgstr "İmleci göster"
 msgid "For mouse control or to verify touchscreen accuracy"
 msgstr "Fare yada dokunmatik ekranın kesinliğini doğrulamak için"
 
-#, fuzzy
-msgid "Screen wake delay"
-msgstr "Ekran uyandırma gecikmesi"
-
-#, fuzzy
-msgid "Helps to prevent unwanted touchs during screen wake up"
-msgstr "Ekran uyanırken istenmeyen dokunmaları önlemeye yardımcı olur"
-
-msgid "second"
-msgid_plural "seconds"
-msgstr[0] "saniye"
-msgstr[1] "saniyeler"
-
 msgid "Invert X"
 msgstr "X Ters çevir"
 
@@ -290,15 +272,6 @@ msgid_plural "minutes"
 msgstr[0] "dakika"
 msgstr[1] "dakikalar"
 
-msgid "Temperature too low to extrude"
-msgstr "Sıcaklık ekstrüzyon için çok düşük"
-
-msgid "Klipper will reboot"
-msgstr "Klipper yeniden başlayacak"
-
-msgid "Save configuration?"
-msgstr "Yapılandırmayı kaydet?"
-
 msgid "Are you sure you want to run Emergency Stop?"
 msgstr "Acil Durdurmak istediğinizden emin misiniz?"
 
@@ -306,6 +279,11 @@ msgid "day"
 msgid_plural "days"
 msgstr[0] "gün"
 msgstr[1] "günler"
+
+msgid "second"
+msgid_plural "seconds"
+msgstr[0] "saniye"
+msgstr[1] "saniyeler"
 
 msgid "Network not found"
 msgstr "Ağ bulunamadı"
@@ -346,9 +324,11 @@ msgstr "Bağlantı başarısız oldu"
 msgid "No mesh has been loaded"
 msgstr "Herhangi bir haritalandırma yüklenmedi"
 
-#, fuzzy
-msgid "Invalid Number"
-msgstr "Geçersiz Sayı"
+msgid "Calibrate"
+msgstr "Kalibre et"
+
+msgid "Invalid temperature"
+msgstr "Geçersiz Sıcaklık"
 
 msgid "Password"
 msgstr "Şifre"
@@ -391,9 +371,6 @@ msgstr "Referans"
 
 msgid "Add profile"
 msgstr "Profil ekle"
-
-msgid "Calibrate"
-msgstr "Kalibre et"
 
 msgid "Clear"
 msgstr "Temizle"
@@ -535,6 +512,12 @@ msgstr "Y Ölçüle"
 
 msgid "Measure Both"
 msgstr "İkisini de ölçüle"
+
+msgid "Klipper will reboot"
+msgstr "Klipper yeniden başlayacak"
+
+msgid "Save configuration?"
+msgstr "Yapılandırmayı kaydet?"
 
 msgid "Check ADXL Wiring"
 msgstr "ADXL Bağlantılarını Kontrol Et"
@@ -695,9 +678,6 @@ msgstr "Isıtıcı gücüne bağlı olarak 5 dakikadan fazla sürebilir."
 msgid "Temp (°C)"
 msgstr "Sıcaklık (°C)"
 
-msgid "Invalid temperature"
-msgstr "Geçersiz Sıcaklık"
-
 msgid "Home"
 msgstr "Ana Konum"
 
@@ -722,37 +702,17 @@ msgstr "Sadece paneli taşımak için"
 msgid "Z Speed (mm/s)"
 msgstr "Z Hızı (mm/s)"
 
-#, fuzzy
-msgid "Advanced Move"
-msgstr "Gelişmiş Hareket"
-
-#, fuzzy
-msgid "Query Endstops"
-msgstr "Endstop'ları Sorgula"
-
-#, fuzzy
-msgid "Invalid position"
-msgstr "Geçersiz konum"
-
 msgid "Failed to initialize"
 msgstr "Başlatılamadı"
 
 msgid "Interface"
 msgstr "Arayüz"
 
-#, fuzzy
-msgid "No network devices have been found"
-msgstr "Hiçbir ağ cihazı bulunamadı"
-
-#, fuzzy
-msgid "No network devices available"
-msgstr "Mevcut ağ cihazı yok"
+msgid "No wireless interface has been found"
+msgstr "Herhangi bir kablosuz cihazı bulunamadı"
 
 msgid "Connected"
 msgstr "Bağlandı"
-
-msgid "Channel"
-msgstr "Kanal"
 
 #, python-format
 msgid "Do you want to forget or disconnect %s?"
@@ -773,6 +733,9 @@ msgstr "Kullanıcı"
 #, python-format
 msgid "Connecting to %s"
 msgstr "%s'e Bağlanılıyor"
+
+msgid "Channel"
+msgstr "Kanal"
 
 msgid "Hostname"
 msgstr "Ana bilgisayar adı"
@@ -858,93 +821,32 @@ msgstr "Tekrar dene"
 msgid "Power On Printer"
 msgstr "Yazıcıyı aç"
 
-#, fuzzy
-msgid "Spool editor"
-msgstr "İplik düzenleyici"
+msgid "ID"
+msgstr "ID"
 
-#, fuzzy
-msgid "No spool selected"
-msgstr "Seçili iplik yok"
-
-#, fuzzy
-msgid "Measured weight"
-msgstr "Ölçülen ağırlık"
-
-#, fuzzy
-msgid "Remaining weight"
-msgstr "Kalan ağırlık"
-
-#, fuzzy
-msgid "Initial weight"
-msgstr "İlk ağırlık"
-
-#, fuzzy
-msgid "Empty weight"
-msgstr "Boş ağırlık"
-
-#, fuzzy
-msgid "Invalid weight"
-msgstr "Geçersiz ağırlık"
-
-#, fuzzy
-msgid "Restore"
-msgstr "Geri yükle"
-
-#, fuzzy
-msgid "No"
-msgstr "Hayır"
-
-#, fuzzy
-msgid "Yes"
-msgstr "Evet"
-
-#, fuzzy
-msgid "Vendor"
-msgstr "Satıcı"
-
-msgid "Material"
-msgstr "Malzeme"
-
-#, fuzzy
-msgid "Used"
-msgstr "Kullanılan"
-
-#, fuzzy
-msgid "Location"
-msgstr "Konum"
+msgid "Last Used"
+msgstr "Son kullanılan"
 
 msgid "Archived"
 msgstr "Arşivlenen"
 
-#, fuzzy
-msgid "Price"
-msgstr "Fiyat"
+msgid "Filter"
+msgstr "Filtre"
+
+msgid "Material"
+msgstr "Malzeme"
 
 #, fuzzy
 msgid "Comment"
 msgstr "Yorum"
 
 #, fuzzy
-msgid "Measured weight is below empty spool weight"
-msgstr "Ölçülen ağırlık, boş makara ağırlığının altındadır"
+msgid "Last used"
+msgstr "Son kullanılan"
 
 #, fuzzy
-msgid "Value must be positive"
-msgstr "Değer pozitif olmalıdır"
-
-#, fuzzy
-msgid "Error updating filament weight"
-msgstr "İplik ağırlığı güncellenirken hata oluştu"
-
-#, fuzzy
-msgid "Filament weight updated"
-msgstr "İplik ağırlığı güncellendi"
-
-msgid "ID"
-msgstr "ID"
-
-msgid "Filter"
-msgstr "Filtre"
+msgid "Remaining weight"
+msgstr "Kalan ağırlık"
 
 #, fuzzy
 msgid "Remaining length"
@@ -962,16 +864,11 @@ msgstr "Aktif makara temizleme hatası"
 msgid "Error setting active spool"
 msgstr "Etkin makara ayar hatası"
 
+msgid "Error getting active spool"
+msgstr "Aktif makara hata veriyor"
+
 msgid "No info available"
 msgstr "Bilgi yok"
-
-#, fuzzy
-msgid "Disk"
-msgstr "Disk"
-
-#, fuzzy
-msgid "Cores"
-msgstr "Çekirdekler"
 
 #, fuzzy
 msgid "IP Address"
@@ -1075,10 +972,6 @@ msgstr "Nozzle indir"
 msgid "Abort"
 msgstr "İptal et"
 
-#, fuzzy
-msgid "Calibration commands not available yet"
-msgstr "Kalibrasyon komutları henüz mevcut değil"
-
 msgid "Error: Couldn't get a position to probe"
 msgstr "Hata: İnceleyici için bir konum alınamadı"
 
@@ -1094,14 +987,6 @@ msgstr "Minimum:"
 msgid "System:"
 msgstr "Sistem:"
 
-#, fuzzy
-msgid "Waiting connection closure"
-msgstr "Bağlantı kapanışı bekleniyor"
-
-#, fuzzy
-msgid "Initializing KlipperScreen"
-msgstr "KlipperScreen başlatılıyor"
-
 msgid "Provide KlipperScreen.log when asking for help.\n"
 msgstr "Yardım isterken KlipperScreen.log dosyasını sağlayın.\n"
 
@@ -1112,12 +997,11 @@ msgstr "Kapat"
 msgid "DPMS has failed and has been disabled"
 msgstr "DPMS başarısız oldu ve devre dışı bırakıldı"
 
-#, fuzzy
-msgid "Moonraker Connected"
-msgstr "Moonraker Bağlandı"
+msgid "Cannot connect to Moonraker"
+msgstr "Moonraker'a bağlanılamıyor"
 
-msgid "Retrying"
-msgstr "Yeniden Deneniyor"
+msgid "Lost Connection to Moonraker"
+msgstr "Moonraker ile Bağlantı Koptu"
 
 msgid "Klipper has disconnected"
 msgstr "Klipper bağlantısı kesildi"
@@ -1138,16 +1022,194 @@ msgid "Klipper has shutdown"
 msgstr "Klipper Kapandı"
 
 #, fuzzy
-msgid "Waiting for Moonraker connection to close"
-msgstr "Moonraker bağlantısının kapanması bekleniyor"
+msgid "No eligible macros:"
+msgstr "Geçerli makro yok:"
+
+msgid "macros with a name starting with '_' are hidden"
+msgstr "adı '_' ile başlayan makrolar gizlendi"
+
+msgid "macros that use 'rename_existing' are hidden"
+msgstr "'rename_existing'i kullanan makrolar gizlendi"
+
+msgid ""
+"LOAD_FILAMENT/UNLOAD_FILAMENT are hidden and should be used from extrude"
+msgstr "FILEMENT_YUKLE/FILEMENT_KALDIR gizlidir ve extrude'dan kullanılmalıdır"
+
+msgid "Temperature too low to extrude"
+msgstr "Sıcaklık ekstrüzyon için çok düşük"
+
+msgid "Retrying"
+msgstr "Yeniden Deneniyor"
 
 msgid "Moonraker: connected"
 msgstr "Moonraker: bağlandı"
 
-#, fuzzy
-msgid "Initializing Klipper Connection"
-msgstr "Klipper Bağlantısı başlatılıyor"
+#~ msgid "Max:"
+#~ msgstr "Maksimum:"
 
-#, fuzzy
-msgid "Klipper not responding after multiple attempts"
-msgstr "Birden fazla denemeden sonra Klipper yanıt vermiyor"
+#~ msgid "Password saved"
+#~ msgstr "Şifre kaydedildi"
+
+#~ msgid "Hide temp."
+#~ msgstr "Sıcaklığı gizle."
+
+#~ msgid "PSK for"
+#~ msgstr "PSK için"
+
+#~ msgid "Are you sure you want to stop the calibration?"
+#~ msgstr "Kalibrasyonu durdurmak istediğinizden emin misiniz?"
+
+#~ msgid "Do you want to let KlipperScreen try to solve the issue?"
+#~ msgstr ""
+#~ "KlipperScreen'in sorunu çözmeye çalışmasına izin vermek ister misiniz?"
+
+#~ msgid "Insufficient priviledges detected"
+#~ msgstr "Yetersiz ayrıcalık algılandı"
+
+#~ msgid "Mesh calibrate"
+#~ msgstr "Tabla haritası Kalibre et"
+
+#~ msgid "Uploaded"
+#~ msgstr "Yüklendi"
+
+#~ msgid "Ended official support in June 2023"
+#~ msgstr "Resmi destek Haziran 2023 tarihinde sona ermiştir"
+
+#~ msgid "Hidden"
+#~ msgstr "Gizli"
+
+#~ msgid "KlipperScreen will drop support in June 2024"
+#~ msgstr "KlipperScreen Haziran 2024 tarihinde desteği bırakacaktır"
+
+#~ msgid "Print Time"
+#~ msgstr "Yazdırma Süresi"
+
+#~ msgid "Warning"
+#~ msgstr "Uyarı"
+
+#~ msgid "dBm"
+#~ msgstr "dBm"
+
+#~ msgid "Deselect"
+#~ msgstr "Seçimi kaldır"
+
+#~ msgid "Select"
+#~ msgstr "Seç"
+
+#~ msgid "Bed screw configuration:"
+#~ msgstr "Tabla vida yapılandırması:"
+
+#~ msgid ""
+#~ "Not supported for auto-detection, it needs to be configured in "
+#~ "klipperscreen.conf"
+#~ msgstr ""
+#~ "Otomatik algılama desteklenmiyor, klipperscreen.conf dosyasından "
+#~ "yapılandırmanız gerekli"
+
+#~ msgid "Unknown screw position"
+#~ msgstr "Bilinmeyen vida konumu"
+
+#~ msgid "Max Acceleration to Deceleration"
+#~ msgstr "Maksimum Hızlanma ve Yavaşlama"
+
+#~ msgid "Continue"
+#~ msgstr "Devam et"
+
+#~ msgid "Fullscreen"
+#~ msgstr "Tam Ekran"
+
+#~ msgid "Actions"
+#~ msgstr "Eylemler"
+
+#~ msgid "Configuration"
+#~ msgstr "Yapılandırma"
+
+#~ msgid "Homing"
+#~ msgstr "Eksen Sıfırlama"
+
+#~ msgid "Disable XY"
+#~ msgstr "XY Devre dışı bırak"
+
+#~ msgid "Slicer Time correction (%)"
+#~ msgstr "Dilimleme Zamanı doğrulama (%)"
+
+#~ msgid "Calibrated, save configuration to make it permanent"
+#~ msgstr "Kalibre edildi, kalıcı hale getirmek için yapılandırmayı kaydedin"
+
+#~ msgid "Decrease"
+#~ msgstr "Azalt"
+
+#~ msgid "Increase"
+#~ msgstr "Artır"
+
+#, python-format
+#~ msgid "Sending Power ON signal to: %s"
+#~ msgstr "Güç AÇ sinyalı gönderilen: %s"
+
+#~ msgid "Sort:"
+#~ msgstr "Sırala:"
+
+#~ msgid "Calibrating..."
+#~ msgstr "Kalibre Ediliyor..."
+
+#~ msgid "Z+"
+#~ msgstr "Z+"
+
+#~ msgid "Z-"
+#~ msgstr "Z-"
+
+#~ msgid "X+"
+#~ msgstr "X+"
+
+#~ msgid "X-"
+#~ msgstr "X-"
+
+#~ msgid "Y+"
+#~ msgstr "Y+"
+
+#~ msgid "Y-"
+#~ msgstr "Y-"
+
+#, python-format
+#~ msgid "Retry #%s"
+#~ msgstr "Yeniden Dene #%s"
+
+#~ msgid "Add Printer"
+#~ msgstr "Yazıcı Ekle"
+
+#~ msgid "Initializing"
+#~ msgstr "Başlatılıyor"
+
+#~ msgid "Off"
+#~ msgstr "Kapa"
+
+#~ msgid "View Mesh"
+#~ msgstr "Örgüyü Görüntüle"
+
+#~ msgid "Machine"
+#~ msgstr "Makine"
+
+#~ msgid "Sort by: "
+#~ msgstr "Sırala: "
+
+#~ msgid "Bltouch found applied offset"
+#~ msgstr "Bltouch uygulanmış ofseti buldu"
+
+#~ msgid ""
+#~ "Check /tmp/KlipperScreen.log for more information.\n"
+#~ "Please submit an issue on GitHub for help."
+#~ msgstr ""
+#~ "Daha fazla bilgi için /tmp/KlipperScreen.log'a bakın.\n"
+#~ "Lütfen yardım için GitHub'da bir sorun gönderin."
+
+#~ msgid "Probe found applied offset"
+#~ msgstr "Prob uygulanmış ofset bulundu"
+
+#~ msgid "Tool"
+#~ msgstr "Araç"
+
+#~ msgid "Displayed Macros"
+#~ msgstr "Görüntülenen Makrolar"
+
+#~ msgid "Z Position"
+#~ msgstr "Z Pozisyonu"

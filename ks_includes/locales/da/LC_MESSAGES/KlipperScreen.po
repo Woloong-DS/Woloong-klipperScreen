@@ -3,7 +3,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: KlipperScreen\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-06-21 12:14-0300\n"
+"POT-Creation-Date: 2026-04-23 22:27-0300\n"
 "PO-Revision-Date: 2025-07-09 06:02+0000\n"
 "Last-Translator: Simon B <simon.buro@hotmail.com>\n"
 "Language-Team: Danish <https://hosted.weblate.org/projects/klipperscreen/"
@@ -168,13 +168,8 @@ msgstr "24-timers visning"
 msgid "Disable for 12hs with am / pm"
 msgstr "Deaktiver for 12 timer med am / pm"
 
-#, fuzzy
-msgid "Action bar Shortcut"
-msgstr "Genvej til handlingslinje"
-
-#, fuzzy
-msgid "LEDs"
-msgstr "LED'er"
+msgid "Macro shortcut on sidebar"
+msgstr "Makrogenvej på sidelinjen"
 
 msgid "Font Size"
 msgstr "Skriftstørrelse"
@@ -245,19 +240,6 @@ msgstr "Vis musemarkør"
 msgid "For mouse control or to verify touchscreen accuracy"
 msgstr "Til brug af mus eller for at kontrollere nøjagtigheden af touchskærmen"
 
-#, fuzzy
-msgid "Screen wake delay"
-msgstr "Skærmvågeforsinkelse"
-
-#, fuzzy
-msgid "Helps to prevent unwanted touchs during screen wake up"
-msgstr "Hjælper med at forhindre uønskede touches under skærmopvågning"
-
-msgid "second"
-msgid_plural "seconds"
-msgstr[0] "sekund"
-msgstr[1] "sekunder"
-
 msgid "Invert X"
 msgstr "Invertér X"
 
@@ -286,15 +268,6 @@ msgid_plural "minutes"
 msgstr[0] "minut"
 msgstr[1] "minutter"
 
-msgid "Temperature too low to extrude"
-msgstr "Temperaturen er for lav til at ekstrudere"
-
-msgid "Klipper will reboot"
-msgstr "Klipper vil genstarte"
-
-msgid "Save configuration?"
-msgstr "Gem Konfiguration?"
-
 msgid "Are you sure you want to run Emergency Stop?"
 msgstr "Er du sikker på, at du vil aktivere nødstop?"
 
@@ -302,6 +275,11 @@ msgid "day"
 msgid_plural "days"
 msgstr[0] "dag"
 msgstr[1] "dage"
+
+msgid "second"
+msgid_plural "seconds"
+msgstr[0] "sekund"
+msgstr[1] "sekunder"
 
 msgid "Network not found"
 msgstr "Netværk ikke fundet"
@@ -342,9 +320,11 @@ msgstr "Tilslutning mislykkedes"
 msgid "No mesh has been loaded"
 msgstr "Intet mesh er indlæst"
 
-#, fuzzy
-msgid "Invalid Number"
-msgstr "Ugyldigt tal"
+msgid "Calibrate"
+msgstr "Kalibrér"
+
+msgid "Invalid temperature"
+msgstr "Ugyldig temperatur"
 
 msgid "Password"
 msgstr "Kodeord"
@@ -387,9 +367,6 @@ msgstr "Reference"
 
 msgid "Add profile"
 msgstr "Tilføj profil"
-
-msgid "Calibrate"
-msgstr "Kalibrér"
 
 msgid "Clear"
 msgstr "Ryd"
@@ -531,6 +508,12 @@ msgstr "Mål Y"
 
 msgid "Measure Both"
 msgstr "Mål begge"
+
+msgid "Klipper will reboot"
+msgstr "Klipper vil genstarte"
+
+msgid "Save configuration?"
+msgstr "Gem Konfiguration?"
 
 msgid "Check ADXL Wiring"
 msgstr "Check ledninger til ADXL"
@@ -691,9 +674,6 @@ msgstr "Det kan tage mere end 5 minutter, afhængigt af opvarmerens styrke."
 msgid "Temp (°C)"
 msgstr "Temp (°C)"
 
-msgid "Invalid temperature"
-msgstr "Ugyldig temperatur"
-
 msgid "Home"
 msgstr "Home"
 
@@ -718,37 +698,17 @@ msgstr "Kun for flyttepanelet"
 msgid "Z Speed (mm/s)"
 msgstr "Z Hastighed (mm/s)"
 
-#, fuzzy
-msgid "Advanced Move"
-msgstr "Avanceret bevægelse"
-
-#, fuzzy
-msgid "Query Endstops"
-msgstr "Spørg endstoppere"
-
-#, fuzzy
-msgid "Invalid position"
-msgstr "Ugyldig position"
-
 msgid "Failed to initialize"
 msgstr "Fejlede i at initialisere"
 
 msgid "Interface"
 msgstr "Interface"
 
-#, fuzzy
-msgid "No network devices have been found"
-msgstr "Ingen netværksenheder blev fundet"
-
-#, fuzzy
-msgid "No network devices available"
-msgstr "Ingen netværksenheder tilgængelige"
+msgid "No wireless interface has been found"
+msgstr "Intet trådløst interface blev fundet"
 
 msgid "Connected"
 msgstr "Forbundet"
-
-msgid "Channel"
-msgstr "Kanal"
 
 #, python-format
 msgid "Do you want to forget or disconnect %s?"
@@ -769,6 +729,9 @@ msgstr "Bruger"
 #, python-format
 msgid "Connecting to %s"
 msgstr "Forbinder til %s"
+
+msgid "Channel"
+msgstr "Kanal"
 
 msgid "Hostname"
 msgstr "Værtsnavn"
@@ -854,93 +817,32 @@ msgstr "Forsøg igen"
 msgid "Power On Printer"
 msgstr "Tænd printer"
 
-#, fuzzy
-msgid "Spool editor"
-msgstr "Spoleredigering"
+msgid "ID"
+msgstr "ID"
 
-#, fuzzy
-msgid "No spool selected"
-msgstr "Ingen spole valgt"
-
-#, fuzzy
-msgid "Measured weight"
-msgstr "Målt vægt"
-
-#, fuzzy
-msgid "Remaining weight"
-msgstr "Resterende vægt"
-
-#, fuzzy
-msgid "Initial weight"
-msgstr "Startvægt"
-
-#, fuzzy
-msgid "Empty weight"
-msgstr "Tom vægt"
-
-#, fuzzy
-msgid "Invalid weight"
-msgstr "Ugyldig vægt"
-
-#, fuzzy
-msgid "Restore"
-msgstr "Gendan"
-
-#, fuzzy
-msgid "No"
-msgstr "Nej"
-
-#, fuzzy
-msgid "Yes"
-msgstr "Ja"
-
-#, fuzzy
-msgid "Vendor"
-msgstr "Producent"
-
-msgid "Material"
-msgstr "Materiale"
-
-#, fuzzy
-msgid "Used"
-msgstr "Brugt"
-
-#, fuzzy
-msgid "Location"
-msgstr "Placering"
+msgid "Last Used"
+msgstr "Sidst brugt"
 
 msgid "Archived"
 msgstr "Arkiveret"
 
-#, fuzzy
-msgid "Price"
-msgstr "Pris"
+msgid "Filter"
+msgstr "Filter"
+
+msgid "Material"
+msgstr "Materiale"
 
 #, fuzzy
 msgid "Comment"
 msgstr "Kommentar"
 
 #, fuzzy
-msgid "Measured weight is below empty spool weight"
-msgstr "Målt vægt er under vægten af tom rulle"
+msgid "Last used"
+msgstr "Sidst brugt"
 
 #, fuzzy
-msgid "Value must be positive"
-msgstr "Værdi skal være positiv"
-
-#, fuzzy
-msgid "Error updating filament weight"
-msgstr "Fejl ved opdatering af filamentvægt"
-
-#, fuzzy
-msgid "Filament weight updated"
-msgstr "Filamentvægt opdateret"
-
-msgid "ID"
-msgstr "ID"
-
-msgid "Filter"
-msgstr "Filter"
+msgid "Remaining weight"
+msgstr "Resterende vægt"
 
 #, fuzzy
 msgid "Remaining length"
@@ -958,16 +860,11 @@ msgstr "Fejl ved fjernelse af aktiv spole"
 msgid "Error setting active spool"
 msgstr "Fejl ved indstilling af aktiv spole"
 
+msgid "Error getting active spool"
+msgstr "Fejl ved hentning af aktiv spole"
+
 msgid "No info available"
 msgstr "Ingen info tilgængeligt"
-
-#, fuzzy
-msgid "Disk"
-msgstr "Disk"
-
-#, fuzzy
-msgid "Cores"
-msgstr "Kerner"
 
 #, fuzzy
 msgid "IP Address"
@@ -1071,10 +968,6 @@ msgstr "Sænk Nozzle"
 msgid "Abort"
 msgstr "Afbryd"
 
-#, fuzzy
-msgid "Calibration commands not available yet"
-msgstr "Kalibreringskommandoer er ikke tilgængelige endnu"
-
 msgid "Error: Couldn't get a position to probe"
 msgstr "Fejl: Kunne ikke få en position til at probe"
 
@@ -1090,14 +983,6 @@ msgstr "Minimum:"
 msgid "System:"
 msgstr "System:"
 
-#, fuzzy
-msgid "Waiting connection closure"
-msgstr "Afventer forbindelselukning"
-
-#, fuzzy
-msgid "Initializing KlipperScreen"
-msgstr "Initialiserer KlipperScreen"
-
 msgid "Provide KlipperScreen.log when asking for help.\n"
 msgstr "Inkludér Klipperscreen.log når du beder om hjælp\n"
 
@@ -1108,12 +993,11 @@ msgstr "Luk"
 msgid "DPMS has failed and has been disabled"
 msgstr "DPMS mislykkedes og er deaktiveret"
 
-#, fuzzy
-msgid "Moonraker Connected"
-msgstr "Moonraker forbundet"
+msgid "Cannot connect to Moonraker"
+msgstr "Kan ikke oprette forbindelse til Moonraker"
 
-msgid "Retrying"
-msgstr "Forsøger igen"
+msgid "Lost Connection to Moonraker"
+msgstr "Tabte forbindelse til Moonraker"
 
 msgid "Klipper has disconnected"
 msgstr "Klipper er frokoblet"
@@ -1134,16 +1018,218 @@ msgid "Klipper has shutdown"
 msgstr "Klipper er lukket ned"
 
 #, fuzzy
-msgid "Waiting for Moonraker connection to close"
-msgstr "Venter på at Moonraker-forbindelse lukker"
+msgid "No eligible macros:"
+msgstr "Ingen gyldige makroer:"
+
+msgid "macros with a name starting with '_' are hidden"
+msgstr "makroer hvis navne begynder med '_' er skjulte"
+
+msgid "macros that use 'rename_existing' are hidden"
+msgstr "makroer der bruger 'rename_existing' er skjulte"
+
+msgid ""
+"LOAD_FILAMENT/UNLOAD_FILAMENT are hidden and should be used from extrude"
+msgstr ""
+"LOAD_FILAMENT/UNLOAD_FILAMENT-makroerne er skjulte, og bør tilgås fra "
+"\"Ekstrudering\""
+
+msgid "Temperature too low to extrude"
+msgstr "Temperaturen er for lav til at ekstrudere"
+
+msgid "Retrying"
+msgstr "Forsøger igen"
 
 msgid "Moonraker: connected"
 msgstr "Moonraker: tilsluttet"
 
-#, fuzzy
-msgid "Initializing Klipper Connection"
-msgstr "Initialiserer Klipper-forbindelse"
+#~ msgid "Max:"
+#~ msgstr "Maks:"
 
-#, fuzzy
-msgid "Klipper not responding after multiple attempts"
-msgstr "Klipper svarer ikke efter flere forsøg"
+#~ msgid "Password saved"
+#~ msgstr "Adgangskode gemt"
+
+#~ msgid "Hide temp."
+#~ msgstr "Skjul temperaturer"
+
+#~ msgid "PSK for"
+#~ msgstr "PSK for"
+
+#~ msgid "Are you sure you want to stop the calibration?"
+#~ msgstr "Er du sikker på, at du vil stoppe kalibreringen?"
+
+#~ msgid "Do you want to let KlipperScreen try to solve the issue?"
+#~ msgstr "Vil du lade KlipperScreen forsøge at løse problemet?"
+
+#~ msgid "Insufficient priviledges detected"
+#~ msgstr "Utilstrækkelige priviledges fundet"
+
+#~ msgid "Mesh calibrate"
+#~ msgstr "Mesh-kalibrering"
+
+#~ msgid "Uploaded"
+#~ msgstr "Uploadet"
+
+#~ msgid "Ended official support in June 2023"
+#~ msgstr "Officiel support udløb i Juni 2023"
+
+#~ msgid "Hidden"
+#~ msgstr "Skjult"
+
+#~ msgid "KlipperScreen will drop support in June 2024"
+#~ msgstr "Klipperscreen stopper understøttelsen i Juni 2024"
+
+#~ msgid "Print Time"
+#~ msgstr "Printtid"
+
+#~ msgid "Warning"
+#~ msgstr "Advarsel"
+
+#~ msgid "dBm"
+#~ msgstr "dBm"
+
+#~ msgid "Deselect"
+#~ msgstr "Fravælg"
+
+#~ msgid "Select"
+#~ msgstr "Vælg"
+
+#~ msgid "Bed screw configuration:"
+#~ msgstr "Bed-skrue konfiguration:"
+
+#~ msgid ""
+#~ "Not supported for auto-detection, it needs to be configured in "
+#~ "klipperscreen.conf"
+#~ msgstr ""
+#~ "Understøttes ikke til auto-find, dette skal konfigureres i "
+#~ "klipperscreen.conf"
+
+#~ msgid "Unknown screw position"
+#~ msgstr "Ukendt skrue-position"
+
+#~ msgid "Max Acceleration to Deceleration"
+#~ msgstr "Maks. acceleration til decceleration"
+
+#~ msgid "Continue"
+#~ msgstr "Fortsæt"
+
+#~ msgid "Actions"
+#~ msgstr "Muligheder"
+
+#~ msgid "Homing"
+#~ msgstr "Homing"
+
+#~ msgid "Disable XY"
+#~ msgstr "Deaktivér XY"
+
+#~ msgid "Slicer Time correction (%)"
+#~ msgstr "Slicer Tidskorrektion (%)"
+
+#~ msgid "Calibrated, save configuration to make it permanent"
+#~ msgstr "Kalibreret, gem konfiguration for at gøre den permanent"
+
+#~ msgid "Decrease"
+#~ msgstr "Formindsk"
+
+#~ msgid "Increase"
+#~ msgstr "Forøg"
+
+#, python-format
+#~ msgid "Sending Power ON signal to: %s"
+#~ msgstr "Sender Power ON-signal til: %s"
+
+#~ msgid "Sort:"
+#~ msgstr "Sortere: "
+
+#~ msgid "Calibrating..."
+#~ msgstr "Kalibrerer..."
+
+#~ msgid "Z+"
+#~ msgstr "Z+"
+
+#~ msgid "Z-"
+#~ msgstr "Z-"
+
+#~ msgid "X+"
+#~ msgstr "X+"
+
+#~ msgid "X-"
+#~ msgstr "X-"
+
+#~ msgid "Y+"
+#~ msgstr "Y+"
+
+#~ msgid "Y-"
+#~ msgstr "Y-"
+
+#, python-format
+#~ msgid "Retry #%s"
+#~ msgstr "Prøv igen #%s"
+
+#~ msgid "Add Printer"
+#~ msgstr "Tilføj printer"
+
+#~ msgid "Initializing"
+#~ msgstr "Initialiserer"
+
+#~ msgid "Off"
+#~ msgstr "Sluk"
+
+#~ msgid "View Mesh"
+#~ msgstr "Vis mesh"
+
+#~ msgid "Sort by: "
+#~ msgstr "Sortér efter: "
+
+#~ msgid "Bltouch found applied offset"
+#~ msgstr "Bltouch fundet anvendt offset"
+
+#~ msgid ""
+#~ "Check /tmp/KlipperScreen.log for more information.\n"
+#~ "Please submit an issue on GitHub for help."
+#~ msgstr ""
+#~ "Tjek /tmp/KlipperScreen.log for mere information.\n"
+#~ "Indsend venligst et \"Issue\" på GitHub for hjælp."
+
+#~ msgid "Probe found applied offset"
+#~ msgstr "Probe fundet anvendt offset"
+
+#~ msgid "Tool"
+#~ msgstr "Ekstruder"
+
+#~ msgid "Displayed Macros"
+#~ msgstr "Viste makroer"
+
+#~ msgid "Z Position"
+#~ msgstr "Z-position"
+
+#~ msgid "IPv4"
+#~ msgstr "IPv4"
+
+#~ msgid "IPv6"
+#~ msgstr "IPv6"
+
+#~ msgid "Klipper Version"
+#~ msgstr "Klipper version"
+
+#~ msgid ""
+#~ "Klipper has encountered an error with the micro-controller.\n"
+#~ "Please recompile and flash."
+#~ msgstr ""
+#~ "Klipper har fundet en fejl med mcu.\n"
+#~ "Kompilér og flash venligst firmware på ny."
+
+#~ msgid ""
+#~ "Klipper has encountered an error.\n"
+#~ "Issue a FIRMWARE_RESTART to attempt fixing the issue."
+#~ msgstr ""
+#~ "Klipper har fundet en fejl.\n"
+#~ "Tryk på \"Genstart alt\" for at forsøge at udbedre fejlen."
+
+#~ msgid "KlipperScreen Version"
+#~ msgstr "KlipperScreen version"
+
+#~ msgid "Show Only Heaters in Temp."
+#~ msgstr "Vis kun varmelegemer i Temp."
+
+#~ msgid "Temp"
+#~ msgstr "Temp"

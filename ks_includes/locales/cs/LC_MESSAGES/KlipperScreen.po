@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Czech\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-06-21 12:14-0300\n"
+"POT-Creation-Date: 2026-04-23 22:27-0300\n"
 "PO-Revision-Date: 2026-05-04 00:09+0000\n"
 "Last-Translator: Michal Bitala <yzeroy14@gmail.com>\n"
 "Language-Team: Czech <https://hosted.weblate.org/projects/klipperscreen/"
@@ -172,13 +172,8 @@ msgstr "24 hod formát"
 msgid "Disable for 12hs with am / pm"
 msgstr "Vypnout na 12 hodin am / pm"
 
-#, fuzzy
-msgid "Action bar Shortcut"
-msgstr "Zkratka akčního panelu"
-
-#, fuzzy
-msgid "LEDs"
-msgstr "LED"
+msgid "Macro shortcut on sidebar"
+msgstr "Makro zkratka na postranním panelu"
 
 msgid "Font Size"
 msgstr "Velikost fontu"
@@ -249,20 +244,6 @@ msgstr "Zobrazit kurzor"
 msgid "For mouse control or to verify touchscreen accuracy"
 msgstr "Pro ovládání myší nebo ověření přesnosti dotykového displeje"
 
-#, fuzzy
-msgid "Screen wake delay"
-msgstr "Zpoždění probuzení obrazovky"
-
-#, fuzzy
-msgid "Helps to prevent unwanted touchs during screen wake up"
-msgstr "Pomáhá předcházet nežádoucím dotykům při probuzení obrazovky"
-
-msgid "second"
-msgid_plural "seconds"
-msgstr[0] "sekunda"
-msgstr[1] "sekundy"
-msgstr[2] "sekund"
-
 msgid "Invert X"
 msgstr "Otočit X"
 
@@ -293,15 +274,6 @@ msgstr[0] "minuta"
 msgstr[1] "minuty"
 msgstr[2] "minut"
 
-msgid "Temperature too low to extrude"
-msgstr "Příliš nízká teplota pro extruzi"
-
-msgid "Klipper will reboot"
-msgstr "Klipper se restartuje"
-
-msgid "Save configuration?"
-msgstr "Uložit nastavení?"
-
 msgid "Are you sure you want to run Emergency Stop?"
 msgstr "Opravdu okamžitě nouzově zastavit?"
 
@@ -310,6 +282,12 @@ msgid_plural "days"
 msgstr[0] "den"
 msgstr[1] "dny"
 msgstr[2] "dní"
+
+msgid "second"
+msgid_plural "seconds"
+msgstr[0] "sekunda"
+msgstr[1] "sekundy"
+msgstr[2] "sekund"
 
 msgid "Network not found"
 msgstr "Síť nebyla nalezena"
@@ -350,9 +328,11 @@ msgstr "Připojení se nezdařilo"
 msgid "No mesh has been loaded"
 msgstr "Nebyla načtena žádná síť"
 
-#, fuzzy
-msgid "Invalid Number"
-msgstr "Neplatné číslo"
+msgid "Calibrate"
+msgstr "Kalibrace"
+
+msgid "Invalid temperature"
+msgstr "Chybná teplota"
 
 msgid "Password"
 msgstr "Heslo"
@@ -395,9 +375,6 @@ msgstr "Odkaz"
 
 msgid "Add profile"
 msgstr "Přidat profil"
-
-msgid "Calibrate"
-msgstr "Kalibrace"
 
 msgid "Clear"
 msgstr "Vymazat"
@@ -539,6 +516,12 @@ msgstr "Změřit Y"
 
 msgid "Measure Both"
 msgstr "Změřit obojí"
+
+msgid "Klipper will reboot"
+msgstr "Klipper se restartuje"
+
+msgid "Save configuration?"
+msgstr "Uložit nastavení?"
 
 msgid "Check ADXL Wiring"
 msgstr "Zkontroluj zapojení ADXL"
@@ -699,9 +682,6 @@ msgstr "V závislosti na výkonu ohřívače to může trvat déle než 5 minut.
 msgid "Temp (°C)"
 msgstr "Teplota (°C)"
 
-msgid "Invalid temperature"
-msgstr "Chybná teplota"
-
 msgid "Home"
 msgstr "Domů"
 
@@ -726,37 +706,17 @@ msgstr "Pouze pro panel pohybů"
 msgid "Z Speed (mm/s)"
 msgstr "Rychlost pohybu Z (mm/s)"
 
-#, fuzzy
-msgid "Advanced Move"
-msgstr "Pokročilý pohyb"
-
-#, fuzzy
-msgid "Query Endstops"
-msgstr "Dotaz koncových spínačů"
-
-#, fuzzy
-msgid "Invalid position"
-msgstr "Neplatná pozice"
-
 msgid "Failed to initialize"
 msgstr "Inicializace se nezdařila"
 
 msgid "Interface"
 msgstr "Rozhraní"
 
-#, fuzzy
-msgid "No network devices have been found"
-msgstr "Nebyla nalezena žádná síťová zařízení"
-
-#, fuzzy
-msgid "No network devices available"
-msgstr "Není k dispozici žádná síťová zařízení"
+msgid "No wireless interface has been found"
+msgstr "Nebylo nalezeno žádné bezdrátové rozhraní"
 
 msgid "Connected"
 msgstr "Připojeno"
-
-msgid "Channel"
-msgstr "Kanál"
 
 #, python-format
 msgid "Do you want to forget or disconnect %s?"
@@ -777,6 +737,9 @@ msgstr "Uživatel"
 #, python-format
 msgid "Connecting to %s"
 msgstr "Připojování k %s"
+
+msgid "Channel"
+msgstr "Kanál"
 
 msgid "Hostname"
 msgstr "Hostname"
@@ -862,93 +825,32 @@ msgstr "Zkusit znovu"
 msgid "Power On Printer"
 msgstr "Zapněte tiskárnu"
 
-#, fuzzy
-msgid "Spool editor"
-msgstr "Editor cívky"
+msgid "ID"
+msgstr "ID"
 
-#, fuzzy
-msgid "No spool selected"
-msgstr "Není vybrána žádná cívka"
-
-#, fuzzy
-msgid "Measured weight"
-msgstr "Naměřená hmotnost"
-
-#, fuzzy
-msgid "Remaining weight"
-msgstr "Zbývající váha"
-
-#, fuzzy
-msgid "Initial weight"
-msgstr "Počáteční hmotnost"
-
-#, fuzzy
-msgid "Empty weight"
-msgstr "Hmotnost prázdné cívky"
-
-#, fuzzy
-msgid "Invalid weight"
-msgstr "Neplatná hmotnost"
-
-#, fuzzy
-msgid "Restore"
-msgstr "Obnovit"
-
-#, fuzzy
-msgid "No"
-msgstr "Ne"
-
-#, fuzzy
-msgid "Yes"
-msgstr "Ano"
-
-#, fuzzy
-msgid "Vendor"
-msgstr "Výrobce"
-
-msgid "Material"
-msgstr "Materiál"
-
-#, fuzzy
-msgid "Used"
-msgstr "Použito"
-
-#, fuzzy
-msgid "Location"
-msgstr "Umístění"
+msgid "Last Used"
+msgstr "Naposledy použitý"
 
 msgid "Archived"
 msgstr "Archivováno"
 
-#, fuzzy
-msgid "Price"
-msgstr "Cena"
+msgid "Filter"
+msgstr "Filtr"
+
+msgid "Material"
+msgstr "Materiál"
 
 #, fuzzy
 msgid "Comment"
 msgstr "Komentář"
 
 #, fuzzy
-msgid "Measured weight is below empty spool weight"
-msgstr "Naměřená hmotnost je nižší než hmotnost prázdné cívky"
+msgid "Last used"
+msgstr "Naposledy použito"
 
 #, fuzzy
-msgid "Value must be positive"
-msgstr "Hodnota musí být kladná"
-
-#, fuzzy
-msgid "Error updating filament weight"
-msgstr "Chyba při aktualizaci hmotnosti filamentu"
-
-#, fuzzy
-msgid "Filament weight updated"
-msgstr "Hmotnost filamentu aktualizována"
-
-msgid "ID"
-msgstr "ID"
-
-msgid "Filter"
-msgstr "Filtr"
+msgid "Remaining weight"
+msgstr "Zbývající váha"
 
 #, fuzzy
 msgid "Remaining length"
@@ -966,16 +868,11 @@ msgstr "Chyba při vymazání aktivní cívky"
 msgid "Error setting active spool"
 msgstr "Chyba nastavení aktivní cívky"
 
+msgid "Error getting active spool"
+msgstr "Chyba při získávání aktivní cívky"
+
 msgid "No info available"
 msgstr "Nejsou k dispozici žádné informace"
-
-#, fuzzy
-msgid "Disk"
-msgstr "Disk"
-
-#, fuzzy
-msgid "Cores"
-msgstr "Jádra"
 
 #, fuzzy
 msgid "IP Address"
@@ -1081,10 +978,6 @@ msgstr "Trysku níž"
 msgid "Abort"
 msgstr "Zrušit"
 
-#, fuzzy
-msgid "Calibration commands not available yet"
-msgstr "Kalibrační příkazy ještě nejsou k dispozici"
-
 msgid "Error: Couldn't get a position to probe"
 msgstr "Chyba: Nepodařilo se získat pozici pro sondování"
 
@@ -1100,14 +993,6 @@ msgstr "Min:"
 msgid "System:"
 msgstr "Systém:"
 
-#, fuzzy
-msgid "Waiting connection closure"
-msgstr "Čekání na ukončení připojení"
-
-#, fuzzy
-msgid "Initializing KlipperScreen"
-msgstr "Inicializace KlipperScreen"
-
 msgid "Provide KlipperScreen.log when asking for help.\n"
 msgstr "Při žádosti o pomoc uveďte soubor KlipperScreen.log.\n"
 
@@ -1118,12 +1003,11 @@ msgstr "Zavřít"
 msgid "DPMS has failed and has been disabled"
 msgstr "DPMS selhalo a bylo vypnuto"
 
-#, fuzzy
-msgid "Moonraker Connected"
-msgstr "Moonraker připojen"
+msgid "Cannot connect to Moonraker"
+msgstr "Nelze se připojit k Moonrakeru"
 
-msgid "Retrying"
-msgstr "Zkouším znovu"
+msgid "Lost Connection to Moonraker"
+msgstr "Ztraceno spojení s Moonrakerem"
 
 msgid "Klipper has disconnected"
 msgstr "Klipper odpojen"
@@ -1143,17 +1027,121 @@ msgstr "Klipper startuje"
 msgid "Klipper has shutdown"
 msgstr "Klipper zastaven"
 
-#, fuzzy
-msgid "Waiting for Moonraker connection to close"
-msgstr "Čekání na ukončení připojení k Moonrakeru"
+msgid "No eligible macros:"
+msgstr "Žádná vhodná makra:"
+
+msgid "macros with a name starting with '_' are hidden"
+msgstr "makra s názvem začínajícím na '_' jsou skrytá"
+
+msgid "macros that use 'rename_existing' are hidden"
+msgstr "makra, která používají 'rename_existing', jsou skryta"
+
+msgid ""
+"LOAD_FILAMENT/UNLOAD_FILAMENT are hidden and should be used from extrude"
+msgstr ""
+"LOAD_FILAMENT/UNLOAD_FILAMENT jsou skryté a měly by se používat s extrude"
+
+msgid "Temperature too low to extrude"
+msgstr "Příliš nízká teplota pro extruzi"
+
+msgid "Retrying"
+msgstr "Zkouším znovu"
 
 msgid "Moonraker: connected"
 msgstr "Moonraker: připojen"
 
-#, fuzzy
-msgid "Initializing Klipper Connection"
-msgstr "Inicializace připojení k Klipperu"
+#~ msgid "Max:"
+#~ msgstr "Max:"
 
-#, fuzzy
-msgid "Klipper not responding after multiple attempts"
-msgstr "Klipper nereaguje po několika pokusech"
+#~ msgid "Password saved"
+#~ msgstr "Heslo uloženo"
+
+#~ msgid "Hide temp."
+#~ msgstr "Skrýt teplotu"
+
+#~ msgid "PSK for"
+#~ msgstr "PSK pro"
+
+#~ msgid "Are you sure you want to stop the calibration?"
+#~ msgstr "Opravdu chcete kalibraci zastavit?"
+
+#~ msgid "Do you want to let KlipperScreen try to solve the issue?"
+#~ msgstr "Chcete nechat KlipperScreen, aby se pokusil problém vyřešit?"
+
+#~ msgid "Insufficient priviledges detected"
+#~ msgstr "Zjištěna nedostatečná oprávnění"
+
+#~ msgid "Mesh calibrate"
+#~ msgstr "Kalibrace sítě"
+
+#~ msgid "Uploaded"
+#~ msgstr "Nahrané"
+
+#~ msgid "Ended official support in June 2023"
+#~ msgstr "Oficiální podpora ukončena v červnu 2023"
+
+#~ msgid "Hidden"
+#~ msgstr "Skrytý"
+
+#~ msgid "KlipperScreen will drop support in June 2024"
+#~ msgstr "KlipperScreen ztratí podporu v červnu 2024"
+
+#~ msgid "Print Time"
+#~ msgstr "Čas tisku"
+
+#~ msgid "Warning"
+#~ msgstr "Varování"
+
+#~ msgid "dBm"
+#~ msgstr "dBm"
+
+#~ msgid "Deselect"
+#~ msgstr "Odznačit"
+
+#~ msgid "Select"
+#~ msgstr "Vyber"
+
+#~ msgid "Bed screw configuration:"
+#~ msgstr "Vyrovnání šroubů podložky:"
+
+#~ msgid ""
+#~ "Not supported for auto-detection, it needs to be configured in "
+#~ "klipperscreen.conf"
+#~ msgstr "Nepodporováno autodetekcí, nakonfiguruj v klipperscreen.conf"
+
+#~ msgid "Unknown screw position"
+#~ msgstr "Neznámé nastavení šroubů"
+
+#~ msgid "Max Acceleration to Deceleration"
+#~ msgstr "Z max. zrychlení do zpomalení"
+
+#~ msgid "Continue"
+#~ msgstr "Pokračuj"
+
+#~ msgid "Actions"
+#~ msgstr "Akce"
+
+#~ msgid "Configuration"
+#~ msgstr "Konfigurace"
+
+#~ msgid "Homing"
+#~ msgstr "Domů"
+
+#~ msgid "Disable XY"
+#~ msgstr "Uvolnit XY"
+
+#~ msgid "Slicer Time correction (%)"
+#~ msgstr "Časová korekce Sliceru  (%)"
+
+#~ msgid "Calibrated, save configuration to make it permanent"
+#~ msgstr "Zkalibrováno, uložit změny jako trvalé"
+
+#~ msgid "Decrease"
+#~ msgstr "Snížit"
+
+#~ msgid "Increase"
+#~ msgstr "Zvětšit"
+
+#, python-format
+#~ msgid "Sending Power ON signal to: %s"
+#~ msgstr "Odeslat ZAP do %s"
