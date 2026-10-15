@@ -1,0 +1,83 @@
+# ============================================================================
+# upstream-sync —— 在上游发布新版本后，把「上游 + woloong 定制」重新叠加并推送
+#
+# 设计（D20）：不做 git merge；而是「上游树整体替换 → 纯上游 commit → 重放定制 → 定制 commit」。
+# 门禁：推送前必须通过 verify-assets（定制资产完整性）；基线漂移时**失败退出**，
+#       由人工重锚定（更新 baseline + make-patch + 更新清单哈希）后再重跑本工作流。
+# ============================================================================
+name: upstream-sync
+
+on:
+  workflow_dispatch:
+    inputs:
+      upstream_ref:
+        description: '上游 ref（tag 或分支，例如 v0.4.7）'
+        required: true
+        type: string
+      next_tag:
+        description: '合并结果打的新 tag（可留空，例如 woloong-1.1.0）'
+        required: false
+        default: ''
+        type: string
+      do_push:
+        description: '是否推送到本仓库（false 只做演练）'
+        required: false
+        default: true
+        type: boolean
+
+permissions:
+  contents: write
+
+jobs:
+  restack:
+    runs-on: ubuntu-latest
+    steps:
+      - name: 检出（含全部历史与 tag）
+        uses: actions/checkout@v5
+        with:
+          fetch-depth: 0
+          token: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: 配置 git 身份
+        run: |
+          git config user.name  'woloong-ci'
+          git config user.email 'ci@woloong.local'
+          git config core.autocrlf false
+
+      - name: 添加上游远端并抓取
+        run: |
+          set -euo pipefail
+          git remote add upstream https://github.com/KlipperScreen/KlipperScreen.git || true
+          git fetch upstream --tags --prune
+          echo '上游可用 tag（近 5）:'
+          git tag --sort=-creatordate | grep -v '^woloong-' | head -5
+
+      - name: 重新叠加（上游树替换 → 重放 woloong 定制）
+        id: restack
+        run: |
+          set -uo pipefail
+          ARGS=''
+          if [ -n '${{ inputs.next_tag }}' ]; then ARGS="--tag ${{ inputs.next_tag }}"; fi
+          bash woloong-release/tools/fork-sync.sh . --upstream-ref '${{ inputs.upstream_ref }}' $ARGS
+          echo '--- 提交形状 ---'
+          git log --oneline -4
+
+      - name: 门禁 —— 定制资产完整性（失败则绝不推送）
+        run: |
+          set -euo pipefail
+          bash woloong-release/tools/verify-assets.sh
+
+      - name: 推送（可选）
+        if: ${{ inputs.do_push }}
+        run: |
+          set -euo pipefail
+          git push origin HEAD:main
+          if [ -n '${{ inputs.next_tag }}' ]; then git push origin '${{ inputs.next_tag }}'; fi
+          echo '已推送：上游 ${{ inputs.upstream_ref }} + woloong 定制'
+
+      - name: 失败提示（人工重锚定指引）
+        if: failure()
+        run: |
+          echo '::error::重新叠加失败。常见原因：基线漂移（上游改动了我们打补丁的文件）。'
+          echo '处理：更新 woloong-release/baseline/<path> 为新的上游文件 → 用 tools/make-patch.sh 重新生成补丁'
+          echo '      → 若有定制内容变更，同步更新 assets.manifest.tsv 中该文件的哈希 → 提交后重跑本工作流。'
