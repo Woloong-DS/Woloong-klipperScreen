@@ -13,3 +13,13 @@ while IFS=$'\t' read -r sha rel; do
 done < <(tr -d '\r' < assets.manifest.tsv)
 echo "verify-assets: ok=$ok fail=$fail"
 [ "$fail" -eq 0 ] || exit 1
+
+# 额外断言：移除清单中的文件必须**不存在**（防止重叠加把上游 CI/dependabot 带回来）
+MAN="$(cd "$(dirname "$0")/.." && pwd)"
+if [ -f "$MAN/remove.list" ]; then
+  while IFS= read -r rp; do
+    rp="$(printf '%s' "$rp" | tr -d '\r')"
+    case "$rp" in ''|'#'*) continue ;; esac
+    if [ -e "$rp" ]; then echo "  [FAIL] 应被移除但仍存在: $rp"; fail=$((fail+1)); fi
+  done < "$MAN/remove.list"
+fi

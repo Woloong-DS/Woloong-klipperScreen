@@ -119,6 +119,15 @@ fi
 # 6) 校验
 echo ""
 echo "== 定制校验 =="
+# 5.5) 应用移除清单：上游有、但我们的发行版不要的文件/目录（否则每次重叠加都会复活它们）
+if [ -f "$MAN/remove.list" ]; then
+  info "应用移除清单 $MAN/remove.list"
+  while IFS= read -r rp; do
+    rp="$(printf '%s' "$rp" | tr -d '\r')"
+    case "$rp" in ''|'#'*) continue ;; esac
+    if [ -e "$rp" ]; then rm -rf "$rp"; info "  ✓ 已移除: $rp"; else info "  - 本就不存在: $rp"; fi
+  done < "$MAN/remove.list"
+fi
 bash "$MAN/tools/verify-assets.sh" || die "定制校验未通过（定制未完整重放）"
 
 if [ "$DO_COMMIT" -eq 1 ]; then

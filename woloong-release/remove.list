@@ -1,0 +1,11 @@
+# 上游存在、但 woloong 发行版**不要**的文件/目录（每行一项，# 开头为注释）
+# 重叠加（fork-sync）会在重放定制后自动删除它们；CI 的 upstream-sync 会带上此文件。
+
+# 上游 CI 工作流（品牌副本不需要）
+.github/workflows/codeql.yml
+.github/workflows/docs.yml
+.github/workflows/missing_log.yml
+.github/workflows/test_code.yml
+
+# 上游 dependabot 配置（会为品牌副本制造无意义 PR）
+.github/dependabot.yml
