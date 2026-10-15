@@ -1,0 +1,689 @@
+{
+  "schema": 1,
+  "component": "klipperscreen",
+  "upstream": {
+    "repo": "KlipperScreen/KlipperScreen",
+    "baseline_commit": "f2eb6919c0fcbcd4bab91ba59a5708415963d2ac",
+    "baseline_ref": "f2eb6919c0fc"
+  },
+  "entries": [
+    {
+      "path": "styles/woloong/background.svg",
+      "sha256": "9f9d33ca11ae3767fa4f9f3948b8258d1e083ffb2fda8b513b5c9f3e9ae30d4d",
+      "bytes": 9875,
+      "kind": "theme-new-dir"
+    },
+    {
+      "path": "styles/woloong/images/archived.svg",
+      "sha256": "9043045f800bb9b19b49d393e67afe3646933ce5283b326e0fb09a73316c5a85",
+      "bytes": 3579,
+      "kind": "theme-new-dir"
+    },
+    {
+      "path": "styles/woloong/images/arrow-down.svg",
+      "sha256": "5c78d4099f912689ccc8be452cc8cbfc9b40e04650b6c900c3c3a6e5de8954e4",
+      "bytes": 1116,
+      "kind": "theme-new-dir"
+    },
+    {
+      "path": "styles/woloong/images/arrow-left.svg",
+      "sha256": "bfdaa434424b1e9579589e477117bb9a8d90f83d0d4d826b0ebbe68ed874065e",
+      "bytes": 1119,
+      "kind": "theme-new-dir"
+    },
+    {
+      "path": "styles/woloong/images/arrow-right.svg",
+      "sha256": "7e1ed349ec1261a6284bce2585f328f1f9ca6306b6f15c43007fae4d6d7bad0e",
+      "bytes": 1117,
+      "kind": "theme-new-dir"
+    },
+    {
+      "path": "styles/woloong/images/arrow-up.svg",
+      "sha256": "56b72e2ce4c8b55648ba505a27d80031f81e0ecce12acfbc8a424fc939212029",
+      "bytes": 1117,
+      "kind": "theme-new-dir"
+    },
+    {
+      "path": "styles/woloong/images/back.svg",
+      "sha256": "a8661a552120070c153b62daf9d418b24c5b4a77268b771d2d848b027dcc9595",
+      "bytes": 1218,
+      "kind": "theme-new-dir"
+    },
+    {
+      "path": "styles/woloong/images/backspace.svg",
+      "sha256": "307bd5a1b000ecef09287641546124ac4a4f32b90bd84dd01252b328faa21f15",
+      "bytes": 1293,
+      "kind": "theme-new-dir"
+    },
+    {
+      "path": "styles/woloong/images/battery-0.svg",
+      "sha256": "beba724061cdca4080c246b9ce472a89695126701b83606f2d537857d1748ab3",
+      "bytes": 2518,
+      "kind": "theme-new-dir"
+    },
+    {
+      "path": "styles/woloong/images/battery-100.svg",
+      "sha256": "0449e7ef6522c30c7473f88c745a818e6d7c38b68437b8b361ec063ddac709b2",
+      "bytes": 2480,
+      "kind": "theme-new-dir"
+    },
+    {
+      "path": "styles/woloong/images/battery-25.svg",
+      "sha256": "107a338cf02598720272f721a8c9c90fdb87f0c30e37126d30d0f6704b7a9296",
+      "bytes": 2522,
+      "kind": "theme-new-dir"
+    },
+    {
+      "path": "styles/woloong/images/battery-50.svg",
+      "sha256": "5d3955c13ff02e2044ab334f5b709575346ea462c1836154a8060dda31411f62",
+      "bytes": 2522,
+      "kind": "theme-new-dir"
+    },
+    {
+      "path": "styles/woloong/images/battery-75.svg",
+      "sha256": "1132f84c40c9b09f04f0991a808704bfb1ae01cf04b8e6c975589a65107e768a",
+      "bytes": 2522,
+      "kind": "theme-new-dir"
+    },
+    {
+      "path": "styles/woloong/images/battery-charging.svg",
+      "sha256": "41f38766e7674cc186fef858921d4e520e1cef771301d2f3c24db1dedbac9cd3",
+      "bytes": 2901,
+      "kind": "theme-new-dir"
+    },
+    {
+      "path": "styles/woloong/images/battery-unknown.svg",
+      "sha256": "ef4b78d3bcf17a6bdcc7119835a21d7dbf04fe7ecdb183f420e0a1e98739f939",
+      "bytes": 3444,
+      "kind": "theme-new-dir"
+    },
+    {
+      "path": "styles/woloong/images/bed-level-b-l.svg",
+      "sha256": "77f616764c235a3224282692e502e75e8e5efe03d69bb21ac2193cd32b727e7d",
+      "bytes": 1126,
+      "kind": "theme-new-dir"
+    },
+    {
+      "path": "styles/woloong/images/bed-level-b-m.svg",
+      "sha256": "8b139137d030941e24dd17258cb4f6c6b63bedcac04d2a6c9e760e03a5867474",
+      "bytes": 3094,
+      "kind": "theme-new-dir"
+    },
+    {
+      "path": "styles/woloong/images/bed-level-b-r.svg",
+      "sha256": "fac7dce8a503334132151fa6de42730931061d9a0a84f7b5bfcfa30dcec79ab5",
+      "bytes": 1127,
+      "kind": "theme-new-dir"
+    },
+    {
+      "path": "styles/woloong/images/bed-level-center.svg",
+      "sha256": "b0f3c8c38641d341705284c645197d9403426ac2624b948948d8292d3bc3ded5",
+      "bytes": 2823,
+      "kind": "theme-new-dir"
+    },
+    {
+      "path": "styles/woloong/images/bed-level-l-m.svg",
+      "sha256": "88ec557d771baaf364898da0a825a31ba99e260524b7e9ceb65abdd97c263402",
+      "bytes": 3113,
+      "kind": "theme-new-dir"
+    },
+    {
+      "path": "styles/woloong/images/bed-level-r-m.svg",
+      "sha256": "ef62fe38f62eba9e0b28c633a76dd9d001b892aeb7bebd0b2e188dd832f9bff8",
+      "bytes": 3115,
+      "kind": "theme-new-dir"
+    },
+    {
+      "path": "styles/woloong/images/bed-level-t-l.svg",
+      "sha256": "43e288021efd5307d0ac885b70d7ecf5da41db544fd854668e48574145e6da6d",
+      "bytes": 1128,
+      "kind": "theme-new-dir"
+    },
+    {
+      "path": "styles/woloong/images/bed-level-t-m.svg",
+      "sha256": "6ba42ec6a8f94545dc3503f77309e6c6b4e414c41dcd39529f9dc4066ca1e322",
+      "bytes": 3092,
+      "kind": "theme-new-dir"
+    },
+    {
+      "path": "styles/woloong/images/bed-level-t-r.svg",
+      "sha256": "e90a624daa45997f80bd44370bb63438b8f11f23a3cb17a342516339fe4608b4",
+      "bytes": 1126,
+      "kind": "theme-new-dir"
+    },
+    {
+      "path": "styles/woloong/images/bed-level.svg",
+      "sha256": "6ddc171ce8114dbf1654252789abbbed15421234a1bcd81345890f9cafd3feed",
+      "bytes": 1370,
+      "kind": "theme-new-dir"
+    },
+    {
+      "path": "styles/woloong/images/bed-mesh.svg",
+      "sha256": "eddfaba47c98ed31db1e11d72d6825de1f63018864bdb9960bf9bd6ed1a3cb0c",
+      "bytes": 2491,
+      "kind": "theme-new-dir"
+    },
+    {
+      "path": "styles/woloong/images/bed.svg",
+      "sha256": "b02e1b31613c35460d598b9470cc3396c2c198d361eb6fcd5cbb4bdf223cddb4",
+      "bytes": 1180,
+      "kind": "theme-new-dir"
+    },
+    {
+      "path": "styles/woloong/images/camera.svg",
+      "sha256": "b672e42464f10397aad6bc13ad20627e379932dec911a7f0b21d86e40232b3fd",
+      "bytes": 1495,
+      "kind": "theme-new-dir"
+    },
+    {
+      "path": "styles/woloong/images/cancel.svg",
+      "sha256": "1d9ff63d4dd8da621640c0f3ee943e1a43cc59272a97a40de983a544399c766c",
+      "bytes": 1150,
+      "kind": "theme-new-dir"
+    },
+    {
+      "path": "styles/woloong/images/ccw.svg",
+      "sha256": "91c1c0b045341b494e97d8aed5acb6f5919828547e5fef746aaf355b4e4da69f",
+      "bytes": 3233,
+      "kind": "theme-new-dir"
+    },
+    {
+      "path": "styles/woloong/images/clock.svg",
+      "sha256": "d404b3251d5501db36a4d4b59184e704e9316ac51f070bf0c5d6ce23b31a9340",
+      "bytes": 1146,
+      "kind": "theme-new-dir"
+    },
+    {
+      "path": "styles/woloong/images/complete.svg",
+      "sha256": "6ff9ab5bede1eacaf347c42997827bf8a43a7642e9eed26508e4a47e2999618b",
+      "bytes": 1114,
+      "kind": "theme-new-dir"
+    },
+    {
+      "path": "styles/woloong/images/console.svg",
+      "sha256": "5ea101b76c42464c28159b1ce8f5d6368287fc9e4d201427025f263c0e58e253",
+      "bytes": 1163,
+      "kind": "theme-new-dir"
+    },
+    {
+      "path": "styles/woloong/images/cool-down.svg",
+      "sha256": "1a8bb12aee2b468a35152841c1578e20b0b8f6f6c966083b606de10026a92e0a",
+      "bytes": 1140,
+      "kind": "theme-new-dir"
+    },
+    {
+      "path": "styles/woloong/images/custom-script.svg",
+      "sha256": "f21dd3d91a862bd0dc00ae35c51c6a56e3054f2fe4ede08ad0196485b1ca62e1",
+      "bytes": 1326,
+      "kind": "theme-new-dir"
+    },
+    {
+      "path": "styles/woloong/images/cw.svg",
+      "sha256": "a1c29011dcfec2ef5f4bf646c28a4397435491f4c3bb6c9c91e7d3c21d7405a5",
+      "bytes": 3240,
+      "kind": "theme-new-dir"
+    },
+    {
+      "path": "styles/woloong/images/decrease.svg",
+      "sha256": "a33ed400fde6b27c7d6e69afadb2c1a6c4fd2c615a9a0806246896ee3ea5d3e7",
+      "bytes": 1082,
+      "kind": "theme-new-dir"
+    },
+    {
+      "path": "styles/woloong/images/delete.svg",
+      "sha256": "4a6e6cd92f537b87cb9f7599b92f358ac55c81798c0076861df78fbb9b3f9a95",
+      "bytes": 1282,
+      "kind": "theme-new-dir"
+    },
+    {
+      "path": "styles/woloong/images/edit.svg",
+      "sha256": "99924599a97b72cc97b30a6d170cf80ef3d94e92166fda7e82b24951f104fb95",
+      "bytes": 4674,
+      "kind": "theme-new-dir"
+    },
+    {
+      "path": "styles/woloong/images/emergency.svg",
+      "sha256": "3b37f793eb6d10df5e295e17cd170c15e465fc0c1cd55e3656bf1813f711d285",
+      "bytes": 1540,
+      "kind": "theme-new-dir"
+    },
+    {
+      "path": "styles/woloong/images/extrude.svg",
+      "sha256": "280842ab522fd682297911afb2bb1b33bb5612211016cc5f4a3aae3d07d034b2",
+      "bytes": 1164,
+      "kind": "theme-new-dir"
+    },
+    {
+      "path": "styles/woloong/images/extruder-0.svg",
+      "sha256": "4aefb8e10885e2e9e67502e2bed1533574aae58d0b1511621a6e7d0cf6af7770",
+      "bytes": 4551,
+      "kind": "theme-new-dir"
+    },
+    {
+      "path": "styles/woloong/images/extruder-1.svg",
+      "sha256": "6ad3512c0c9483c4d7f977b8aff179d6e2182a4544fca1f67d1668a8970708d6",
+      "bytes": 3602,
+      "kind": "theme-new-dir"
+    },
+    {
+      "path": "styles/woloong/images/extruder-10.svg",
+      "sha256": "74aecd681ab02619bef40be945e4462a70bec4ae747cb55b551dce1faecef416",
+      "bytes": 4879,
+      "kind": "theme-new-dir"
+    },
+    {
+      "path": "styles/woloong/images/extruder-11.svg",
+      "sha256": "05230649097b168d6cf032586f5d3adb32496d3347279871ef5708b64f0009e2",
+      "bytes": 3871,
+      "kind": "theme-new-dir"
+    },
+    {
+      "path": "styles/woloong/images/extruder-2.svg",
+      "sha256": "dc80d6bd53c854aab109b63dd80e23d751b2ee2e07736a42eb09218fee948d31",
+      "bytes": 4523,
+      "kind": "theme-new-dir"
+    },
+    {
+      "path": "styles/woloong/images/extruder-3.svg",
+      "sha256": "5f99a5eeb702b6e2012422a82d9be9c180279b78f99b4e9e1c35dcb33666ba9a",
+      "bytes": 4912,
+      "kind": "theme-new-dir"
+    },
+    {
+      "path": "styles/woloong/images/extruder-4.svg",
+      "sha256": "bdb38973c17ed06464cab44d41977eee982392babc6d5ac4af9022b593bf7475",
+      "bytes": 3870,
+      "kind": "theme-new-dir"
+    },
+    {
+      "path": "styles/woloong/images/extruder-5.svg",
+      "sha256": "7861e3babe8c1566e353b44e5c2ba57a3ea62e0141be50d19d0640bd2c705fdd",
+      "bytes": 4377,
+      "kind": "theme-new-dir"
+    },
+    {
+      "path": "styles/woloong/images/extruder-6.svg",
+      "sha256": "f7ccdd07d0f9dfe24a199b82db99e98316f82f797a4034361f70f1e3231a193f",
+      "bytes": 4827,
+      "kind": "theme-new-dir"
+    },
+    {
+      "path": "styles/woloong/images/extruder-7.svg",
+      "sha256": "0557ebb1668720a1e7b654f3899dcc4f09f3ccdb4b205d92d3454524088e6ca7",
+      "bytes": 3898,
+      "kind": "theme-new-dir"
+    },
+    {
+      "path": "styles/woloong/images/extruder-8.svg",
+      "sha256": "4fa4e318d8534d5597ca12c0436521202c514ae2cb1431b6370503304aa547c4",
+      "bytes": 5245,
+      "kind": "theme-new-dir"
+    },
+    {
+      "path": "styles/woloong/images/extruder-9.svg",
+      "sha256": "af5ab1d5b8c292c2470d01273676eb78a697403c37b23d036aede85aada7b0ed",
+      "bytes": 4827,
+      "kind": "theme-new-dir"
+    },
+    {
+      "path": "styles/woloong/images/extruder.svg",
+      "sha256": "280842ab522fd682297911afb2bb1b33bb5612211016cc5f4a3aae3d07d034b2",
+      "bytes": 1164,
+      "kind": "theme-new-dir"
+    },
+    {
+      "path": "styles/woloong/images/fan-on.svg",
+      "sha256": "40b930b10bf68684464c84474c30ccad57d551340284a88dbc5ccf3edb208d14",
+      "bytes": 1823,
+      "kind": "theme-new-dir"
+    },
+    {
+      "path": "styles/woloong/images/fan.svg",
+      "sha256": "1bb0acd5d99a16bd407d45bda849b1c2ae315462ea1f6046810d0a855228491e",
+      "bytes": 1633,
+      "kind": "theme-new-dir"
+    },
+    {
+      "path": "styles/woloong/images/filament.svg",
+      "sha256": "f12b285f236e7316e299be5e167cf8b58c7db471efc8a530f3eb21bfc1476b37",
+      "bytes": 3239,
+      "kind": "theme-new-dir"
+    },
+    {
+      "path": "styles/woloong/images/file.svg",
+      "sha256": "79808ee2a5884253cd7bfe641ecbe83b21364e3dbcb832757bd75e45f5b6aed8",
+      "bytes": 1150,
+      "kind": "theme-new-dir"
+    },
+    {
+      "path": "styles/woloong/images/files.svg",
+      "sha256": "77c48687d665ed946934f90d28605c8953d6138c50e5c1ddecb112ab5d6817f1",
+      "bytes": 1180,
+      "kind": "theme-new-dir"
+    },
+    {
+      "path": "styles/woloong/images/fine-tune.svg",
+      "sha256": "0d41c181cd1735665e096319cb72777704dfdbca93c28add420f380dd94a903d",
+      "bytes": 1448,
+      "kind": "theme-new-dir"
+    },
+    {
+      "path": "styles/woloong/images/flow+.svg",
+      "sha256": "d9a46221f03d1cfd632bbfb66c048436c85d9c773a59c1865c6c3209e4b82fda",
+      "bytes": 1371,
+      "kind": "theme-new-dir"
+    },
+    {
+      "path": "styles/woloong/images/flow-.svg",
+      "sha256": "96b7c2797a49b39597621eed58badcd92922756ab659f0d81358a978bb566527",
+      "bytes": 1351,
+      "kind": "theme-new-dir"
+    },
+    {
+      "path": "styles/woloong/images/folder.svg",
+      "sha256": "90b2fab4f6447bee32b2ff0f63ed0925db0e9a2410b94449d773c87016f62d30",
+      "bytes": 1155,
+      "kind": "theme-new-dir"
+    },
+    {
+      "path": "styles/woloong/images/hashtag.svg",
+      "sha256": "0cfbcf5551544715e4f5c68e167d3138cd80ef1eb3a6cc01ca01942e20eb4510",
+      "bytes": 1301,
+      "kind": "theme-new-dir"
+    },
+    {
+      "path": "styles/woloong/images/heat-up.svg",
+      "sha256": "7999faeb47654631b44b358ccc926991ca11e4d33d0c60dd70601931b5ffa2ae",
+      "bytes": 1128,
+      "kind": "theme-new-dir"
+    },
+    {
+      "path": "styles/woloong/images/heater.svg",
+      "sha256": "aa5b2eb52fcb6a06f837513c99ef8ef383332c861dcaf03e35783f021552a0b3",
+      "bytes": 3481,
+      "kind": "theme-new-dir"
+    },
+    {
+      "path": "styles/woloong/images/home-x.svg",
+      "sha256": "fd1ccb045f3a406a348f2ce78afa19cb2fc44eac774e0462346dddeff1cf6ad3",
+      "bytes": 1173,
+      "kind": "theme-new-dir"
+    },
+    {
+      "path": "styles/woloong/images/home-y.svg",
+      "sha256": "b35999e67e24e0dc4703b1aa8d3ce700867dea930f98dd914c82821bba1952ff",
+      "bytes": 1169,
+      "kind": "theme-new-dir"
+    },
+    {
+      "path": "styles/woloong/images/home-z.svg",
+      "sha256": "b01a7b4cc4160f4a90d535bdfdfb78d87c7bb9f6608dfaef89c94f6dfb6da3d7",
+      "bytes": 1139,
+      "kind": "theme-new-dir"
+    },
+    {
+      "path": "styles/woloong/images/home.svg",
+      "sha256": "704454c82d771c94f63a505709d71840153ab43f2023b64c7e2a83e86b6d44ed",
+      "bytes": 1103,
+      "kind": "theme-new-dir"
+    },
+    {
+      "path": "styles/woloong/images/hourglass.svg",
+      "sha256": "fd46292ac4b6b234676d13af51e093ca1e7fd710bd922d0aa09798b543e2be0c",
+      "bytes": 1127,
+      "kind": "theme-new-dir"
+    },
+    {
+      "path": "styles/woloong/images/increase.svg",
+      "sha256": "9f66f8b4de2192bd12c232ef1159c75fd9e0fa7b574b629e15b8ad11debf6e04",
+      "bytes": 1105,
+      "kind": "theme-new-dir"
+    },
+    {
+      "path": "styles/woloong/images/info.svg",
+      "sha256": "1c24f4fbd8740fa4177a0c745a1d5b0dcde07e00788222853b3fad97d6564892",
+      "bytes": 1561,
+      "kind": "theme-new-dir"
+    },
+    {
+      "path": "styles/woloong/images/klipper.svg",
+      "sha256": "ea8a48782afa4e5a9af531abf4b7daf5e414dce686c81f0be817a7bf778d9bb9",
+      "bytes": 31409,
+      "kind": "theme-new-dir"
+    },
+    {
+      "path": "styles/woloong/images/light.svg",
+      "sha256": "0503cff122faebdaeb3940adf2ebd1327165308718c6552250f2864d9b3cd268",
+      "bytes": 1591,
+      "kind": "theme-new-dir"
+    },
+    {
+      "path": "styles/woloong/images/load.svg",
+      "sha256": "f62426a0d2e1020de52262b53b2db3a8c37b8887da71cd9103a1d895c295381f",
+      "bytes": 1183,
+      "kind": "theme-new-dir"
+    },
+    {
+      "path": "styles/woloong/images/lock.svg",
+      "sha256": "8252131045a58c92fbb224c08d86650520430e1558bdeafbca8bd4601d760aa3",
+      "bytes": 3638,
+      "kind": "theme-new-dir"
+    },
+    {
+      "path": "styles/woloong/images/main.svg",
+      "sha256": "f06d420b3b96d97ea45ffbe849d14edb777a55a0f55a77c8a869b3c8c5291c45",
+      "bytes": 1322,
+      "kind": "theme-new-dir"
+    },
+    {
+      "path": "styles/woloong/images/motor-off.svg",
+      "sha256": "5e62d609c11babeaf1d3b70286230d9a6256a9066fd05f3c8894158540fa9ee9",
+      "bytes": 1205,
+      "kind": "theme-new-dir"
+    },
+    {
+      "path": "styles/woloong/images/move.svg",
+      "sha256": "44fd277a384bf7687d6797f78720c57b75536f0c1ff5c3a91616634242a21ea3",
+      "bytes": 1188,
+      "kind": "theme-new-dir"
+    },
+    {
+      "path": "styles/woloong/images/network.svg",
+      "sha256": "6165dfab08a59fea31cee8116c38c135408e1187de953ec372c401ac7dd9f79f",
+      "bytes": 1377,
+      "kind": "theme-new-dir"
+    },
+    {
+      "path": "styles/woloong/images/notifications.svg",
+      "sha256": "1beba8ce6b8ef963ffc7bb52ea97f3fc0bb912546e564c633b2f7a5041238202",
+      "bytes": 3096,
+      "kind": "theme-new-dir"
+    },
+    {
+      "path": "styles/woloong/images/notifications_active.svg",
+      "sha256": "524a3052fa752e282fc69a3017ac910ef2fd88254da328bdc1a43e628c470647",
+      "bytes": 3960,
+      "kind": "theme-new-dir"
+    },
+    {
+      "path": "styles/woloong/images/notifications_important.svg",
+      "sha256": "2919b95286aae65c1b2fb7cdd0405294fbd9f92d51aa216758f147977f363e87",
+      "bytes": 4573,
+      "kind": "theme-new-dir"
+    },
+    {
+      "path": "styles/woloong/images/pause.svg",
+      "sha256": "f35b99d2fc20d6c49062b5262bf5b0a8a49ad7ffd7514def95cefc8c12d6c077",
+      "bytes": 1091,
+      "kind": "theme-new-dir"
+    },
+    {
+      "path": "styles/woloong/images/print.svg",
+      "sha256": "d0211ec26cac048238d52dd1d147bb4c00bb979a2f75bc401738bf383a8413a7",
+      "bytes": 1604,
+      "kind": "theme-new-dir"
+    },
+    {
+      "path": "styles/woloong/images/printer.svg",
+      "sha256": "ba21d9a50eab151fab2a2f1c47a14763c76cafa309009f2f17fa0e7b692a572d",
+      "bytes": 3383,
+      "kind": "theme-new-dir"
+    },
+    {
+      "path": "styles/woloong/images/refresh.svg",
+      "sha256": "26f1f043ae58f64e06465e2506356942985ce87a35157a3dbdb89eac2f1e2742",
+      "bytes": 1278,
+      "kind": "theme-new-dir"
+    },
+    {
+      "path": "styles/woloong/images/resume.svg",
+      "sha256": "821d2bc9d941d04005780b5b3b58779e05c66adf5219d059c147ebd7be999ecd",
+      "bytes": 1097,
+      "kind": "theme-new-dir"
+    },
+    {
+      "path": "styles/woloong/images/retract.svg",
+      "sha256": "7d5b75b28d3bdbf2c3c4735831cd07ec09dce2b048cf3ff42143e60a9b25a1fa",
+      "bytes": 1475,
+      "kind": "theme-new-dir"
+    },
+    {
+      "path": "styles/woloong/images/sd.svg",
+      "sha256": "ab9f0454efb8ee263d8f20240feeaf0095ab02471b72012e9de78e3d9dfab2ba",
+      "bytes": 1174,
+      "kind": "theme-new-dir"
+    },
+    {
+      "path": "styles/woloong/images/settings.svg",
+      "sha256": "d559da03b2e270b29f58362f03a225c932fd3073970d94915b928f1ed7820f8d",
+      "bytes": 1971,
+      "kind": "theme-new-dir"
+    },
+    {
+      "path": "styles/woloong/images/shuffle.svg",
+      "sha256": "265deef6a2ed3afc2383d8c4e3d168d0c89c5de98c94a025eb2df8a86d6a4c3d",
+      "bytes": 1128,
+      "kind": "theme-new-dir"
+    },
+    {
+      "path": "styles/woloong/images/shutdown.svg",
+      "sha256": "00ad02ffccce24826e3bd1528deed80ea97732da56f84c965a9670a0fc07d87c",
+      "bytes": 1277,
+      "kind": "theme-new-dir"
+    },
+    {
+      "path": "styles/woloong/images/speed+.svg",
+      "sha256": "192d35f5a89da7db1285290f87822175849eebde069e3c964aca2265d4c35067",
+      "bytes": 1600,
+      "kind": "theme-new-dir"
+    },
+    {
+      "path": "styles/woloong/images/speed-.svg",
+      "sha256": "87bfd50e5c5cefe3bb89549beff130cdd805cc3c6a1ced808fb35b0540a61fd7",
+      "bytes": 1589,
+      "kind": "theme-new-dir"
+    },
+    {
+      "path": "styles/woloong/images/spool.svg",
+      "sha256": "c06177d871fe659582903ced3a80f1b872d8d5a24e34c0e24963b5059b811cdd",
+      "bytes": 3660,
+      "kind": "theme-new-dir"
+    },
+    {
+      "path": "styles/woloong/images/spoolman.svg",
+      "sha256": "bf662476ccdd5915a4b8d5f22e601b4ad20c9f9032489ebe51b41a358cec5146",
+      "bytes": 5311,
+      "kind": "theme-new-dir"
+    },
+    {
+      "path": "styles/woloong/images/stop.svg",
+      "sha256": "39566ca4a1d6cb1dd216c90b57088bbff0ee9b14012a0fdad42222715ffe65db",
+      "bytes": 1082,
+      "kind": "theme-new-dir"
+    },
+    {
+      "path": "styles/woloong/images/toolchanger.svg",
+      "sha256": "997c693972f5d1260f1de3d6e11f71dce624e69353f649f5d5fd744fd23a597a",
+      "bytes": 1106,
+      "kind": "theme-new-dir"
+    },
+    {
+      "path": "styles/woloong/images/warning.svg",
+      "sha256": "08b36b53ce49366366e03937996e3fff48de21e4cacae1e03ad1b7b0e016506b",
+      "bytes": 1121,
+      "kind": "theme-new-dir"
+    },
+    {
+      "path": "styles/woloong/images/wifi_excellent.svg",
+      "sha256": "00c6ac7f0dc1beeac9b89fb24b345d45c9e8f8005f77c0562601f0b6f847b4f6",
+      "bytes": 4045,
+      "kind": "theme-new-dir"
+    },
+    {
+      "path": "styles/woloong/images/wifi_fair.svg",
+      "sha256": "13b269c8f7ee9a1842cadd319f5cd44ccc843658368229114fa92631f960ad92",
+      "bytes": 2926,
+      "kind": "theme-new-dir"
+    },
+    {
+      "path": "styles/woloong/images/wifi_good.svg",
+      "sha256": "1f0a7ed962173c9d19c03c3633e9a3acb5dedb0084a173b155b42f9d631d4a64",
+      "bytes": 3474,
+      "kind": "theme-new-dir"
+    },
+    {
+      "path": "styles/woloong/images/wifi_weak.svg",
+      "sha256": "89dd8286e3158b02d9085ad76dee1f8c5138f7a39bfaf476f38be6e3aad873db",
+      "bytes": 3530,
+      "kind": "theme-new-dir"
+    },
+    {
+      "path": "styles/woloong/images/z-closer.svg",
+      "sha256": "4ef90febc9026f92128fef8f69336dbe8c4f727a91dd234368d0524c962e2bf0",
+      "bytes": 1164,
+      "kind": "theme-new-dir"
+    },
+    {
+      "path": "styles/woloong/images/z-farther.svg",
+      "sha256": "48728cc43579d8a948d22313654bd3865fe745d867b0a1b0d67ce08d0f9c0297",
+      "bytes": 1179,
+      "kind": "theme-new-dir"
+    },
+    {
+      "path": "styles/woloong/images/z-tilt.svg",
+      "sha256": "95d2537b6d4f5d1003659af2be54ed335856fe3df038e9c27fea83cb69bd8ff4",
+      "bytes": 1119,
+      "kind": "theme-new-dir"
+    },
+    {
+      "path": "styles/woloong/README.md",
+      "sha256": "61dd7187fa2b63e0db17a9656883dce6c80194531fc49ffea781d6cfe6a83143",
+      "bytes": 3756,
+      "kind": "theme-new-dir"
+    },
+    {
+      "path": "styles/woloong/style.conf",
+      "sha256": "b2d15d50a749082e73d4c2850501e1bd202676e1879064e771d55b9df632eece",
+      "bytes": 489,
+      "kind": "theme-new-dir"
+    },
+    {
+      "path": "styles/woloong/style.css",
+      "sha256": "7e8dd7be8ffd722bc55d02fea9ef7e4d17142f211ab29a79007613d171c6e83f",
+      "bytes": 6456,
+      "kind": "theme-new-dir"
+    },
+    {
+      "path": "styles/woloong/Woloong_Logo.png",
+      "sha256": "e282e9b05ace2b7999a3ab4f5e81492d0c8ac6a561485c14c69e4d0a00ba646c",
+      "bytes": 22582,
+      "kind": "theme-new-dir"
+    },
+    {
+      "path": "panels/splash_screen.py",
+      "sha256": "feb1b52adecc82a61b875b129c1d157228a1e094dbff3bab4eae6cc76b607ee8",
+      "bytes": 9257,
+      "kind": "tracked-file-replaced"
+    }
+  ]
+}
