@@ -1,45 +1,50 @@
 # ============================================================================
-# upstream-sync —— 在上游发布新版本后，把「上游 + woloong 定制」重新叠加并推送
+# upstream-sync —— 吸收上游官方新版 → 重放 woloong 定制 → 门禁 → 发布（D20 发行树）
 #
-# 设计（D20）：不做 git merge；而是「上游树整体替换 → 纯上游 commit → 重放定制 → 定制 commit」。
-# 门禁：推送前必须通过 verify-assets（定制资产完整性）；基线漂移时**失败退出**，
-#       由人工重锚定（更新 baseline + make-patch + 更新清单哈希）后再重跑本工作流。
+# 自动闭环：
+#   · 每周定时审计（check-upstream）→ 落后才继续
+#   · 重叠加（fork-sync：上游树替换 → 重放定制 → 应用 remove.list → 更新 upstream.json）
+#   · 门禁：定制资产完整性（不过则不发布）
+#   · 无需构建（Python 应用，源码即产物）
+#   · 发布：tag = woloong-<上游 tag>（与上游版本一一对应）；推送 main 与 tag
+#   · 通知下游：若有 WOLOONG_DISPATCH_TOKEN 则 repository_dispatch 通知 Woloong-OS 跟进
+#   · 漂移/失败：自动开 Issue（去重），绝不静默遗漏
 # ============================================================================
 name: upstream-sync
 
 on:
-  # 每周一 03:17 UTC 自动检测上游新发布；有新版则自动重叠加，漂移则开 Issue（确保不漏版本）
   schedule:
-    - cron: '17 3 * * 1'
+    - cron: '17 3 * * 1'      # 每周一：审计上游新发布
   workflow_dispatch:
     inputs:
       upstream_ref:
-        description: '上游 ref（tag 或分支，例如 v0.4.7）'
-        required: true
+        description: '上游 ref（留空=审计得到的最新）'
+        required: false
+        default: ''
         type: string
       next_tag:
-        description: '合并结果打的新 tag（可留空，例如 woloong-1.1.0）'
+        description: '本次发布 tag（留空=自动派生 woloong-<上游 tag>）'
         required: false
         default: ''
         type: string
       do_push:
-        description: '是否推送到本仓库（false 只做演练）'
+        description: '是否推送与发布（false=只演练）'
         required: false
         default: true
         type: boolean
 
 permissions:
   contents: write
+  issues: write
 
 jobs:
   restack:
     runs-on: ubuntu-latest
     steps:
-      - name: 检出（含全部历史与 tag）
+      - name: 检出
         uses: actions/checkout@v5
         with:
           fetch-depth: 0
-          token: ${{ secrets.GITHUB_TOKEN }}
 
       - name: 配置 git 身份
         run: |
@@ -52,10 +57,8 @@ jobs:
           set -euo pipefail
           git remote add upstream https://github.com/KlipperScreen/KlipperScreen.git || true
           git fetch upstream --tags --prune
-          echo '上游可用 tag（近 5）:'
-          git tag --sort=-creatordate | grep -v '^woloong-' | head -5
 
-      - name: 上游版本审计（是否落后、列出全部未吸收版本）
+      - name: 上游版本审计（逐版本列出，不漏）
         id: audit
         run: |
           set +e
@@ -70,45 +73,58 @@ jobs:
         if: steps.audit.outputs.behind == '0'
         run: echo '发行树已对应上游最新发布，无需动作 ✓'
 
-      - name: 重新叠加（上游树替换 → 重放 woloong 定制）
+      - name: 重叠加（上游树替换 → 重放定制 → remove.list → 更新基线声明）
         id: restack
+        if: steps.audit.outputs.behind != '0'
         run: |
           set -uo pipefail
-          ARGS=''
-          if [ -n '${{ inputs.next_tag }}' ]; then ARGS="--tag ${{ inputs.next_tag }}"; fi
           REF='${{ inputs.upstream_ref }}'; [ -n "$REF" ] || REF='${{ steps.audit.outputs.latest }}'
-          bash woloong-release/tools/fork-sync.sh . --upstream-ref "$REF" $ARGS
-          echo '--- 提交形状 ---'
-          git log --oneline -4
+          TAG='${{ inputs.next_tag }}';  [ -n "$TAG" ] || TAG="woloong-$REF"
+          echo "ref=$REF" >> "$GITHUB_OUTPUT"
+          echo "tag=$TAG" >> "$GITHUB_OUTPUT"
+          echo "重叠加目标：上游 $REF → 我们的 tag $TAG"
+          bash woloong-release/tools/fork-sync.sh . --upstream-ref "$REF" --tag "$TAG"
 
-      - name: 门禁 —— 定制资产完整性（失败则绝不推送）
+      - name: 门禁 —— 定制资产完整性
         if: steps.audit.outputs.behind != '0'
+        run: bash woloong-release/tools/verify-assets.sh
+
+      - name: 发布（推送 main + tag）
+        if: steps.audit.outputs.behind != '0' && inputs.do_push
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
           set -euo pipefail
-          bash woloong-release/tools/verify-assets.sh
-
-      - name: 推送（可选）
-        if: steps.audit.outputs.behind != '0'
-        if: ${{ inputs.do_push }}
-        run: |
-          set -euo pipefail
+          TAG='${{ steps.restack.outputs.tag }}'
           git push origin HEAD:main
-          if [ -n '${{ inputs.next_tag }}' ]; then git push origin '${{ inputs.next_tag }}'; fi
-          echo '已推送：上游 ${{ inputs.upstream_ref }} + woloong 定制'
+          git tag -f "$TAG" >/dev/null 2>&1 || true
+          git push -f origin "$TAG"
+          echo "已推送 main 与 tag $TAG"
 
-      - name: 漂移或失败 → 开 Issue（不遗漏，人工重锚定）
+      - name: 通知 Woloong-OS 跟进（需 WOLOONG_DISPATCH_TOKEN 秘密；无则跳过）
+        if: steps.audit.outputs.behind != '0' && inputs.do_push
+        env:
+          TOKEN: ${{ secrets.WOLOONG_DISPATCH_TOKEN }}
+        run: |
+          if [ -z "$TOKEN" ]; then
+            echo '::notice::未配置 WOLOONG_DISPATCH_TOKEN —— 请手动在 Woloong-OS 执行：'
+            echo "  bash tools/sync-component-release.sh klipperscreen '${{ steps.restack.outputs.tag }}'"
+            exit 0
+          fi
+          curl -fsSL -X POST -H "Authorization: Bearer $TOKEN" -H 'Accept: application/vnd.github+json' \
+            https://api.github.com/repos/Woloong-DS/Woloong-OS/dispatches \
+            -d "{\"event_type\":\"component-released\",\"client_payload\":{\"component\":\"klipperscreen\",\"tag\":\"${{ steps.restack.outputs.tag }}\",\"ref\":\"${{ steps.restack.outputs.ref }}\"}}"
+          echo '已通知 Woloong-OS'
+
+      - name: 漂移或失败 → 开 Issue（不遗漏）
         if: failure() && steps.audit.outputs.behind != '0'
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
           set -uo pipefail
           TITLE='上游发布待吸收（基线漂移，需人工重锚定）'
-          BODY=$(printf '上游最新：%s\n\n审计输出：\n```\n%s\n```\n\n处理：更新 woloong-release/baseline/<path> 为新的上游文件 → tools/make-patch.sh 重新生成补丁 → 必要时更新 assets.manifest.tsv 中该文件的哈希 → 提交后重跑本工作流。\n' \
-            '${{ steps.audit.outputs.latest }}' "$(cat /tmp/audit.txt 2>/dev/null | tail -40)")
+          BODY=$(printf '上游最新：%s\n\n审计输出：\n```\n%s\n```\n\n处理：更新 woloong-release/baseline/<path> 为新的**上游原版** → 工作区放**定制版** → tools/make-patch.sh → 更新 assets.manifest.tsv 中该文件的哈希 → 提交后重跑。\n' \
+            '${{ steps.audit.outputs.latest }}' "$(tail -40 /tmp/audit.txt 2>/dev/null)")
           EXIST=$(gh issue list --state open --search "$TITLE" --json number -q '.[0].number' || true)
-          if [ -n "$EXIST" ]; then
-            gh issue comment "$EXIST" --body "$BODY"
-            echo "已追加到既有 Issue #$EXIST"
-          else
-            gh issue create --title "$TITLE" --body "$BODY"
-          fi
+          if [ -n "$EXIST" ]; then gh issue comment "$EXIST" --body "$BODY"; else gh issue create --title "$TITLE" --body "$BODY"; fi
+

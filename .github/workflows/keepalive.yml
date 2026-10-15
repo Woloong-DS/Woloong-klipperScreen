@@ -1,0 +1,24 @@
+# 心跳：GitHub 会在仓库连续 60 天无活动后停用 schedule；本工作流每月产生一次提交保住定时任务。
+name: keepalive
+on:
+  schedule:
+    - cron: '41 4 1 * *'
+  workflow_dispatch:
+permissions:
+  contents: write
+jobs:
+  ping:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v5
+      - name: 写入心跳时间戳并提交
+        run: |
+          set -euo pipefail
+          mkdir -p .github
+          date -u +'%Y-%m-%dT%H:%M:%SZ' > .github/last-keepalive
+          git config user.name 'woloong-ci'
+          git config user.email 'ci@woloong.local'
+          git add .github/last-keepalive
+          git commit -m "chore: keepalive $(date -u +%Y-%m)" || { echo '无变化'; exit 0; }
+          git push
+
