@@ -1,0 +1,6 @@
+{
+  "repo": "KlipperScreen/KlipperScreen",
+  "base_ref": "v0.4.7",
+  "base_sha": "c5fcc279518e78af90071ee2bf46bf36c007fc16",
+  "note": "本发行树吸收的上游基线。由 tools/fork-sync.sh 在重叠加成功后自动更新；tools/check-upstream.sh 据此审计是否遗漏上游发布。"
+}

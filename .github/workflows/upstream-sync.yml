@@ -8,6 +8,9 @@
 name: upstream-sync
 
 on:
+  # 每周一 03:17 UTC 自动检测上游新发布；有新版则自动重叠加，漂移则开 Issue（确保不漏版本）
+  schedule:
+    - cron: '17 3 * * 1'
   workflow_dispatch:
     inputs:
       upstream_ref:
@@ -52,22 +55,40 @@ jobs:
           echo '上游可用 tag（近 5）:'
           git tag --sort=-creatordate | grep -v '^woloong-' | head -5
 
+      - name: 上游版本审计（是否落后、列出全部未吸收版本）
+        id: audit
+        run: |
+          set +e
+          bash woloong-release/tools/check-upstream.sh | tee /tmp/audit.txt
+          rc=${PIPESTATUS[0]}
+          set -e
+          LATEST=$(grep '^上游最新' /tmp/audit.txt | awk '{print $NF}')
+          echo "latest=$LATEST" >> "$GITHUB_OUTPUT"
+          if [ "$rc" = "0" ]; then echo 'behind=0' >> "$GITHUB_OUTPUT"; else echo 'behind=1' >> "$GITHUB_OUTPUT"; fi
+
+      - name: 无新版本 → 结束
+        if: steps.audit.outputs.behind == '0'
+        run: echo '发行树已对应上游最新发布，无需动作 ✓'
+
       - name: 重新叠加（上游树替换 → 重放 woloong 定制）
         id: restack
         run: |
           set -uo pipefail
           ARGS=''
           if [ -n '${{ inputs.next_tag }}' ]; then ARGS="--tag ${{ inputs.next_tag }}"; fi
-          bash woloong-release/tools/fork-sync.sh . --upstream-ref '${{ inputs.upstream_ref }}' $ARGS
+          REF='${{ inputs.upstream_ref }}'; [ -n "$REF" ] || REF='${{ steps.audit.outputs.latest }}'
+          bash woloong-release/tools/fork-sync.sh . --upstream-ref "$REF" $ARGS
           echo '--- 提交形状 ---'
           git log --oneline -4
 
       - name: 门禁 —— 定制资产完整性（失败则绝不推送）
+        if: steps.audit.outputs.behind != '0'
         run: |
           set -euo pipefail
           bash woloong-release/tools/verify-assets.sh
 
       - name: 推送（可选）
+        if: steps.audit.outputs.behind != '0'
         if: ${{ inputs.do_push }}
         run: |
           set -euo pipefail
@@ -75,9 +96,19 @@ jobs:
           if [ -n '${{ inputs.next_tag }}' ]; then git push origin '${{ inputs.next_tag }}'; fi
           echo '已推送：上游 ${{ inputs.upstream_ref }} + woloong 定制'
 
-      - name: 失败提示（人工重锚定指引）
-        if: failure()
+      - name: 漂移或失败 → 开 Issue（不遗漏，人工重锚定）
+        if: failure() && steps.audit.outputs.behind != '0'
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
-          echo '::error::重新叠加失败。常见原因：基线漂移（上游改动了我们打补丁的文件）。'
-          echo '处理：更新 woloong-release/baseline/<path> 为新的上游文件 → 用 tools/make-patch.sh 重新生成补丁'
-          echo '      → 若有定制内容变更，同步更新 assets.manifest.tsv 中该文件的哈希 → 提交后重跑本工作流。'
+          set -uo pipefail
+          TITLE='上游发布待吸收（基线漂移，需人工重锚定）'
+          BODY=$(printf '上游最新：%s\n\n审计输出：\n```\n%s\n```\n\n处理：更新 woloong-release/baseline/<path> 为新的上游文件 → tools/make-patch.sh 重新生成补丁 → 必要时更新 assets.manifest.tsv 中该文件的哈希 → 提交后重跑本工作流。\n' \
+            '${{ steps.audit.outputs.latest }}' "$(cat /tmp/audit.txt 2>/dev/null | tail -40)")
+          EXIST=$(gh issue list --state open --search "$TITLE" --json number -q '.[0].number' || true)
+          if [ -n "$EXIST" ]; then
+            gh issue comment "$EXIST" --body "$BODY"
+            echo "已追加到既有 Issue #$EXIST"
+          else
+            gh issue create --title "$TITLE" --body "$BODY"
+          fi

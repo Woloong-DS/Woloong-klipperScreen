@@ -128,6 +128,16 @@ if [ -f "$MAN/remove.list" ]; then
     if [ -e "$rp" ]; then rm -rf "$rp"; info "  ✓ 已移除: $rp"; else info "  - 本就不存在: $rp"; fi
   done < "$MAN/remove.list"
 fi
+# 5.6) 记录本次吸收的上游基线（check-upstream 的审计依据）
+if [ -n "${UP_SHA:-}" ] && [ -n "${REF:-}" ]; then
+  REPO_URL="$(git remote get-url upstream 2>/dev/null || true)"
+  REPO_SLUG="$(printf '%s' "$REPO_URL" | sed -E 's#.*github\.com[:/]##; s#\.git$##')"
+  if [ -n "$REPO_SLUG" ]; then
+    printf '{\n  "repo": "%s",\n  "base_ref": "%s",\n  "base_sha": "%s",\n  "note": "由 tools/fork-sync.sh 在重叠加成功后自动更新；tools/check-upstream.sh 据此审计是否遗漏上游发布。"\n}\n' \
+      "$REPO_SLUG" "$REF" "$UP_SHA" > "$MAN/upstream.json"
+    info "  ✓ 已更新基线声明 $MAN/upstream.json（$REF @ ${UP_SHA:0:8}）"
+  fi
+fi
 bash "$MAN/tools/verify-assets.sh" || die "定制校验未通过（定制未完整重放）"
 
 if [ "$DO_COMMIT" -eq 1 ]; then
