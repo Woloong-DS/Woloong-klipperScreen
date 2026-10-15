@@ -39,7 +39,7 @@ permissions:
 
 jobs:
   restack:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04   # 显式固定：ubuntu-latest 自 2026-10-19 起滚动迁移到 26.04（actions/runner-images#14748）
     steps:
       - name: 检出
         uses: actions/checkout@v5

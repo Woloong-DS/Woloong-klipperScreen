@@ -8,7 +8,7 @@ permissions:
   contents: write
 jobs:
   ping:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04   # 显式固定：ubuntu-latest 自 2026-10-19 起滚动迁移到 26.04（actions/runner-images#14748）
     steps:
       - uses: actions/checkout@v5
       - name: 写入心跳时间戳并提交
