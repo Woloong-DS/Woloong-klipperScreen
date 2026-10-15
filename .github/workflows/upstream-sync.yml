@@ -101,21 +101,26 @@ jobs:
           git push -f origin "$TAG"
           echo "已推送 main 与 tag $TAG"
 
-      - name: 通知 Woloong-OS 跟进（需 WOLOONG_DISPATCH_TOKEN 秘密；无则跳过）
+      - name: 通知 Woloong-OS 跟进（把 sha/资产信息一并带过去，下游无需跨仓库权限）
         if: steps.audit.outputs.behind != '0' && inputs.do_push
         env:
           TOKEN: ${{ secrets.WOLOONG_DISPATCH_TOKEN }}
         run: |
+          set -uo pipefail
+          TAG='${{ steps.restack.outputs.tag }}'
+          SHA=$(git rev-parse HEAD)
+          ASSET=''
+          ASHA=''
           if [ -z "$TOKEN" ]; then
-            echo '::notice::未配置 WOLOONG_DISPATCH_TOKEN —— 请手动在 Woloong-OS 执行：'
-            echo "  bash tools/sync-component-release.sh klipperscreen '${{ steps.restack.outputs.tag }}'"
+            echo "::notice::未配置 WOLOONG_DISPATCH_TOKEN —— 请手动在 Woloong-OS 执行：bash tools/sync-component-release.sh klipperscreen $TAG"
             exit 0
           fi
+          jq -n --arg c 'klipperscreen' --arg t "$TAG" --arg s "$SHA" --arg a "$ASSET" --arg h "$ASHA" \
+            '{event_type:"component-released", client_payload:{component:$c, tag:$t, sha:$s, asset:$a, asset_sha256:$h}}' > /tmp/dispatch.json
+          cat /tmp/dispatch.json
           curl -fsSL -X POST -H "Authorization: Bearer $TOKEN" -H 'Accept: application/vnd.github+json' \
-            https://api.github.com/repos/Woloong-DS/Woloong-OS/dispatches \
-            -d "{\"event_type\":\"component-released\",\"client_payload\":{\"component\":\"klipperscreen\",\"tag\":\"${{ steps.restack.outputs.tag }}\",\"ref\":\"${{ steps.restack.outputs.ref }}\"}}"
-          echo '已通知 Woloong-OS'
-
+            https://api.github.com/repos/Woloong-DS/Woloong-OS/dispatches --data-binary @/tmp/dispatch.json
+          echo '已通知 Woloong-OS（携带 sha/资产信息）'
       - name: 漂移或失败 → 开 Issue（不遗漏）
         if: failure() && steps.audit.outputs.behind != '0'
         env:
