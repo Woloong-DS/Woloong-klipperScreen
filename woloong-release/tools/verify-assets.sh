@@ -15,7 +15,7 @@ echo "verify-assets: ok=$ok fail=$fail"
 [ "$fail" -eq 0 ] || exit 1
 
 # 额外断言：移除清单中的文件必须**不存在**（防止重叠加把上游 CI/dependabot 带回来）
-MAN="$(cd "$(dirname "$0")/.." && pwd)"
+MAN="woloong-release"   # 脚本已 cd 到仓库根，用相对路径
 if [ -f "$MAN/remove.list" ]; then
   while IFS= read -r rp; do
     rp="$(printf '%s' "$rp" | tr -d '\r')"
