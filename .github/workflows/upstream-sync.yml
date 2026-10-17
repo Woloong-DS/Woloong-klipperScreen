@@ -23,7 +23,7 @@ on:
         default: ''
         type: string
       next_tag:
-        description: '本次发布 tag（留空=自动派生 woloong-<上游 tag>）'
+        description: '本次发布 tag（留空=直接使用上游 tag（与上游版本一一对应 ✓））'
         required: false
         default: ''
         type: string
@@ -79,7 +79,7 @@ jobs:
         run: |
           set -uo pipefail
           REF='${{ inputs.upstream_ref }}'; [ -n "$REF" ] || REF='${{ steps.audit.outputs.latest }}'
-          TAG='${{ inputs.next_tag }}';  [ -n "$TAG" ] || TAG="woloong-$REF"
+          TAG='${{ inputs.next_tag }}';  [ -n "$TAG" ] || TAG="$REF"
           echo "ref=$REF" >> "$GITHUB_OUTPUT"
           echo "tag=$TAG" >> "$GITHUB_OUTPUT"
           echo "重叠加目标：上游 $REF → 我们的 tag $TAG"
