@@ -56,7 +56,7 @@ jobs:
         run: |
           set -euo pipefail
           git remote add upstream https://github.com/KlipperScreen/KlipperScreen.git || true
-          git fetch upstream --tags --prune
+          git fetch upstream --tags --prune --force
 
       - name: 上游版本审计（逐版本列出，不漏）
         id: audit
@@ -123,6 +123,7 @@ jobs:
             https://api.github.com/repos/Woloong-DS/Woloong-OS/dispatches --data-binary @/tmp/dispatch.json
           echo '已通知 Woloong-OS（携带 sha/资产信息）'
       - name: 漂移或失败 → 开 Issue（不遗漏）
+        continue-on-error: true   # 报警失败不得让整次 run 失败 ✗（实证 createIssue 403 ✗）
         # ★ 只用 failure() ✓：通知步骤已 continue-on-error ✓ 不会污染它 ✓
         #   （2026-10-18 实测：引用不存在的 step id 会导致报警**永不触发** ✗）
         if: failure()
@@ -134,5 +135,5 @@ jobs:
           BODY=$(printf '上游最新：%s\n\n审计输出：\n```\n%s\n```\n\n处理：更新 woloong-release/baseline/<path> 为新的**上游原版** → 工作区放**定制版** → tools/make-patch.sh → 更新 assets.manifest.tsv 中该文件的哈希 → 提交后重跑。\n' \
             '${{ steps.audit.outputs.latest }}' "$(tail -40 /tmp/audit.txt 2>/dev/null)")
           EXIST=$(gh issue list --state open --search "$TITLE" --json number -q '.[0].number' || true)
-          if [ -n "$EXIST" ]; then gh issue comment "$EXIST" --body "$BODY"; else gh issue create --title "$TITLE" --body "$BODY"; fi
+          if [ -n "$EXIST" ]; then gh issue comment "$EXIST" --body "$BODY" || echo "::warning::issue comment failed"; else gh issue create --title "$TITLE" --body "$BODY" || echo "::warning::issue create failed (手动记录: $TITLE)"; fi
 
