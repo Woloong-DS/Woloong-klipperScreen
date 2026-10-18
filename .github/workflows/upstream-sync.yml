@@ -102,6 +102,7 @@ jobs:
           echo "已推送 main 与 tag $TAG"
 
       - name: 通知 Woloong-OS 跟进（把 sha/资产信息一并带过去，下游无需跨仓库权限）
+        continue-on-error: true   # 通知是尽力而为 ✓ 失败不得掩盖同步成功 ✗
         if: steps.audit.outputs.behind != '0' && inputs.do_push
         env:
           TOKEN: ${{ secrets.WOLOONG_DISPATCH_TOKEN }}
