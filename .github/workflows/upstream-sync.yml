@@ -123,7 +123,9 @@ jobs:
             https://api.github.com/repos/Woloong-DS/Woloong-OS/dispatches --data-binary @/tmp/dispatch.json
           echo '已通知 Woloong-OS（携带 sha/资产信息）'
       - name: 漂移或失败 → 开 Issue（不遗漏）
-        if: failure() && steps.audit.outputs.behind != '0'
+        # ★ 只用 failure() ✓：通知步骤已 continue-on-error ✓ 不会污染它 ✓
+        #   （2026-10-18 实测：引用不存在的 step id 会导致报警**永不触发** ✗）
+        if: failure()
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
