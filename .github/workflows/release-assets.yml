@@ -40,6 +40,11 @@ jobs:
         with:
           fetch-depth: 0
 
+      - name: 配置 git 身份
+        run: |
+          git config user.name  'woloong-ci'
+          git config user.email 'ci@woloong.local'
+
       - name: 解析参数
         id: p
         run: |
