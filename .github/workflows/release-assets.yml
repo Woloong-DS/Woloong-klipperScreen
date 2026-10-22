@@ -118,6 +118,9 @@ jobs:
           jq -n --arg c 'klipperscreen' --arg t "$TAG" --arg s "$SHA" --arg a "$ASSET" --arg h "$ASHA" \
             '{event_type:"component-released", client_payload:{component:$c, tag:$t, sha:$s, asset:$a, asset_sha256:$h}}' > /tmp/dispatch.json
           cat /tmp/dispatch.json
-          curl -fsSL -X POST -H "Authorization: Bearer $TOKEN" -H 'Accept: application/vnd.github+json' \
-            https://api.github.com/repos/Woloong-DS/Woloong-OS/dispatches --data-binary @/tmp/dispatch.json
+          if ! curl -fsSL -X POST -H "Authorization: Bearer $TOKEN" -H 'Accept: application/vnd.github+json' \
+               https://api.github.com/repos/Woloong-DS/Woloong-OS/dispatches --data-binary @/tmp/dispatch.json; then
+            echo "::warning::通知 Woloong-OS 失败 —— 检查 WOLOONG_DISPATCH_TOKEN 是否有效且对 Woloong-OS 有 contents:write"
+            exit 0
+          fi
           echo "已通知 Woloong-OS（$TAG @ $SHA）"
