@@ -684,6 +684,12 @@
       "sha256": "67a929fd0b1c8c2cb6f3928d5edfeb1a6f4c36dfb74dc5284867ce67884a679e",
       "bytes": 7903,
       "kind": "tracked-file-replaced"
+    },
+    {
+      "path": "README.md",
+      "sha256": "7447ecdf8a8aa7a39b0976737783d1d04c10f4e8b04b94663cdee1cd511d3efd",
+      "bytes": 4402,
+      "kind": "tracked-file-replaced"
     }
   ]
 }
