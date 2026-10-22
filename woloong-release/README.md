@@ -31,6 +31,18 @@
 5. 提交两个 commit：`upstream: KlipperScreen @ <sha>` + `woloong: re-apply customization`
 6. 打 tag `woloong-<上游短 sha>-<n>` 并推送
 
+## 发布产物（Release 资产）
+
+版本号 = **上游发布版本号**（例如上游 `v0.4.7` → 我们的 tag / Release / 资产文件名都用 `v0.4.7`），不做二次编号。
+
+| 资产 | 说明 |
+| --- | --- |
+| `Woloong-KlipperScreen-<tag>.tar.gz` | 发行树源码包（上游 + woloong 定制，重叠加后门禁通过） |
+| `Woloong-KlipperScreen-<tag>.zip` | 同上，zip 格式 |
+| `SHA256SUMS.txt` | 两个包的 SHA256，供设备端校验 |
+
+发布流程见 `.github/workflows/upstream-sync.yml`：重叠加 → `verify-assets` 门禁 → 推 main 与 tag → 打包 → `gh release create`（资产随 tag 发布）→ 通知 Woloong-OS（携带资产名与 sha256）。
+
 ## 设备端（唯一更新入口，D17）
 
 `woloong-addon update klipperscreen` —— 取我们的发行包覆盖安装路径，再校验定制在位并重启服务。
