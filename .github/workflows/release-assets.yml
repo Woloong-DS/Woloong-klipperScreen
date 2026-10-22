@@ -75,6 +75,8 @@ jobs:
           git archive --format=zip    --prefix="${PREFIX}/" -o "dist/${PREFIX}.zip"  '${{ steps.p.outputs.sha }}'
           ( cd dist && sha256sum "${PREFIX}.tar.gz" "${PREFIX}.zip" > SHA256SUMS.txt )
           echo "prefix=${PREFIX}" >> "$GITHUB_OUTPUT"
+          echo "asset=${PREFIX}.tar.gz" >> "$GITHUB_OUTPUT"
+          echo "sha256=$(sha256sum "dist/${PREFIX}.tar.gz" | cut -d' ' -f1)" >> "$GITHUB_OUTPUT"
           cat dist/SHA256SUMS.txt
 
       - name: 发布（必要时先移动 tag）
@@ -98,3 +100,24 @@ jobs:
               --title "Woloong-KlipperScreen ${TAG}" --notes "$NOTES" --verify-tag
           fi
           echo "已发布 Release $TAG"
+
+      - name: 通知 Woloong-OS 跟进（repository_dispatch）
+        continue-on-error: true        # 通知尽力而为，不影响发布结果
+        env:
+          TOKEN: ${{ secrets.WOLOONG_DISPATCH_TOKEN }}
+        run: |
+          set -uo pipefail
+          TAG='${{ steps.p.outputs.tag }}'
+          SHA='${{ steps.p.outputs.sha }}'
+          ASSET='${{ steps.pkg.outputs.asset }}'
+          ASHA='${{ steps.pkg.outputs.sha256 }}'
+          if [ -z "${TOKEN:-}" ]; then
+            echo "::notice::未配置 WOLOONG_DISPATCH_TOKEN —— 请手动在 Woloong-OS 执行：bash tools/sync-component-release.sh klipperscreen $TAG"
+            exit 0
+          fi
+          jq -n --arg c 'klipperscreen' --arg t "$TAG" --arg s "$SHA" --arg a "$ASSET" --arg h "$ASHA" \
+            '{event_type:"component-released", client_payload:{component:$c, tag:$t, sha:$s, asset:$a, asset_sha256:$h}}' > /tmp/dispatch.json
+          cat /tmp/dispatch.json
+          curl -fsSL -X POST -H "Authorization: Bearer $TOKEN" -H 'Accept: application/vnd.github+json' \
+            https://api.github.com/repos/Woloong-DS/Woloong-OS/dispatches --data-binary @/tmp/dispatch.json
+          echo "已通知 Woloong-OS（$TAG @ $SHA）"
