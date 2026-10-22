@@ -139,8 +139,8 @@ while IFS= read -r b; do
 done < <(find "$MAN/baseline" -type f | sort)
 info "复制新增/资产文件"
 if [ -d "$STAGE" ]; then
-  ( cd "$STAGE" && find . -path ./__man -prune -o -type f -print ) | sed 's|^\./||' | while IFS= read -r rel; do
-    case "$rel" in *__man*) continue ;; esac
+  ( cd "$STAGE" && find . -path './__*' -prune -o -type f -print ) | sed 's|^\./||' | while IFS= read -r rel; do
+    case "$rel" in __*) continue ;; esac
     if [ -f "$MAN/baseline/$rel" ]; then continue; fi   # 受控文件已由补丁处理
     mkdir -p "$(dirname "$rel")"; cp -p "$STAGE/$rel" "$rel"
   done
