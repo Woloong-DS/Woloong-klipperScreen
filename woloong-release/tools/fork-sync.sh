@@ -174,7 +174,10 @@ bash "$MAN/tools/verify-assets.sh" || die "定制校验未通过（定制未完�
 if [ "$DO_COMMIT" -eq 1 ]; then
   git add -A
   git -c user.email=ci@woloong.local -c user.name=Woloong commit -q -m "woloong: re-apply customization (upstream $UP_SHORT)" && info "已提交定制重放"
-  if [ -n "$TAG" ]; then git -c user.email=ci@woloong.local -c user.name=Woloong tag -a "$TAG" -m "发行树：上游 $UP_SHORT + woloong 定制" && info "已打 tag：$TAG"; fi
+  if [ -n "$TAG" ]; then
+    # -f：上游同名 tag（fetch --tags 会带进来）指向的是上游提交，这里强制重指到我们的发行提交
+    git -c user.email=ci@woloong.local -c user.name=Woloong tag -f -a "$TAG" -m "发行树：上游 $UP_SHORT + woloong 定制" && info "已打 tag：$TAG"
+  fi
   info "git describe: $(git describe --always --tags --long --dirty)"
   info "工作区脏数: $(git status --porcelain | wc -l)"
 fi

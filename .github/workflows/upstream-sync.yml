@@ -101,7 +101,7 @@ jobs:
           set -euo pipefail
           TAG='${{ steps.restack.outputs.tag }}'
           git push origin HEAD:main
-          git tag -f "$TAG" >/dev/null 2>&1 || true
+          git rev-parse -q --verify "refs/tags/$TAG" >/dev/null || { echo "::error::重叠加未生成 tag $TAG"; exit 1; }
           git push -f origin "$TAG"
           echo "已推送 main 与 tag $TAG"
 
