@@ -41,6 +41,8 @@
 | `Woloong-KlipperScreen-<tag>.zip` | 同上，zip 格式 |
 | `SHA256SUMS.txt` | 两个包的 SHA256，供设备端校验 |
 
+补发历史版本（只有 tag、没有 Release 的情况）：手动运行 `release-assets` 工作流，`tag` 填该版本，必要时勾选 `move_tag` 把旧 tag 移动到已修复的发行提交。
+
 发布流程见 `.github/workflows/upstream-sync.yml`：重叠加 → `verify-assets` 门禁 → 推 main 与 tag → 打包 → `gh release create`（资产随 tag 发布）→ 通知 Woloong-OS（携带资产名与 sha256）。
 
 ## 设备端（唯一更新入口，D17）

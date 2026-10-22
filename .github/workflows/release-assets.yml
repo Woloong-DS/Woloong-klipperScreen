@@ -1,0 +1,95 @@
+# ============================================================================
+# release-assets —— 手动补发 / 重发 Release 资产（版本号 = 上游发布版本号）
+#
+# 用途：upstream-sync 的自动发布之外，补发某个已存在的版本（例如历史上只有 tag、
+#       没有 Release 的版本），或重传被删掉的资产。
+#   · tag      发布用 tag（默认取 woloong-release/upstream.json 的 base_ref）
+#   · ref      打包的提交（默认 HEAD；若填 refs/tags/x 则按该 tag 的树打包）
+#   · move_tag true = 把 tag 强制移动到打包提交（仅当旧 tag 的树过不了门禁时需要）
+# ============================================================================
+name: release-assets
+
+on:
+  workflow_dispatch:
+    inputs:
+      tag:
+        description: '发布 tag（留空 = upstream.json 的 base_ref）'
+        required: false
+        default: ''
+        type: string
+      ref:
+        description: '打包的提交（留空 = 当前 main 的 HEAD）'
+        required: false
+        default: ''
+        type: string
+      move_tag:
+        description: '把 tag 强制移动到打包提交（默认 false）'
+        required: false
+        default: false
+        type: boolean
+
+permissions:
+  contents: write
+
+jobs:
+  release:
+    runs-on: ubuntu-24.04
+    steps:
+      - name: 检出
+        uses: actions/checkout@v5
+        with:
+          fetch-depth: 0
+
+      - name: 解析参数
+        id: p
+        run: |
+          set -euo pipefail
+          TAG='${{ inputs.tag }}'
+          [ -n "$TAG" ] || TAG=$(python3 -c "import json;print(json.load(open('woloong-release/upstream.json',encoding='utf-8'))['base_ref'])")
+          REF='${{ inputs.ref }}'
+          [ -n "$REF" ] || REF='HEAD'
+          SHA=$(git rev-parse --verify "${REF}^{commit}")
+          echo "tag=${TAG}" >> "$GITHUB_OUTPUT"
+          echo "sha=${SHA}" >> "$GITHUB_OUTPUT"
+          echo "发布 tag：${TAG}  ←  打包提交：${SHA}"
+
+      - name: 门禁 —— 定制资产完整性
+        run: |
+          set -euo pipefail
+          git checkout -q '${{ steps.p.outputs.sha }}'
+          bash woloong-release/tools/verify-assets.sh
+
+      - name: 打包发行资产
+        id: pkg
+        run: |
+          set -euo pipefail
+          TAG='${{ steps.p.outputs.tag }}'
+          PREFIX="Woloong-KlipperScreen-${TAG}"
+          rm -rf dist && mkdir -p dist
+          git archive --format=tar.gz --prefix="${PREFIX}/" -o "dist/${PREFIX}.tar.gz" '${{ steps.p.outputs.sha }}'
+          git archive --format=zip    --prefix="${PREFIX}/" -o "dist/${PREFIX}.zip"  '${{ steps.p.outputs.sha }}'
+          ( cd dist && sha256sum "${PREFIX}.tar.gz" "${PREFIX}.zip" > SHA256SUMS.txt )
+          echo "prefix=${PREFIX}" >> "$GITHUB_OUTPUT"
+          cat dist/SHA256SUMS.txt
+
+      - name: 发布（必要时先移动 tag）
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          set -euo pipefail
+          TAG='${{ steps.p.outputs.tag }}'
+          SHA='${{ steps.p.outputs.sha }}'
+          PREFIX='${{ steps.pkg.outputs.prefix }}'
+          if [ '${{ inputs.move_tag }}' = 'true' ]; then
+            git tag -f -a "$TAG" "$SHA" -m "发行树：${TAG}（手动补发资产）"
+            git push -f origin "refs/tags/${TAG}"
+          fi
+          git rev-parse -q --verify "refs/tags/$TAG" >/dev/null || { echo "::error::tag $TAG 不存在（可勾选 move_tag 创建）"; exit 1; }
+          NOTES=$(printf '对应上游发布：KlipperScreen %s\n\n本资产 = 上游 %s + Woloong 定制（重叠加后门禁通过）。\n' "$TAG" "$TAG")
+          if gh release view "$TAG" >/dev/null 2>&1; then
+            gh release upload "$TAG" "dist/${PREFIX}.tar.gz" "dist/${PREFIX}.zip" "dist/SHA256SUMS.txt" --clobber
+          else
+            gh release create "$TAG" "dist/${PREFIX}.tar.gz" "dist/${PREFIX}.zip" "dist/SHA256SUMS.txt" \
+              --title "Woloong-KlipperScreen ${TAG}" --notes "$NOTES" --verify-tag
+          fi
+          echo "已发布 Release $TAG"
