@@ -6,7 +6,8 @@
 #   · 重叠加（fork-sync：上游树替换 → 重放定制 → 应用 remove.list → 更新 upstream.json）
 #   · 门禁：定制资产完整性（不过则不发布）
 #   · 无需构建（Python 应用，源码即产物）
-#   · 发布：tag = woloong-<上游 tag>（与上游版本一一对应）；推送 main 与 tag
+#   · 发布：tag = 上游 tag（与上游版本一一对应）；推送 main 与 tag
+#   · 资产：Woloong-KlipperScreen-<tag>.tar.gz/.zip + SHA256SUMS.txt，随 Release 发布
 #   · 通知下游：若有 WOLOONG_DISPATCH_TOKEN 则 repository_dispatch 通知 Woloong-OS 跟进
 #   · 漂移/失败：自动开 Issue（去重），绝不静默遗漏
 # ============================================================================
@@ -40,6 +41,9 @@ permissions:
 jobs:
   restack:
     runs-on: ubuntu-24.04   # 显式固定：ubuntu-latest 自 2026-10-19 起滚动迁移到 26.04（actions/runner-images#14748）
+    env:
+      # 定时任务没有 inputs（为空），旧条件会静默跳过发布；这里统一成显式开关
+      DO_PUSH: ${{ github.event_name == 'schedule' || inputs.do_push }}
     steps:
       - name: 检出
         uses: actions/checkout@v5
@@ -90,7 +94,7 @@ jobs:
         run: bash woloong-release/tools/verify-assets.sh
 
       - name: 发布（推送 main + tag）
-        if: steps.audit.outputs.behind != '0' && inputs.do_push
+        if: steps.audit.outputs.behind != '0' && env.DO_PUSH == 'true'
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
@@ -101,17 +105,50 @@ jobs:
           git push -f origin "$TAG"
           echo "已推送 main 与 tag $TAG"
 
+      - name: 打包发行资产（文件名/版本号 = 上游发布版本号）
+        id: package
+        if: steps.audit.outputs.behind != '0' && env.DO_PUSH == 'true'
+        run: |
+          set -euo pipefail
+          TAG='${{ steps.restack.outputs.tag }}'
+          PREFIX="Woloong-KlipperScreen-${TAG}"
+          rm -rf dist && mkdir -p dist
+          git archive --format=tar.gz --prefix="${PREFIX}/" -o "dist/${PREFIX}.tar.gz" HEAD
+          git archive --format=zip    --prefix="${PREFIX}/" -o "dist/${PREFIX}.zip"  HEAD
+          ( cd dist && sha256sum "${PREFIX}.tar.gz" "${PREFIX}.zip" > SHA256SUMS.txt )
+          echo "prefix=${PREFIX}" >> "$GITHUB_OUTPUT"
+          echo "asset=${PREFIX}.tar.gz" >> "$GITHUB_OUTPUT"
+          echo "sha256=$(sha256sum "dist/${PREFIX}.tar.gz" | cut -d' ' -f1)" >> "$GITHUB_OUTPUT"
+          cat dist/SHA256SUMS.txt
+
+      - name: 发布 GitHub Release（资产随 tag 一起发布）
+        if: steps.audit.outputs.behind != '0' && env.DO_PUSH == 'true'
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          set -euo pipefail
+          TAG='${{ steps.restack.outputs.tag }}'
+          PREFIX='${{ steps.package.outputs.prefix }}'
+          NOTES=$(printf '对应上游发布：KlipperScreen %s\n\n本资产 = 上游 %s + Woloong 定制（重叠加后门禁通过）。\n' "$TAG" "$TAG")
+          if gh release view "$TAG" >/dev/null 2>&1; then
+            gh release upload "$TAG" "dist/${PREFIX}.tar.gz" "dist/${PREFIX}.zip" "dist/SHA256SUMS.txt" --clobber
+          else
+            gh release create "$TAG" "dist/${PREFIX}.tar.gz" "dist/${PREFIX}.zip" "dist/SHA256SUMS.txt" \
+              --title "Woloong-KlipperScreen ${TAG}" --notes "$NOTES" --verify-tag
+          fi
+          echo "已发布 Release $TAG（2 个资产 + SHA256SUMS.txt）"
+
       - name: 通知 Woloong-OS 跟进（把 sha/资产信息一并带过去，下游无需跨仓库权限）
         continue-on-error: true   # 通知是尽力而为 ✓ 失败不得掩盖同步成功 ✗
-        if: steps.audit.outputs.behind != '0' && inputs.do_push
+        if: steps.audit.outputs.behind != '0' && env.DO_PUSH == 'true'
         env:
           TOKEN: ${{ secrets.WOLOONG_DISPATCH_TOKEN }}
         run: |
           set -uo pipefail
           TAG='${{ steps.restack.outputs.tag }}'
           SHA=$(git rev-parse HEAD)
-          ASSET=''
-          ASHA=''
+          ASSET='${{ steps.package.outputs.asset }}'
+          ASHA='${{ steps.package.outputs.sha256 }}'
           if [ -z "$TOKEN" ]; then
             echo "::notice::未配置 WOLOONG_DISPATCH_TOKEN —— 请手动在 Woloong-OS 执行：bash tools/sync-component-release.sh klipperscreen $TAG"
             exit 0

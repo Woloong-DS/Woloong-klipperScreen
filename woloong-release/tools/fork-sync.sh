@@ -82,6 +82,28 @@ info "已暂存 $count 个定制文件"
 cp -a "$MAN" "$STAGE/__man"
 [ -f .gitattributes ] && cp -p .gitattributes "$STAGE/.gitattributes"
 
+# 3.4) 暂存「仓库自有文件」：上游没有、且不在定制清单里的文件
+#      （如 .github/workflows/upstream-sync.yml、keepalive.yml、.gitattributes）
+#      上游树替换会删除它们；不保留会让发布自动化在第一次重叠加后自毁。
+LC_ALL=C git ls-tree -r --name-only HEAD | LC_ALL=C sort > "$STAGE/__ours.paths"
+LC_ALL=C git ls-tree -r --name-only "$UP_SHA" | LC_ALL=C sort > "$STAGE/__up.paths"
+tr -d '\r' < "$MAN/assets.manifest.tsv" | cut -f2 | LC_ALL=C sort > "$STAGE/__manifest.paths"
+comm -23 "$STAGE/__ours.paths" "$STAGE/__up.paths" | while IFS= read -r rel; do
+  [ -n "$rel" ] || continue
+  case "$rel" in woloong-release/*) continue ;; esac
+  grep -qxF "$rel" "$STAGE/__manifest.paths" && continue
+  printf '%s\n' "$rel"
+done > "$STAGE/__own.paths"
+if [ -s "$STAGE/__own.paths" ]; then
+  mkdir -p "$STAGE/__own"
+  while IFS= read -r rel; do
+    [ -f "$rel" ] || continue
+    mkdir -p "$STAGE/__own/$(dirname "$rel")"
+    cp -p "$rel" "$STAGE/__own/$rel"
+  done < "$STAGE/__own.paths"
+  info "仓库自有文件 $(wc -l < "$STAGE/__own.paths") 个（上游没有、重叠加后保留）"
+fi
+
 # 4) 上游树整体替换（保留 .git/）
 info "用上游树替换工作区"
 git rm -r --ignore-unmatch -q . || true
@@ -90,6 +112,15 @@ if [ -f "$STAGE/.gitattributes" ]; then cp -p "$STAGE/.gitattributes" .gitattrib
 git checkout "$UP_SHA" -- . || die "从上游检出文件失败"
 if [ "$DO_COMMIT" -eq 1 ]; then
   git -c user.email=ci@woloong.local -c user.name=Woloong commit -q -m "upstream: $(basename "$(git remote get-url upstream)" .git) @ $UP_SHORT" && info "已提交上游快照"
+fi
+
+# 4a) 恢复仓库自有文件（不属于上游，也不属于定制资产）
+if [ -d "$STAGE/__own" ]; then
+  ( cd "$STAGE/__own" && find . -type f -print ) | sed 's|^\./||' | while IFS= read -r rel; do
+    mkdir -p "$(dirname "$rel")"
+    cp -p "$STAGE/__own/$rel" "$rel"
+  done
+  info "已恢复仓库自有文件：$(wc -l < "$STAGE/__own.paths") 个"
 fi
 
 # 4b) 恢复发行元数据目录（上游替换会删除它；补丁位于其中，必须先恢复）
