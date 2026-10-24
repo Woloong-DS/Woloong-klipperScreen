@@ -62,7 +62,7 @@ class KlippyWebsocket(threading.Thread):
         logging.debug("Attempting to connect")
         self.reconnect_count += 1
 
-        self.ws_url = f"{self.ws_proto}://{self._url}/websocket?token={self.api_key}"
+        self.ws_url = f"{self.ws_proto}://{self._url}/websocket" + (f"?token={self.api_key}" if self.api_key else "")
         self.ws = websocket.WebSocketApp(
             self.ws_url,
             on_close=self.on_close,
