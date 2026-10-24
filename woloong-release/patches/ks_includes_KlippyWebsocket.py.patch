@@ -1,0 +1,13 @@
+diff --git a/ks_includes/KlippyWebsocket.py b/ks_includes/KlippyWebsocket.py
+index f5e5cb57..118e20c7 100644
+--- a/ks_includes/KlippyWebsocket.py
++++ b/ks_includes/KlippyWebsocket.py
+@@ -62,7 +62,7 @@ class KlippyWebsocket(threading.Thread):
+         logging.debug("Attempting to connect")
+         self.reconnect_count += 1
+ 
+-        self.ws_url = f"{self.ws_proto}://{self._url}/websocket?token={self.api_key}"
++        self.ws_url = f"{self.ws_proto}://{self._url}/websocket" + (f"?token={self.api_key}" if self.api_key else "")
+         self.ws = websocket.WebSocketApp(
+             self.ws_url,
+             on_close=self.on_close,

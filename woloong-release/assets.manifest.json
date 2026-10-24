@@ -690,6 +690,14 @@
       "sha256": "15e58082e802f9f38997b29ea772b0a0a5b8e8b4da97283eab0561c512f18be0",
       "bytes": 7879,
       "kind": "tracked-file-replaced"
+    },
+    {
+      "path": "screen.py",
+      "sha256": "39f8acd6d293c7962ed6e6cb7fafb07b20110dfbe4e217d0594df0e604472c5c"
+    },
+    {
+      "path": "ks_includes/KlippyWebsocket.py",
+      "sha256": "ec4d9c3228798eab449a2277012871df3bc29fd64a00e4537e98449be3fb786e"
     }
   ]
 }
