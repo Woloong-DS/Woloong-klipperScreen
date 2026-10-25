@@ -17,7 +17,7 @@
  
          self.labels["menu"] = self._gtk.Button("settings", _("Menu"), "color4")
          self.labels["menu"].connect("clicked", self._screen._go_to_submenu, "")
-@@ -46,16 +36,53 @@
+@@ -46,16 +36,60 @@
  
          self.labels["actions"] = Gtk.Box(hexpand=True, vexpand=False, homogeneous=True)
  
@@ -62,6 +62,13 @@
 +        self.labels["dots"] = Gtk.Label(label="●  ○  ○", halign=Gtk.Align.CENTER)
 +        self.labels["dots"].get_style_context().add_class("splash_dots")
 +
++        # Woloong: 错误信息可能很长，限制每次显示行数并自动翻页，避免把底部按钮挤出屏幕
++        self._max_lines = 6
++        self._page = 0
++        self._pages = 1
++        self._rotate_source = None
++        self._full_lines = []
++
 +        content_box = Gtk.Box(orientation=Gtk.Orientation.VERTICAL, spacing=12)
 +        content_box.set_halign(Gtk.Align.CENTER)
 +        content_box.set_valign(Gtk.Align.CENTER)
@@ -80,3 +87,40 @@
          main.pack_end(self.labels["actions"], False, False, 0)
  
          self.show_restart_buttons()
+@@ -63,9 +97,35 @@
+         self.content.add(main)
+ 
+     def update_text(self, text):
+-        self.labels["text"].set_label(f"{text}")
++        self._full_lines = str(text).splitlines() or [""]
++        self._page = 0
++        self._render_page()
+         self.show_restart_buttons()
+ 
++    def _render_page(self):
++        lines = self._full_lines
++        self._pages = max(1, (len(lines) + self._max_lines - 1) // self._max_lines)
++        start = self._page * self._max_lines
++        chunk = lines[start:start + self._max_lines]
++        if self._pages > 1:
++            chunk = chunk + ["", "(%d/%d)" % (self._page + 1, self._pages)]
++        self.labels["text"].set_label("\n".join(chunk))
++        self._schedule_rotation()
++
++    def _schedule_rotation(self):
++        if self._rotate_source is not None:
++            GLib.source_remove(self._rotate_source)
++            self._rotate_source = None
++        if self._pages <= 1:
++            return
++        self._rotate_source = GLib.timeout_add_seconds(6, self._next_page)
++
++    def _next_page(self):
++        self._rotate_source = None
++        self._page = (self._page + 1) % self._pages
++        self._render_page()
++        return False
++
+     def clear_action_bar(self):
+         for child in self.labels["actions"].get_children():
+             self.labels["actions"].remove(child)

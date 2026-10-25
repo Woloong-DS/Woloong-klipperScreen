@@ -16,6 +16,7 @@ v<上游版本>-<定制标识><序号>
 | `ws` | websocket / 核心通信修复 |
 | `afc` | AFC 面板集成 |
 | `theme` | 主题 / 图标 / 配色 |
+| `ui` | 界面布局 / 可用性修复 |
 
 示例：
 
@@ -33,6 +34,6 @@ v<上游版本>-<定制标识><序号>
 
 ## 约束（门禁）
 
-- tag 必须匹配 `^v<base_ref>-(ws|afc|theme)[0-9]+$`，或等于 `base_ref` 本身；
+- tag 必须匹配 `^v<base_ref>-(ws|afc|theme|ui)[0-9]+$`，或等于 `base_ref` 本身；
 - Woloong-OS 清单的 `klipperscreen.pin_ref` 必须等于最新定制 tag，且该 tag 指向 `pin` 提交；
 - AFC add-on 无上游 tag，其来源 commit 记录在 `VENDOR.md`（集成后新增）。

@@ -63,9 +63,7 @@
     },
     {
       "path": "panels/splash_screen.py",
-      "sha256": "67a929fd0b1c8c2cb6f3928d5edfeb1a6f4c36dfb74dc5284867ce67884a679e",
-      "bytes": 7903,
-      "kind": "tracked-file-replaced"
+      "sha256": "9a413f6545506533e620fa9bb1309e78fdc29d0d222c7d880e4af466c6308b6c"
     },
     {
       "path": "screen.py",

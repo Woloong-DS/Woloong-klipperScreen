@@ -1,8 +1,6 @@
-diff --git a/config/defaults.conf b/config/defaults.conf
-index c72b3c1f..1a82a55f 100644
 --- a/config/defaults.conf
 +++ b/config/defaults.conf
-@@ -25,3 +25,5 @@ extruder = 210
+@@ -25,3 +25,5 @@
  [include print_menu.conf]
  
  [include move_menu.conf]
