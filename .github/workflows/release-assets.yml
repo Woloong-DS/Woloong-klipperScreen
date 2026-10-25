@@ -104,7 +104,7 @@ jobs:
       - name: 通知 Woloong-OS 跟进（repository_dispatch）
         continue-on-error: true        # 通知尽力而为，不影响发布结果
         env:
-          TOKEN: ${{ secrets.WOLOONG_DISPATCH_TOKEN }}
+          TOKEN: ${{ secrets.WO_GIT_TOKEN || secrets.WOLOONG_DISPATCH_TOKEN }}
         run: |
           set -uo pipefail
           TAG='${{ steps.p.outputs.tag }}'

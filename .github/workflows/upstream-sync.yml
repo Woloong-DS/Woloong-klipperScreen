@@ -146,7 +146,7 @@ jobs:
         continue-on-error: true   # 通知是尽力而为 ✓ 失败不得掩盖同步成功 ✗
         if: steps.audit.outputs.behind != '0' && env.DO_PUSH == 'true'
         env:
-          TOKEN: ${{ secrets.WOLOONG_DISPATCH_TOKEN }}
+          TOKEN: ${{ secrets.WO_GIT_TOKEN || secrets.WOLOONG_DISPATCH_TOKEN }}
         run: |
           set -uo pipefail
           TAG='${{ steps.restack.outputs.tag }}'
