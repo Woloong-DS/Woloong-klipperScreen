@@ -40,7 +40,7 @@ info "工作区脏数: $(git status --porcelain | wc -l)"
 
 # 1) 抓取上游
 git remote get-url upstream >/dev/null 2>&1 || die "未配置 upstream 远程（git remote add upstream <官方仓库>）"
-git fetch -q --tags upstream || die "fetch upstream 失败"
+git fetch -q --tags --force upstream || die "fetch upstream 失败"
 UP_SHA="$(git rev-parse --verify "$REF^{commit}") " || die "无法解析 ref：$REF"
 UP_SHA="$(echo "$UP_SHA" | tr -d ' ')"
 UP_SHORT="$(echo "$UP_SHA" | cut -c1-8)"
@@ -48,9 +48,17 @@ info "上游 ref  : $REF = $UP_SHORT"
 
 # 2) 基线漂移检测（受控文件是否被上游改动）
 DRIFT=""
+EXTERNAL=""
+if [ -f "$MAN/external-baseline.list" ]; then
+  EXTERNAL="$(grep -v '^[[:space:]]*#' "$MAN/external-baseline.list" | grep -v '^[[:space:]]*$')"
+fi
 info "基线漂移检测："
 while IFS= read -r b; do
   rel="${b#$MAN/baseline/}"
+  if [ -n "$EXTERNAL" ] && printf '%s\n' "$EXTERNAL" | grep -qxF "$rel"; then
+    info "  - 外部 vendor，跳过基线比对: $rel（见 VENDOR.md）"
+    continue
+  fi
   if ! git cat-file -e "$UP_SHA:$rel" 2>/dev/null; then
     info "  ⚠ 上游已无此文件: $rel"; DRIFT="$DRIFT $rel"; continue
   fi
@@ -135,6 +143,12 @@ while IFS= read -r b; do
   rel="${b#$MAN/baseline/}"
   p="$MAN/patches/$(echo "$rel" | tr '/' '_').patch"
   if [ ! -f "$p" ]; then info "  ⚠ 缺补丁，跳过：$rel（$p）"; fail=$((fail+1)); continue; fi
+  # 上游树里没有该文件（如 AFC 面板来自第三方 add-on）：先放回基线原文，再重放补丁
+  if [ ! -f "$rel" ]; then
+    mkdir -p "$(dirname "$rel")"
+    cp -p "$b" "$rel"
+    info "  + 上游无此文件，已放入基线: $rel"
+  fi
   if git apply "$p" 2>/dev/null; then info "  ✓ 补丁已应用: $rel"; else info "  ✗ 补丁应用失败: $rel"; fail=$((fail+1)); fi
 done < <(find "$MAN/baseline" -type f | sort)
 info "复制新增/资产文件"

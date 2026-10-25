@@ -1,8 +1,6 @@
-diff --git a/screen.py b/screen.py
-index 3bad6a9a..67b498cc 100755
 --- a/screen.py
 +++ b/screen.py
-@@ -739,7 +739,8 @@ class KlipperScreen(Gtk.Window):
+@@ -739,7 +739,8 @@
  
      def websocket_connected(self):
          logging.debug("### websocket_connected")

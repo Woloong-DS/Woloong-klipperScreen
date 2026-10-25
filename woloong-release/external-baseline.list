@@ -1,0 +1,4 @@
+# 基线不来自 KlipperScreen 上游的文件（第三方 vendor，如 AFC 面板）
+# 每行一个仓库相对路径；fork-sync 对这些文件跳过“上游基线漂移”比对，
+# 其上游来源与 pin 记录在 VENDOR.md。
+panels/AFC.py

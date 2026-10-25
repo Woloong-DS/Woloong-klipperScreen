@@ -116,7 +116,7 @@ Woloong-OS 镜像已内置本界面（`~/woloong-klipperScreen`，服务名 `Kli
 
 ## 定制内容
 
-受控文件（打补丁或自有文案）与新增文件共 114 项，逐项记录在
+受控文件（打补丁或自有文案）与新增文件共 123 项，逐项记录在
 [`woloong-release/assets.manifest.tsv`](woloong-release/assets.manifest.tsv)：
 
 | 类别 | 路径 |
@@ -124,6 +124,7 @@ Woloong-OS 镜像已内置本界面（`~/woloong-klipperScreen`，服务名 `Kli
 | 受控文件（打补丁） | `panels/splash_screen.py`（启动画面） |
 | 自有文案 | `README.md`（本文件，重叠加时保留） |
 | 新增主题 | `styles/woloong/`（主题样式、图标与品牌资源，112 个文件） |
+| AFC 面板 | `panels/AFC.py`（上游 vendor + 守卫补丁）、`afc_icons/`（5 个 SVG）、`config/AFC_menu.conf` |
 | 上游 CI 精简 | `.github/`（按 `woloong-release/remove.list` 移除上游 codeql/docs/test 等工作流与 dependabot） |
 | 发行元数据 | `woloong-release/`（基线、补丁、清单、`upstream.json`、工具脚本） |
 

@@ -1,0 +1,27 @@
+--- a/panels/AFC.py
++++ b/panels/AFC.py
+@@ -281,6 +281,15 @@
+         objects = []
+         if isinstance(response, dict):
+             objects = response.get("result", {}).get("objects", []) or []
++        # Woloong: 打印机没有 AFC 对象时不进入面板（配置残留 / 驱动未装）
++        if not any(o == "AFC" or o.startswith("AFC ") or o.startswith("AFC_") for o in objects):
++            logging.info("AFC panel: printer has no AFC object, returning to main menu")
++            self.update_info = False
++            cur_panels = self._screen._cur_panels
++            if cur_panels and self._screen.panels.get(cur_panels[-1]) is self:
++                self._screen._remove_current_panel()
++                self._screen._menu_go_back()
++            return
+         self.filament_sensors = [
+             name for name in objects
+             if name.startswith("filament_switch_sensor")
+@@ -314,7 +323,7 @@
+         result = response.get("result")
+         if not isinstance(result, dict):
+             return None
+-        return result.get("status:", {}).get("AFC", {})
++        return result.get("status", {}).get("AFC", {})
+ 
+     def report_afc_failure(self, response):
+         """

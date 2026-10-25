@@ -1,8 +1,6 @@
-diff --git a/ks_includes/KlippyWebsocket.py b/ks_includes/KlippyWebsocket.py
-index f5e5cb57..118e20c7 100644
 --- a/ks_includes/KlippyWebsocket.py
 +++ b/ks_includes/KlippyWebsocket.py
-@@ -62,7 +62,7 @@ class KlippyWebsocket(threading.Thread):
+@@ -62,7 +62,7 @@
          logging.debug("Attempting to connect")
          self.reconnect_count += 1
  

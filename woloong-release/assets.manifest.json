@@ -687,8 +687,8 @@
     },
     {
       "path": "README.md",
-      "sha256": "15e58082e802f9f38997b29ea772b0a0a5b8e8b4da97283eab0561c512f18be0",
-      "bytes": 7879,
+      "sha256": "e066b56112af1f3156d6ec9d8a934cd2db178b8689a885f6c0604113671d92b8",
+      "bytes": 8001,
       "kind": "tracked-file-replaced"
     },
     {
@@ -698,6 +698,48 @@
     {
       "path": "ks_includes/KlippyWebsocket.py",
       "sha256": "ec4d9c3228798eab449a2277012871df3bc29fd64a00e4537e98449be3fb786e"
+    },
+    {
+      "path": "panels/AFC.py",
+      "sha256": "243a783311a8f94f2d42de1d74dd24dcf88eaaf67d63d20c423a30c2f50c2811",
+      "bytes": 124971,
+      "kind": "tracked-file-replaced"
+    },
+    {
+      "path": "config/AFC_menu.conf",
+      "sha256": "1ad8ab5f56a78ca5b6c6c0581e973f7c3978a2dbe32107370c001e5c90ce277b",
+      "bytes": 1207,
+      "kind": "vendored-file"
+    },
+    {
+      "path": "afc_icons/AFC.svg",
+      "sha256": "297ca1ddf36747e1e8976991639a06fe1e47b543505757c41f5017651f8fce75",
+      "bytes": 2975,
+      "kind": "vendored-file"
+    },
+    {
+      "path": "afc_icons/FilamentReelIcon.svg",
+      "sha256": "2c76978815af0ae7486c383b20f1586a1623f45cd974e0e74472ab7de328a73a",
+      "bytes": 1738,
+      "kind": "vendored-file"
+    },
+    {
+      "path": "afc_icons/HTLF.svg",
+      "sha256": "63c6b08089ef1878252b94619d2b5a066a0160910fff78f87d3c51b22b845abd",
+      "bytes": 18460,
+      "kind": "vendored-file"
+    },
+    {
+      "path": "afc_icons/Night_Owl.svg",
+      "sha256": "b8b54d582dd3d96e1488aefa4a7952c40543b699d8fc6b4fcc17121b6bc2fab0",
+      "bytes": 12537,
+      "kind": "vendored-file"
+    },
+    {
+      "path": "afc_icons/box_turtle_colored_logo.svg",
+      "sha256": "f3f489456626b469f209b62c25be30a92c154b1add2e8808cbb36ec2938858bb",
+      "bytes": 53193,
+      "kind": "vendored-file"
     }
   ]
 }

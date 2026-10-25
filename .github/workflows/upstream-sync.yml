@@ -73,6 +73,10 @@ jobs:
           echo "latest=$LATEST" >> "$GITHUB_OUTPUT"
           if [ "$rc" = "0" ]; then echo 'behind=0' >> "$GITHUB_OUTPUT"; else echo 'behind=1' >> "$GITHUB_OUTPUT"; fi
 
+      - name: AFC 面板 vendor 落后审计（仅告警，不阻断）
+        continue-on-error: true
+        run: bash woloong-release/tools/check-afc-upstream.sh
+
       - name: 无新版本 → 结束
         if: steps.audit.outputs.behind == '0'
         run: echo '发行树已对应上游最新发布，无需动作 ✓'
