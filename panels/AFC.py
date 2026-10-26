@@ -284,12 +284,15 @@ class Panel(ScreenPanel):
             objects = response.get("result", {}).get("objects", []) or []
         # Woloong: 打印机没有 AFC 对象时不进入面板（配置残留 / 驱动未装）
         if not any(o == "AFC" or o.startswith("AFC ") or o.startswith("AFC_") for o in objects):
-            logging.info("AFC panel: printer has no AFC object, returning to main menu")
+            logging.info("AFC panel: printer has no AFC object, showing install hint")
             self.update_info = False
-            cur_panels = self._screen._cur_panels
-            if cur_panels and self._screen.panels.get(cur_panels[-1]) is self:
-                self._screen._remove_current_panel()
-                self._screen._menu_go_back()
+            if self.screen_stack.get_child_by_name("afc_missing") is not None:
+                self.screen_stack.set_visible_child_name("afc_missing")
+            else:
+                cur_panels = self._screen._cur_panels
+                if cur_panels and self._screen.panels.get(cur_panels[-1]) is self:
+                    self._screen._remove_current_panel()
+                    self._screen._menu_go_back()
             return
         self.filament_sensors = [
             name for name in objects
