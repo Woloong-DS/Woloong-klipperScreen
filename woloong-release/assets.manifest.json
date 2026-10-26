@@ -52,6 +52,10 @@
       "sha256": "aa7792a6a2e7027ecdfa8cdd6c0781bbcfb5a866287268b43891f8a34774c4bd"
     },
     {
+      "path": "ks_includes/KlippyGtk.py",
+      "sha256": "f71cc66d74df1a5bac0fd8b3de70bb62ce27480f78e1b3412a611804ac73ba13"
+    },
+    {
       "path": "ks_includes/KlippyWebsocket.py",
       "sha256": "ec4d9c3228798eab449a2277012871df3bc29fd64a00e4537e98449be3fb786e"
     },
@@ -63,7 +67,7 @@
     },
     {
       "path": "panels/splash_screen.py",
-      "sha256": "adefeca4029bb9f9f77d10de372385d382d8ae4efed56119dfe58fb99c9bd931"
+      "sha256": "fc4fd520be21b5c9dfbb32ad61b332201c1e663be50621ba1ff262a365c50a3a"
     },
     {
       "path": "screen.py",

@@ -63,6 +63,12 @@ class KlippyGtk:
         elif self.font_size_type == "small":
             self.font_size = self.font_size * 0.91
             self.bsidescale = .55
+        # Woloong: 小屏（高度 <700px）自动缩小字号，避免主菜单底部按钮被挤出
+        if self.height < 700:
+            self.font_size = self.font_size * 0.85
+            self.img_scale = self.font_size * 2
+            self.bsidescale = min(self.bsidescale, .6)
+
         self.img_width = self.font_size * 3
         self.img_height = self.font_size * 3
         self.titlebar_height = self.font_size * 2

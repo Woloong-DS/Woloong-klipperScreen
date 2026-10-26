@@ -46,7 +46,10 @@ class Panel(ScreenPanel):
         main.pack_start(top_spacer, True, True, 0)
 
         # Logo：取屏幕短边 25%（垂直居中偏上）
-        logo_size = min(self._gtk.content_width, self._gtk.content_height) * 0.25
+        # 相对尺寸 + 小屏收缩：保证底部按钮永远有位置
+        _w, _h = self._gtk.content_width, self._gtk.content_height
+        _ratio = 0.25 if _h >= 600 else 0.18
+        logo_size = min(_w, _h) * _ratio
         image = self._gtk.Image("klipper", logo_size, logo_size)
         image.set_halign(Gtk.Align.CENTER)
         image.set_valign(Gtk.Align.CENTER)
@@ -74,7 +77,9 @@ class Panel(ScreenPanel):
         # 固定高度的滚动区：错误信息再长也不会把底部按钮挤出屏幕
         self.text_scroll = Gtk.ScrolledWindow()
         self.text_scroll.set_policy(Gtk.PolicyType.NEVER, Gtk.PolicyType.EXTERNAL)
-        self.text_scroll.set_size_request(-1, max(96, int(self._gtk.content_height * 0.30)))
+        _reserved = int(logo_size) + 150  # 品牌行 + 圆点 + 底部按钮
+        _scroll_h = max(80, min(int(_h * 0.30), max(80, _h - _reserved)))
+        self.text_scroll.set_size_request(-1, _scroll_h)
         self.text_scroll.set_propagate_natural_height(False)
         self.text_scroll.set_hexpand(True)
         self.text_scroll.set_halign(Gtk.Align.FILL)
