@@ -5,6 +5,7 @@
 # This file may be distributed under the terms of the GNU GPLv3 license.
 
 import logging
+import os
 import os.path
 import gi
 import pathlib
@@ -567,6 +568,18 @@ class Panel(ScreenPanel):
         self.screen_stack.add_named(self.sensor_grid, "sensor_grid")
         self.screen_stack.add_named(self.selector_grid, "selector_grid")
         self.screen_stack.set_visible_child_name("loading_grid")
+        # Woloong: 未安装 AFC 驱动时不要一直停留在 Loading（给出明确提示）
+        if not os.path.exists("/home/pi/klipper/klippy/extras/AFC.py"):
+            _miss = Gtk.Box(orientation=Gtk.Orientation.VERTICAL, spacing=12)
+            _miss.set_valign(Gtk.Align.CENTER)
+            _miss.set_halign(Gtk.Align.CENTER)
+            _t = Gtk.Label(label=_("AFC is not installed"))
+            _t.get_style_context().add_class("splash_status")
+            _h = Gtk.Label(label=_("Install the 'afc' component from KIAUH, then restart KlipperScreen."))
+            _miss.pack_start(_t, False, False, 0)
+            _miss.pack_start(_h, False, False, 0)
+            self.screen_stack.add_named(_miss, "afc_missing")
+            self.screen_stack.set_visible_child_name("afc_missing")
 
         self.content.add(self.screen_stack)
 

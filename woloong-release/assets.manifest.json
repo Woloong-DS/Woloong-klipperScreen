@@ -61,9 +61,7 @@
     },
     {
       "path": "panels/AFC.py",
-      "sha256": "243a783311a8f94f2d42de1d74dd24dcf88eaaf67d63d20c423a30c2f50c2811",
-      "bytes": 124971,
-      "kind": "tracked-file-replaced"
+      "sha256": "a8dc5b795541805df837871ddc28a04dca765e84e9d668f871f0e41aed4c037e"
     },
     {
       "path": "panels/splash_screen.py",
