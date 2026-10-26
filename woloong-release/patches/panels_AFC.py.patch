@@ -8,23 +8,26 @@
  import os.path
  import gi
  import pathlib
-@@ -281,6 +282,15 @@
+@@ -281,6 +282,18 @@
          objects = []
          if isinstance(response, dict):
              objects = response.get("result", {}).get("objects", []) or []
 +        # Woloong: 打印机没有 AFC 对象时不进入面板（配置残留 / 驱动未装）
 +        if not any(o == "AFC" or o.startswith("AFC ") or o.startswith("AFC_") for o in objects):
-+            logging.info("AFC panel: printer has no AFC object, returning to main menu")
++            logging.info("AFC panel: printer has no AFC object, showing install hint")
 +            self.update_info = False
-+            cur_panels = self._screen._cur_panels
-+            if cur_panels and self._screen.panels.get(cur_panels[-1]) is self:
-+                self._screen._remove_current_panel()
-+                self._screen._menu_go_back()
++            if self.screen_stack.get_child_by_name("afc_missing") is not None:
++                self.screen_stack.set_visible_child_name("afc_missing")
++            else:
++                cur_panels = self._screen._cur_panels
++                if cur_panels and self._screen.panels.get(cur_panels[-1]) is self:
++                    self._screen._remove_current_panel()
++                    self._screen._menu_go_back()
 +            return
          self.filament_sensors = [
              name for name in objects
              if name.startswith("filament_switch_sensor")
-@@ -314,7 +324,7 @@
+@@ -314,7 +327,7 @@
          result = response.get("result")
          if not isinstance(result, dict):
              return None
@@ -33,7 +36,7 @@
  
      def report_afc_failure(self, response):
          """
-@@ -558,6 +568,18 @@
+@@ -558,6 +571,18 @@
          self.screen_stack.add_named(self.sensor_grid, "sensor_grid")
          self.screen_stack.add_named(self.selector_grid, "selector_grid")
          self.screen_stack.set_visible_child_name("loading_grid")
