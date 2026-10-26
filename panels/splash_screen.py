@@ -4,7 +4,7 @@ import os
 import gi
 
 gi.require_version("Gtk", "3.0")
-from gi.repository import Gtk, Pango
+from gi.repository import GLib, Gtk, Pango
 from ks_includes.screen_panel import ScreenPanel
 
 
@@ -66,6 +66,13 @@ class Panel(ScreenPanel):
             valign=Gtk.Align.CENTER,
         )
         self.labels["text"].get_style_context().add_class("splash_status")
+        self.labels["text"].set_valign(Gtk.Align.START)
+        # 固定高度的滚动区：错误信息再长也不会把底部按钮挤出屏幕
+        self.text_scroll = Gtk.ScrolledWindow()
+        self.text_scroll.set_policy(Gtk.PolicyType.NEVER, Gtk.PolicyType.AUTOMATIC)
+        self.text_scroll.set_size_request(-1, max(96, int(self._gtk.content_height * 0.30)))
+        self.text_scroll.set_propagate_natural_height(False)
+        self.text_scroll.add(self.labels["text"])
 
         self.labels["dots"] = Gtk.Label(label="●  ○  ○", halign=Gtk.Align.CENTER)
         self.labels["dots"].get_style_context().add_class("splash_dots")
@@ -82,7 +89,7 @@ class Panel(ScreenPanel):
         content_box.set_valign(Gtk.Align.CENTER)
         content_box.pack_start(image, False, True, 0)
         content_box.pack_start(self.labels["brand"], False, True, 0)
-        content_box.pack_start(self.labels["text"], False, True, 0)
+        content_box.pack_start(self.text_scroll, False, True, 0)
         content_box.pack_start(self.labels["dots"], False, True, 0)
         main.pack_start(content_box, False, True, 0)
 
@@ -103,28 +110,34 @@ class Panel(ScreenPanel):
         self.show_restart_buttons()
 
     def _render_page(self):
-        lines = self._full_lines
-        self._pages = max(1, (len(lines) + self._max_lines - 1) // self._max_lines)
-        start = self._page * self._max_lines
-        chunk = lines[start:start + self._max_lines]
-        if self._pages > 1:
-            chunk = chunk + ["", "(%d/%d)" % (self._page + 1, self._pages)]
-        self.labels["text"].set_label("\n".join(chunk))
+        self.labels["text"].set_label("\n".join(self._full_lines))
         self._schedule_rotation()
 
     def _schedule_rotation(self):
         if self._rotate_source is not None:
             GLib.source_remove(self._rotate_source)
             self._rotate_source = None
-        if self._pages <= 1:
-            return
-        self._rotate_source = GLib.timeout_add_seconds(6, self._next_page)
+        GLib.idle_add(self._check_overflow)
 
-    def _next_page(self):
-        self._rotate_source = None
-        self._page = (self._page + 1) % self._pages
-        self._render_page()
+    def _check_overflow(self):
+        if not hasattr(self, "text_scroll"):
+            return False
+        adj = self.text_scroll.get_vadjustment()
+        if adj.get_upper() <= adj.get_page_size() + 1:
+            return False
+        if self._rotate_source is None:
+            self._rotate_source = GLib.timeout_add_seconds(6, self._scroll_step)
         return False
+
+    def _scroll_step(self):
+        adj = self.text_scroll.get_vadjustment()
+        page = adj.get_page_size()
+        upper = adj.get_upper()
+        new_val = adj.get_value() + page * 0.9
+        if new_val >= upper - page:
+            new_val = 0
+        adj.set_value(new_val)
+        return True
 
     def clear_action_bar(self):
         for child in self.labels["actions"].get_children():
