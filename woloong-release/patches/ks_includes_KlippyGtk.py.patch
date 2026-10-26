@@ -1,8 +1,6 @@
-diff --git a/ks_includes/KlippyGtk.py b/ks_includes/KlippyGtk.py
-index 909b2924..4e0bb02a 100644
 --- a/ks_includes/KlippyGtk.py
 +++ b/ks_includes/KlippyGtk.py
-@@ -63,6 +63,12 @@ class KlippyGtk:
+@@ -63,6 +63,12 @@
          elif self.font_size_type == "small":
              self.font_size = self.font_size * 0.91
              self.bsidescale = .55

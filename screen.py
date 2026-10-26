@@ -158,6 +158,8 @@ class KlipperScreen(Gtk.Window):
         self.load_base_styles()
         self.set_icon_from_file(os.path.join(klipperscreendir, "styles", "icon.svg"))
         self.base_panel = BasePanel(self)
+        # Woloong: 底部安全边距，避免按钮边框/时间刻度贴边被面板裁掉
+        self.base_panel.content.set_margin_bottom(10)
         self.change_theme(self.theme)
         self.overlay = Gtk.Overlay()
         self.add(self.overlay)
