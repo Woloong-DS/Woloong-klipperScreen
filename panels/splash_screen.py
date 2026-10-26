@@ -67,11 +67,17 @@ class Panel(ScreenPanel):
         )
         self.labels["text"].get_style_context().add_class("splash_status")
         self.labels["text"].set_valign(Gtk.Align.START)
+        self.labels["text"].set_hexpand(True)
+        self.labels["text"].set_xalign(0.0)
+        self.labels["text"].set_margin_start(24)
+        self.labels["text"].set_margin_end(24)
         # 固定高度的滚动区：错误信息再长也不会把底部按钮挤出屏幕
         self.text_scroll = Gtk.ScrolledWindow()
-        self.text_scroll.set_policy(Gtk.PolicyType.NEVER, Gtk.PolicyType.AUTOMATIC)
+        self.text_scroll.set_policy(Gtk.PolicyType.NEVER, Gtk.PolicyType.EXTERNAL)
         self.text_scroll.set_size_request(-1, max(96, int(self._gtk.content_height * 0.30)))
         self.text_scroll.set_propagate_natural_height(False)
+        self.text_scroll.set_hexpand(True)
+        self.text_scroll.set_halign(Gtk.Align.FILL)
         self.text_scroll.add(self.labels["text"])
 
         self.labels["dots"] = Gtk.Label(label="●  ○  ○", halign=Gtk.Align.CENTER)
@@ -85,7 +91,8 @@ class Panel(ScreenPanel):
         self._full_lines = []
 
         content_box = Gtk.Box(orientation=Gtk.Orientation.VERTICAL, spacing=12)
-        content_box.set_halign(Gtk.Align.CENTER)
+        content_box.set_halign(Gtk.Align.FILL)
+        content_box.set_hexpand(True)
         content_box.set_valign(Gtk.Align.CENTER)
         content_box.pack_start(image, False, True, 0)
         content_box.pack_start(self.labels["brand"], False, True, 0)

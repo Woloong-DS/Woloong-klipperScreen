@@ -45,7 +45,7 @@
     },
     {
       "path": "config/AFC_menu.conf",
-      "sha256": "2dd540b78239e7651da1341f8f1441cf98ea163e57b4f4efff89c9a7a31706d6"
+      "sha256": "1ad8ab5f56a78ca5b6c6c0581e973f7c3978a2dbe32107370c001e5c90ce277b"
     },
     {
       "path": "config/defaults.conf",
@@ -63,7 +63,7 @@
     },
     {
       "path": "panels/splash_screen.py",
-      "sha256": "9a413f6545506533e620fa9bb1309e78fdc29d0d222c7d880e4af466c6308b6c"
+      "sha256": "adefeca4029bb9f9f77d10de372385d382d8ae4efed56119dfe58fb99c9bd931"
     },
     {
       "path": "screen.py",
