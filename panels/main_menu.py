@@ -135,7 +135,16 @@ class Panel(MenuPanel):
         if self._show_heater_power and self._printer.device_has_power(device):
             self.labels['da'].add_object(device, "powers", rgb, True, False)
 
-        name = self._gtk.Button(image, self.prettify(devname), None, self.bts, Gtk.PositionType.LEFT, 1)
+        name = self._gtk.Button(image, self.prettify(devname), None, self.bts, Gtk.PositionType.LEFT, 1,
+                                color=rgb)
+        if rgb:
+            try:
+                prov = Gtk.CssProvider()
+                _r, _g, _b = [int(c * 255) for c in rgb[:3]]
+                prov.load_from_data(("button label { color: rgb(%d,%d,%d); }" % (_r, _g, _b)).encode())
+                name.get_style_context().add_provider(prov, Gtk.STYLE_PROVIDER_PRIORITY_APPLICATION)
+            except Exception:
+                pass
         name.connect("clicked", self.toggle_visibility, device)
         name.set_alignment(0, .5)
         name.get_style_context().add_class(class_name)
