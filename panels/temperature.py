@@ -379,8 +379,17 @@ class Panel(ScreenPanel):
         rgb = self._gtk.get_temp_color(dev_type)
 
         name = self._gtk.Button(
-            image, self.prettify(devname), None, self.bts, Gtk.PositionType.LEFT, 1
+            image, self.prettify(devname), None, self.bts, Gtk.PositionType.LEFT, 1,
+            color=rgb,
         )
+        if rgb:
+            try:
+                prov = Gtk.CssProvider()
+                r, g, b = [int(c * 255) for c in rgb[:3]]
+                prov.load_from_data(("button label { color: rgb(%d,%d,%d); }" % (r, g, b)).encode())
+                name.get_style_context().add_provider(prov, Gtk.STYLE_PROVIDER_PRIORITY_APPLICATION)
+            except Exception:
+                pass
         name.set_alignment(0, 0.5)
         name.get_style_context().add_class(class_name)
         visible = self._config.get_config().getboolean(

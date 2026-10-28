@@ -121,11 +121,39 @@ class KlippyGtk:
         for key in self.color_list:
             self.color_list[key]['state'] = 0
 
-    def Image(self, image_name=None, width=None, height=None):
+    def Image(self, image_name=None, width=None, height=None, color=None):
         if image_name is None:
             return Gtk.Image()
         pixbuf = self.PixbufFromIcon(image_name, width, height)
+        if pixbuf is not None and color:
+            pixbuf = self.tint_pixbuf(pixbuf, color)
         return Gtk.Image.new_from_pixbuf(pixbuf) if pixbuf is not None else Gtk.Image()
+
+    @staticmethod
+    def tint_pixbuf(pixbuf, color):
+        """把白色图标按给定 rgb 着色（保留 alpha）。"""
+        try:
+            import gi
+            gi.require_version("GdkPixbuf", "2.0")
+            from gi.repository import GdkPixbuf, GLib
+            w, h = pixbuf.get_width(), pixbuf.get_height()
+            rowstride = pixbuf.get_rowstride()
+            nch = pixbuf.get_n_channels()
+            data = bytearray(pixbuf.get_pixels())
+            r, g, b = [max(0, min(255, int(c * 255))) for c in color[:3]]
+            for y in range(h):
+                base = y * rowstride
+                for x in range(w):
+                    i = base + x * nch
+                    if nch == 4:
+                        data[i:i + 3] = bytes((r, g, b))
+                    elif nch == 3:
+                        data[i:i + 3] = bytes((r, g, b))
+            return GdkPixbuf.Pixbuf.new_from_bytes(
+                GLib.Bytes.new(bytes(data)), GdkPixbuf.Colorspace.RGB,
+                nch == 4, 8, w, h, rowstride)
+        except Exception:
+            return pixbuf
 
     def update_themedir(self, theme):
         self.themedir = os.path.join(pathlib.Path(__file__).parent.resolve().parent, "styles", theme, "images")
@@ -169,7 +197,7 @@ class KlippyGtk:
         stream.close_async(2)
         return pixbuf
 
-    def Button(self, image_name=None, label=None, style=None, scale=None, position=Gtk.PositionType.TOP, lines=2):
+    def Button(self, image_name=None, label=None, style=None, scale=None, position=Gtk.PositionType.TOP, lines=2, color=None):
         if self.font_size_type == "max" and label is not None:
             image_name = None
         b = Gtk.Button(hexpand=True, vexpand=True, image_position=position, always_show_image=True)
@@ -184,7 +212,7 @@ class KlippyGtk:
             if label is None:
                 scale = scale * 1.4
             width = height = self.img_scale * scale
-            b.set_image(self.Image(image_name, width, height))
+            b.set_image(self.Image(image_name, width, height, color=color))
             spinner = Gtk.Spinner(width_request=width, height_request=height, no_show_all=True)
             spinner.hide()
             box = find_widget(b, Gtk.Box)
