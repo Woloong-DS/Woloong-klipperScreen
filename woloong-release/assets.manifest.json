@@ -68,6 +68,10 @@
       "sha256": "fc4fd520be21b5c9dfbb32ad61b332201c1e663be50621ba1ff262a365c50a3a"
     },
     {
+      "path": "panels/spoolman.py",
+      "sha256": "896b219dbe69b8a925c7958a72bc3e3b432895b02d05863489221f762c2b81b3"
+    },
+    {
       "path": "screen.py",
       "sha256": "be89e7dee17b83de9a86f13b9e9589d515d17fc9391761bf9fc0ed08375c6ce4"
     },

@@ -440,8 +440,11 @@ class Panel(ScreenPanel):
         self._model.clear()
         self._materials.clear()
         spools = self._screen.spoolman_api.load_all_spools(allow_archived=not hide_archived)
-        if not spools:
+        if spools is None:
             self._screen.show_popup_message(_("Error trying to fetch spools"))
+            return
+        if not spools:
+            # 空列表是合法状态（尚未添加料盘），不是错误
             return
 
         materials = []
