@@ -45,8 +45,8 @@
     },
     {
       "path": "config/AFC_menu.conf",
-      "sha256": "7a7d4971d3a7aa2f74dde584315ece8c8060f2457a6dcee9725a614d3b1ee94d",
-      "bytes": 1408
+      "sha256": "bd86973068b41735d3d12bae1385240c4386b29d85fd722f68376ec4788dfa0f",
+      "bytes": 1349
     },
     {
       "path": "config/defaults.conf",
@@ -70,8 +70,8 @@
     },
     {
       "path": "panels/splash_screen.py",
-      "sha256": "fc4fd520be21b5c9dfbb32ad61b332201c1e663be50621ba1ff262a365c50a3a",
-      "bytes": 10569
+      "sha256": "7072ca0439a66148e38890f18945b6871f8bc4aeab29e46ddc7acbd1c7953432",
+      "bytes": 10310
     },
     {
       "path": "panels/spoolman.py",
