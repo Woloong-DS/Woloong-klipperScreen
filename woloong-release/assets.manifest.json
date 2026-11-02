@@ -45,35 +45,43 @@
     },
     {
       "path": "config/AFC_menu.conf",
-      "sha256": "7a7d4971d3a7aa2f74dde584315ece8c8060f2457a6dcee9725a614d3b1ee94d"
+      "sha256": "7a7d4971d3a7aa2f74dde584315ece8c8060f2457a6dcee9725a614d3b1ee94d",
+      "bytes": 1408
     },
     {
       "path": "config/defaults.conf",
-      "sha256": "aa7792a6a2e7027ecdfa8cdd6c0781bbcfb5a866287268b43891f8a34774c4bd"
+      "sha256": "aa7792a6a2e7027ecdfa8cdd6c0781bbcfb5a866287268b43891f8a34774c4bd",
+      "bytes": 346
     },
     {
       "path": "ks_includes/KlippyGtk.py",
-      "sha256": "f71cc66d74df1a5bac0fd8b3de70bb62ce27480f78e1b3412a611804ac73ba13"
+      "sha256": "73ee064c5ef25aa76b991cd227ac5ad5f8bb9197af716699b899a8895d2531b7",
+      "bytes": 14109
     },
     {
       "path": "ks_includes/KlippyWebsocket.py",
-      "sha256": "ec4d9c3228798eab449a2277012871df3bc29fd64a00e4537e98449be3fb786e"
+      "sha256": "ec4d9c3228798eab449a2277012871df3bc29fd64a00e4537e98449be3fb786e",
+      "bytes": 10926
     },
     {
       "path": "panels/AFC.py",
-      "sha256": "717b76be9871ae115bc7a6e3484dceb594c69e7f26e0cb37865b0c7beaea0010"
+      "sha256": "717b76be9871ae115bc7a6e3484dceb594c69e7f26e0cb37865b0c7beaea0010",
+      "bytes": 125963
     },
     {
       "path": "panels/splash_screen.py",
-      "sha256": "fc4fd520be21b5c9dfbb32ad61b332201c1e663be50621ba1ff262a365c50a3a"
+      "sha256": "fc4fd520be21b5c9dfbb32ad61b332201c1e663be50621ba1ff262a365c50a3a",
+      "bytes": 10569
     },
     {
       "path": "panels/spoolman.py",
-      "sha256": "896b219dbe69b8a925c7958a72bc3e3b432895b02d05863489221f762c2b81b3"
+      "sha256": "896b219dbe69b8a925c7958a72bc3e3b432895b02d05863489221f762c2b81b3",
+      "bytes": 18864
     },
     {
       "path": "screen.py",
-      "sha256": "be89e7dee17b83de9a86f13b9e9589d515d17fc9391761bf9fc0ed08375c6ce4"
+      "sha256": "be89e7dee17b83de9a86f13b9e9589d515d17fc9391761bf9fc0ed08375c6ce4",
+      "bytes": 59707
     },
     {
       "path": "styles/woloong/README.md",
@@ -95,19 +103,23 @@
     },
     {
       "path": "styles/woloong/images/AFC.svg",
-      "sha256": "297ca1ddf36747e1e8976991639a06fe1e47b543505757c41f5017651f8fce75"
+      "sha256": "297ca1ddf36747e1e8976991639a06fe1e47b543505757c41f5017651f8fce75",
+      "bytes": 2975
     },
     {
       "path": "styles/woloong/images/FilamentReelIcon.svg",
-      "sha256": "2c76978815af0ae7486c383b20f1586a1623f45cd974e0e74472ab7de328a73a"
+      "sha256": "2c76978815af0ae7486c383b20f1586a1623f45cd974e0e74472ab7de328a73a",
+      "bytes": 1738
     },
     {
       "path": "styles/woloong/images/HTLF.svg",
-      "sha256": "63c6b08089ef1878252b94619d2b5a066a0160910fff78f87d3c51b22b845abd"
+      "sha256": "63c6b08089ef1878252b94619d2b5a066a0160910fff78f87d3c51b22b845abd",
+      "bytes": 18460
     },
     {
       "path": "styles/woloong/images/Night_Owl.svg",
-      "sha256": "b8b54d582dd3d96e1488aefa4a7952c40543b699d8fc6b4fcc17121b6bc2fab0"
+      "sha256": "b8b54d582dd3d96e1488aefa4a7952c40543b699d8fc6b4fcc17121b6bc2fab0",
+      "bytes": 12537
     },
     {
       "path": "styles/woloong/images/archived.svg",
@@ -267,7 +279,8 @@
     },
     {
       "path": "styles/woloong/images/box_turtle_colored_logo.svg",
-      "sha256": "f3f489456626b469f209b62c25be30a92c154b1add2e8808cbb36ec2938858bb"
+      "sha256": "f3f489456626b469f209b62c25be30a92c154b1add2e8808cbb36ec2938858bb",
+      "bytes": 53193
     },
     {
       "path": "styles/woloong/images/camera.svg",
@@ -757,8 +770,8 @@
     },
     {
       "path": "styles/woloong/style.conf",
-      "sha256": "b2d15d50a749082e73d4c2850501e1bd202676e1879064e771d55b9df632eece",
-      "bytes": 489,
+      "sha256": "cda3f0619b7a314472474e8203d0f932e99c76a1507fdf476cd9ec6bf2300a64",
+      "bytes": 785,
       "kind": "theme-new-dir"
     },
     {
