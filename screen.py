@@ -142,7 +142,19 @@ class KlipperScreen(Gtk.Window):
         else:
             self.width = monitor.get_geometry().width
             self.height = monitor.get_geometry().height
-            self.fullscreen_on_monitor(self.get_screen(), mon_n)
+            self.windowed = False
+            if self.height == 600:
+                # Woloong: 1024x600 panel needs a bottom safe area, otherwise
+                # the last button border is clipped by the physical bezel.
+                self.height = 580
+                self.windowed = True
+                logging.info("Woloong: reserve 20px bottom safe area (1024x600)")
+            else:
+                self.fullscreen_on_monitor(self.get_screen(), mon_n)
+        if self.height == 600:
+            self.height = 580
+            self.windowed = True
+            logging.info("Woloong: reserve 20px bottom safe area")
         self.set_default_size(self.width, self.height)
         self.aspect_ratio = self.width / self.height
         self.vertical_mode = self.aspect_ratio < 1.0
