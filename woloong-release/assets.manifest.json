@@ -70,8 +70,8 @@
     },
     {
       "path": "panels/splash_screen.py",
-      "sha256": "ba0a2a68d6f68d88b7ec8e0a90e207c9e9d77739b2ed6323a4c3ecc3450fd350",
-      "bytes": 10406
+      "sha256": "6ac9889a9a5d59d9e2e1ddd242ca52c031f50772f80b865cf5930f753d45895c",
+      "bytes": 10791
     },
     {
       "path": "panels/spoolman.py",
