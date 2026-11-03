@@ -88,11 +88,11 @@ class Panel(ScreenPanel):
         self.labels["dots"] = Gtk.Label(label="●  ○  ○", halign=Gtk.Align.CENTER)
         self.labels["dots"].get_style_context().add_class("splash_dots")
 
-        # Woloong: 错误信息可能很长，限制每次显示行数并自动翻页，避免把底部按钮挤出屏幕
-        self._max_lines = 6
+        # Woloong: 错误信息可能很长，按固定行数分页，从最后一页开始向上循环
+        self._page_source = None
         self._page = 0
         self._pages = 1
-        self._rotate_source = None
+        self._max_lines = 6
         self._full_lines = []
 
         content_box = Gtk.Box(orientation=Gtk.Orientation.VERTICAL, spacing=12)
@@ -117,39 +117,39 @@ class Panel(ScreenPanel):
 
     def update_text(self, text):
         self._full_lines = str(text).splitlines() or [""]
-        self._page = 0
+        self._pages = max(1, (len(self._full_lines) + self._max_lines - 1) // self._max_lines)
+        # Start from the last page (the bottom) and move upward.
+        self._page = self._pages - 1
         self._render_page()
+        self._schedule_pages()
         self.show_restart_buttons()
 
     def _render_page(self):
-        self.labels["text"].set_label("\n".join(self._full_lines))
-        self._schedule_rotation()
+        start = self._page * self._max_lines
+        lines = self._full_lines[start:start + self._max_lines]
+        self.labels["text"].set_label("\n".join(lines) or " ")
+        self.labels["dots"].set_label("  ".join("●" if i == self._page else "○" for i in range(self._pages)))
 
-    def _schedule_rotation(self):
-        if self._rotate_source is not None:
-            GLib.source_remove(self._rotate_source)
-            self._rotate_source = None
-        GLib.idle_add(self._check_overflow)
+    def _stop_pages(self):
+        if self._page_source is not None:
+            GLib.source_remove(self._page_source)
+            self._page_source = None
 
-    def _check_overflow(self):
-        if not hasattr(self, "text_scroll"):
+    def _schedule_pages(self):
+        self._stop_pages()
+        if self._pages > 1:
+            self._page_source = GLib.timeout_add_seconds(6, self._next_page)
+
+    def _next_page(self):
+        if self._pages <= 1:
+            self._page_source = None
             return False
-        adj = self.text_scroll.get_vadjustment()
-        if adj.get_upper() <= adj.get_page_size() + 1:
-            return False
-        if self._rotate_source is None:
-            self._rotate_source = GLib.timeout_add_seconds(6, self._scroll_step)
-        return False
-
-    def _scroll_step(self):
-        adj = self.text_scroll.get_vadjustment()
-        page = adj.get_page_size()
-        upper = adj.get_upper()
-        new_val = adj.get_value() + page * 0.9
-        if new_val >= upper - page:
-            new_val = 0
-        adj.set_value(new_val)
+        self._page = self._page - 1 if self._page > 0 else self._pages - 1
+        self._render_page()
         return True
+
+    def deactivate(self):
+        self._stop_pages()
 
     def clear_action_bar(self):
         for child in self.labels["actions"].get_children():
