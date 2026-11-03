@@ -65,7 +65,7 @@ class Panel(ScreenPanel):
             label=_("Initializing printer..."),
             wrap=True,
             wrap_mode=Pango.WrapMode.WORD_CHAR,
-            halign=Gtk.Align.CENTER,
+            halign=Gtk.Align.FILL,
             valign=Gtk.Align.CENTER,
         )
         self.labels["text"].get_style_context().add_class("splash_status")
@@ -81,8 +81,9 @@ class Panel(ScreenPanel):
         _scroll_h = max(80, min(int(_h * 0.30), max(80, _h - _reserved)))
         self.text_scroll.set_size_request(-1, _scroll_h)
         self.text_scroll.set_propagate_natural_height(False)
-        self.text_scroll.set_hexpand(True)
-        self.text_scroll.set_halign(Gtk.Align.FILL)
+        self.text_scroll.set_hexpand(False)
+        self.text_scroll.set_halign(Gtk.Align.CENTER)
+        self._scroll_h = _scroll_h
         self.text_scroll.add(self.labels["text"])
 
         self.labels["dots"] = Gtk.Label(label="●  ○  ○", halign=Gtk.Align.CENTER)
@@ -118,6 +119,11 @@ class Panel(ScreenPanel):
     def update_text(self, text):
         self._full_lines = str(text).splitlines() or [""]
         self._pages = max(1, (len(self._full_lines) + self._max_lines - 1) // self._max_lines)
+        layout = Pango.Layout(self.labels["text"].get_pango_context())
+        layout.set_text("\n".join(self._full_lines[:self._max_lines]), -1)
+        page_width = max(480, layout.get_pixel_size()[0])
+        max_width = max(100, self._gtk.content_width - 48)
+        self.text_scroll.set_size_request(min(page_width, max_width), self._scroll_h)
         # Start from the last page (the bottom) and move upward.
         self._page = self._pages - 1
         self._render_page()
