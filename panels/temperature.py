@@ -386,7 +386,12 @@ class Panel(ScreenPanel):
             try:
                 prov = Gtk.CssProvider()
                 r, g, b = [int(c * 255) for c in rgb[:3]]
-                prov.load_from_data(("button label { color: rgb(%d,%d,%d); }" % (r, g, b)).encode())
+                css = (
+                    "button.graph_label { border-left-color: rgb(%d,%d,%d); "
+                    "border-left-width: .4em; border-left-style: solid; }"
+                    % (r, g, b)
+                )
+                prov.load_from_data(css.encode())
                 name.get_style_context().add_provider(prov, Gtk.STYLE_PROVIDER_PRIORITY_APPLICATION)
             except Exception:
                 pass

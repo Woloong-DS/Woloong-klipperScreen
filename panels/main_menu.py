@@ -141,7 +141,13 @@ class Panel(MenuPanel):
             try:
                 prov = Gtk.CssProvider()
                 _r, _g, _b = [int(c * 255) for c in rgb[:3]]
-                prov.load_from_data(("button label { color: rgb(%d,%d,%d); }" % (_r, _g, _b)).encode())
+                css = (
+                    "button label { color: rgb(%d,%d,%d); }\n"
+                    "button.graph_label { border-left-color: rgb(%d,%d,%d); "
+                    "border-left-width: .4em; border-left-style: solid; }"
+                    % (_r, _g, _b, _r, _g, _b)
+                )
+                prov.load_from_data(css.encode())
                 name.get_style_context().add_provider(prov, Gtk.STYLE_PROVIDER_PRIORITY_APPLICATION)
             except Exception:
                 pass
