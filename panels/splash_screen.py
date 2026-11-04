@@ -98,8 +98,8 @@ class Panel(ScreenPanel):
         self._last_text = None
 
         content_box = Gtk.Box(orientation=Gtk.Orientation.VERTICAL, spacing=12)
-        content_box.set_halign(Gtk.Align.FILL)
-        content_box.set_hexpand(True)
+        content_box.set_halign(Gtk.Align.CENTER)
+        content_box.set_hexpand(False)
         content_box.set_valign(Gtk.Align.CENTER)
         content_box.pack_start(image, False, True, 0)
         content_box.pack_start(self.labels["brand"], False, True, 0)
@@ -129,8 +129,10 @@ class Panel(ScreenPanel):
         layout = Pango.Layout(self.labels["text"].get_pango_context())
         layout.set_text("\n".join(self._full_lines[:self._max_lines]), -1)
         page_width = max(480, layout.get_pixel_size()[0])
-        max_width = max(100, self._gtk.content_width - 48)
-        self.text_scroll.set_size_request(min(page_width, max_width), self._scroll_h)
+        # 固定错误信息块宽度：不能按当前页的短行决定宽度，否则长句会被
+        # 压成很窄的列，短句也会出现异常断行。
+        max_width = max(100, int(self._gtk.content_width * 0.65))
+        self.text_scroll.set_size_request(max_width, self._scroll_h)
         # Start from the last page (the bottom) and move upward.
         self._page = self._pages - 1
         self._render_page()

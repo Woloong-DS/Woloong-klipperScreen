@@ -70,7 +70,7 @@
     },
     {
       "path": "panels/splash_screen.py",
-      "sha256": "05b174afa9629e85a5843d6926a9f4de40b14ead0ed19b966ced63ec1697e469",
+      "sha256": "cfbd0bd3536dc30d89cff0d22731d1c5323d32acfe41cfb92baef890b7b2ff61",
       "bytes": 10791
     },
     {
@@ -80,7 +80,7 @@
     },
     {
       "path": "screen.py",
-      "sha256": "cebb56008f343740403fb796beb49d6cf39c3aadc5ec43d519c2ce08117caa43",
+      "sha256": "d4768640ccff670405c0fbf3772b00c816ca709a1cfeb5d9d08fa2936ac8eb2c",
       "bytes": 60265
     },
     {
