@@ -84,6 +84,9 @@ class Panel(ScreenPanel):
         self.text_scroll.set_hexpand(False)
         self.text_scroll.set_halign(Gtk.Align.CENTER)
         self._scroll_h = _scroll_h
+        # 分页行数必须与错误框可视高度匹配；固定 6 行会在长段落最后一行
+        # 留下半句，产生短句/断句。
+        self._max_lines = max(6, int(_scroll_h / max(1, self._gtk.font_size * 1.15)))
         self.text_scroll.add(self.labels["text"])
 
         self.labels["dots"] = Gtk.Label(label="●  ○  ○", halign=Gtk.Align.CENTER)
