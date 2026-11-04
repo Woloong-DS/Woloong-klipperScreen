@@ -119,21 +119,57 @@ class Panel(ScreenPanel):
 
         self.content.add(main)
 
+    def _reflow(self, text):
+        """合并 Klipper 源文本中的硬换行续行，保留真正的独立行。"""
+        lines = []
+        for raw in text.splitlines():
+            line = raw.strip()
+            if not line:
+                lines.append("")
+                continue
+            if (
+                lines
+                and lines[-1]
+                and not lines[-1].endswith((".", "!", "?", ":"))
+                and (line[0].islower() or line[0] in "\"'([")
+            ):
+                lines[-1] = lines[-1] + " " + line
+            else:
+                lines.append(line)
+        return "\n".join(lines)
+
     def _wrap_lines(self, text, width):
-        """按实际显示宽度分行，分页以视觉行为单位，避免在段落中间截断。"""
+        """按逻辑行分页，保证完整句子不跨页。"""
+        text = self._reflow(text)
         layout = Pango.Layout(self.labels["text"].get_pango_context())
         layout.set_width(width * Pango.SCALE)
         layout.set_wrap(Pango.WrapMode.WORD_CHAR)
-        layout.set_text(text, -1)
-        lines = []
-        for i in range(layout.get_line_count()):
-            line = layout.get_line(i)
-            start = line.start_index
-            end = start + line.length
-            lines.append(text[start:end].rstrip())
-        while lines and not lines[-1]:
-            lines.pop()
-        return lines or [""]
+        units = []
+        for raw in text.splitlines():
+            unit = raw.strip()
+            if not unit:
+                units.append([""])
+                continue
+            layout.set_text(unit, -1)
+            ulines = []
+            for i in range(layout.get_line_count()):
+                line = layout.get_line(i)
+                start = line.start_index
+                end = start + line.length
+                ulines.append(unit[start:end].rstrip())
+            if ulines:
+                units.append(ulines)
+        while units and not units[-1][0]:
+            units.pop()
+        pages, cur = [], []
+        for ulines in units:
+            if cur and len(cur) + len(ulines) > self._max_lines:
+                pages.append(cur)
+                cur = []
+            cur.extend(ulines)
+        if cur:
+            pages.append(cur)
+        return pages or [[""]]
 
     def update_text(self, text):
         text = str(text)
@@ -144,9 +180,9 @@ class Panel(ScreenPanel):
         self._last_text = text
         # 固定错误信息块宽度：不能按当前页的短行决定宽度，否则长句会被
         # 压成很窄的列，短句也会出现异常断行。
-        max_width = max(100, int(self._gtk.content_width * 0.65))
-        self._full_lines = self._wrap_lines(text, max_width)
-        self._pages = max(1, (len(self._full_lines) + self._max_lines - 1) // self._max_lines)
+        max_width = max(100, int(self._gtk.content_width * 0.78))
+        self._page_lines = self._wrap_lines(text, max_width)
+        self._pages = max(1, len(self._page_lines))
         self.text_scroll.set_size_request(max_width, self._scroll_h)
         # Start from the last page (the bottom) and move upward.
         self._page = self._pages - 1
@@ -155,8 +191,7 @@ class Panel(ScreenPanel):
         self.show_restart_buttons()
 
     def _render_page(self):
-        start = self._page * self._max_lines
-        lines = self._full_lines[start:start + self._max_lines]
+        lines = self._page_lines[self._page]
         self.labels["text"].set_label("\n".join(lines) or " ")
         self.labels["dots"].set_label("  ".join("●" if i == self._page else "○" for i in range(self._pages)))
 
