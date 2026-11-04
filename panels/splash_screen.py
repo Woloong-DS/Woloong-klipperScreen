@@ -95,6 +95,7 @@ class Panel(ScreenPanel):
         self._pages = 1
         self._max_lines = 6
         self._full_lines = []
+        self._last_text = None
 
         content_box = Gtk.Box(orientation=Gtk.Orientation.VERTICAL, spacing=12)
         content_box.set_halign(Gtk.Align.FILL)
@@ -117,7 +118,13 @@ class Panel(ScreenPanel):
         self.content.add(main)
 
     def update_text(self, text):
-        self._full_lines = str(text).splitlines() or [""]
+        text = str(text)
+        # 错误状态可能每 4 秒重复上报同一消息；重复刷新会把分页重置到最后一页，
+        # 导致页面永远不翻页。消息未变化时保留当前页和定时器。
+        if text == self._last_text and self._page_source is not None:
+            return
+        self._last_text = text
+        self._full_lines = text.splitlines() or [""]
         self._pages = max(1, (len(self._full_lines) + self._max_lines - 1) // self._max_lines)
         layout = Pango.Layout(self.labels["text"].get_pango_context())
         layout.set_text("\n".join(self._full_lines[:self._max_lines]), -1)
