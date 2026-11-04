@@ -117,6 +117,20 @@ class Panel(ScreenPanel):
 
         self.content.add(main)
 
+    def _wrap_lines(self, text, width):
+        """按实际显示宽度分行，分页以视觉行为单位，避免在段落中间截断。"""
+        layout = Pango.Layout(self.labels["text"].get_pango_context())
+        layout.set_width(width * Pango.SCALE)
+        layout.set_wrap(Pango.WrapMode.WORD_CHAR)
+        layout.set_text(text, -1)
+        lines = []
+        for i in range(layout.get_line_count()):
+            line = layout.get_line(i)
+            start = line.start_index
+            end = start + line.length
+            lines.append(text[start:end].rstrip())
+        return lines or [""]
+
     def update_text(self, text):
         text = str(text)
         # 错误状态可能每 4 秒重复上报同一消息；重复刷新会把分页重置到最后一页，
@@ -124,14 +138,11 @@ class Panel(ScreenPanel):
         if text == self._last_text and self._page_source is not None:
             return
         self._last_text = text
-        self._full_lines = text.splitlines() or [""]
-        self._pages = max(1, (len(self._full_lines) + self._max_lines - 1) // self._max_lines)
-        layout = Pango.Layout(self.labels["text"].get_pango_context())
-        layout.set_text("\n".join(self._full_lines[:self._max_lines]), -1)
-        page_width = max(480, layout.get_pixel_size()[0])
         # 固定错误信息块宽度：不能按当前页的短行决定宽度，否则长句会被
         # 压成很窄的列，短句也会出现异常断行。
         max_width = max(100, int(self._gtk.content_width * 0.65))
+        self._full_lines = self._wrap_lines(text, max_width)
+        self._pages = max(1, (len(self._full_lines) + self._max_lines - 1) // self._max_lines)
         self.text_scroll.set_size_request(max_width, self._scroll_h)
         # Start from the last page (the bottom) and move upward.
         self._page = self._pages - 1
