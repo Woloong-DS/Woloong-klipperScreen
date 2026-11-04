@@ -78,7 +78,7 @@ class Panel(ScreenPanel):
         self.text_scroll = Gtk.ScrolledWindow()
         self.text_scroll.set_policy(Gtk.PolicyType.NEVER, Gtk.PolicyType.EXTERNAL)
         _reserved = int(logo_size) + 150  # 品牌行 + 圆点 + 底部按钮
-        _scroll_h = max(80, min(int(_h * 0.30), max(80, _h - _reserved)))
+        _scroll_h = max(80, min(int(_h * 0.33), max(80, _h - _reserved)))
         self.text_scroll.set_size_request(-1, _scroll_h)
         self.text_scroll.set_propagate_natural_height(False)
         self.text_scroll.set_hexpand(False)
@@ -96,7 +96,6 @@ class Panel(ScreenPanel):
         self._page_source = None
         self._page = 0
         self._pages = 1
-        self._max_lines = 6
         self._full_lines = []
         self._last_text = None
 
@@ -132,6 +131,8 @@ class Panel(ScreenPanel):
             start = line.start_index
             end = start + line.length
             lines.append(text[start:end].rstrip())
+        while lines and not lines[-1]:
+            lines.pop()
         return lines or [""]
 
     def update_text(self, text):
