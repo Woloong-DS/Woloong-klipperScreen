@@ -32,3 +32,12 @@
    避免配置残留时出现空面板或错误弹窗。
 
 > 主题适配（图标配色、9 处硬编码颜色）属于阶段 2，不在本文件记录范围；届时同样走 patch。
+
+## AFC Klipper 插件（Woloong 集成）
+
+| 项 | 值 |
+|---|---|
+| 上游仓库 | ArmoredTurtle/AFC-Klipper-Add-On |
+| pin | 5ea84ea6fab75b9b49db090f309154d1e52272bb |
+| 本仓路径 | afc/extras、afc/config |
+| 落位 | scripts/woloong-afc-install.sh（KSC 启动前执行） |
