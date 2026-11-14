@@ -848,8 +848,8 @@
     },
     {
       "path": "afc/config/mcu/EMU_EBB36_42.cfg",
-      "sha256": "2a5f6c6d63530dbe51c9b5472240783bc6f4ec9440619a606c56fc57e65927b1",
-      "bytes": 346,
+      "sha256": "eec2144e5246c9308c3111da8fea33e5832d199ec8bbabdeedd8ff771e11c53b",
+      "bytes": 321,
       "kind": "vendored-file"
     },
     {
@@ -860,8 +860,8 @@
     },
     {
       "path": "afc/config/mcu/ERB_2.0.cfg",
-      "sha256": "85e6331115c4321801216d13ee53affbfc8990b99d542d4aa586235c7feb0086",
-      "bytes": 763,
+      "sha256": "2d2f4a9fb6f51909cd571753071a61cd52a1b03e416681447638c9ba05b2397c",
+      "bytes": 735,
       "kind": "vendored-file"
     },
     {
@@ -950,8 +950,8 @@
     },
     {
       "path": "afc/extras/AFC_button.py",
-      "sha256": "bdfc96e67626e81fe4b4ad86de110d795ac210d3ebde8667e6c985e3a8c2357c",
-      "bytes": 3696,
+      "sha256": "cf79168e155b4c5f57b0b2b56d4d55bc437131b0043281c187b42f9059e3aa5e",
+      "bytes": 3602,
       "kind": "vendored-file"
     },
     {
@@ -962,8 +962,8 @@
     },
     {
       "path": "afc/extras/AFC_EMU.py",
-      "sha256": "e37d3512ff5cbbdfd480c477a89be5e5af42744c01cfd5c9121a17edcd183285",
-      "bytes": 5095,
+      "sha256": "9b5005415f302a5814317d7cc9bccc5a0cb0418b1669b6ad42712f3a5fe52b82",
+      "bytes": 4978,
       "kind": "vendored-file"
     },
     {
