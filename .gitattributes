@@ -3,3 +3,7 @@
 *.woff2 binary
 *.woff binary
 *.zip binary
+afc/config/mcu/EMU_EBB36_42.cfg -text
+afc/config/mcu/ERB_2.0.cfg -text
+afc/extras/AFC_button.py -text
+afc/extras/AFC_EMU.py -text
