@@ -33,6 +33,16 @@ if [ ! -f "${CFG}/AFC/AFC.var.unit" ]; then
 }
 JSON
 fi
+# Moonraker stats namespace
+if command -v curl >/dev/null 2>&1; then
+  curl -s -m 5 -X POST "http://127.0.0.1:7125/server/database/item" \
+    -H "Content-Type: application/json" \
+    -d '{"namespace":"afc_stats","key":"init","value":{}}' >/dev/null 2>&1 || true
+fi
+# Disable unconfigured AFC macros
+if [ -f "$CFG/AFC/AFC.cfg" ]; then
+  sed -i -E 's/^(tool_cut|park|poop|kick|wipe): True/\1: False/' "$CFG/AFC/AFC.cfg" || true
+fi
 if ! grep -qE '^\[include AFC/\*\.cfg\]' "${PC}"; then
   printf '\n[include AFC/*.cfg]\n' >> "${PC}"
 fi
