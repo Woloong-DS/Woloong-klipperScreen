@@ -421,14 +421,14 @@
     },
     {
       "path": "scripts/KlipperScreen.service",
-      "sha256": "1fd1f5fa4b8c17e5c5718a2303e760ac5092b56fe25498b2b659392d3593eb3a",
-      "bytes": 1170,
+      "sha256": "a8fbb3ec6ea7156c6940d551a4d6e19194143fe52c36c6b1eeec6a7931cd7542",
+      "bytes": 1352,
       "kind": "custom-file"
     },
     {
       "path": "scripts/woloong-afc-install.sh",
-      "sha256": "b5664dca32f09ff3f3b105fd63ed021a8ae81e124f004b77fe373cc6b7cf555c",
-      "bytes": 1731,
+      "sha256": "98b7370f9b201d53431dc213d4cf0303e77df69f3db3889bb7035751368be696",
+      "bytes": 9703,
       "kind": "custom-file"
     },
     {

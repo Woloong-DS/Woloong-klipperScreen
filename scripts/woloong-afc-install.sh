@@ -1,26 +1,100 @@
 #!/bin/bash
-# Woloong-klipperScreen: 将仓内 AFC 插件物料落位到 Klipper，幂等。
-set -u
+# ============================================================================
+# Woloong-klipperScreen — AFC 插件落位器（幂等 / fail-fast）
+#
+# 由 KlipperScreen.service 的 ExecStartPre 在**每次 KSC 启动前**执行。
+#   1) 幂等落位 KSC 内置 AFC 物料：klippy/extras/*.py + printer_data/config/AFC/
+#   2) 仅当 printer.cfg 有真正的 [extruder]/[extruderN] 时才启用
+#      [include AFC/*.cfg]；无 [extruder] 时物料照落位，include 保持关闭
+#      （AFC 的 klippy 模块会在 get_status 里访问真实挤出机，缺 [extruder]
+#       会让整机 shutdown，所以不能只凭「物料在」就启用 include）
+#   3) 首次追加 include 后，经 Moonraker 重启 Klipper 并等待 [afc] 生效，
+#      这样随后启动的 KSC 能把 AFC 菜单渲染出来（否则要再重启一次 KSC）。
+#
+# 触发路径（用户不需要手工跑本脚本）：
+#   · Web（Mainsail/Fluidd）：服务面板 -> KlipperScreen -> Restart
+#     （systemctl restart KlipperScreen -> 重新执行本 ExecStartPre）
+#   · KIAUH：更新/整机更新 KlipperScreen 会 stop/start 服务（同样触发）
+#   · 重启设备 / 任何 `systemctl restart KlipperScreen`
+#   ★ 注意：KSC 触摸屏的 "Restart KlipperScreen" 只是 os.execv 换掉
+#     Python 进程（screen.py:507），**不会**重启 systemd 单元，因此不会
+#     触发本脚本；首启后请用上面的 Web 服务面板动作（或 KIAUH 更新）。
+#
+# 失败语义（AFC-FALSE-SUCCESS，2026-11-15）：
+#   cp / 写 printer.cfg / 写 AFC.var.unit / 四项校验 任一失败 -> **非零退出**，
+#   且绝不打印 "AFC addon installed"。服务单元里 ExecStartPre 带 '-' 前缀，
+#   所以配置目录只读时 KSC 仍能启动（失败留在 journal，不再假成功）。
+# ============================================================================
+set -euo pipefail
+
 KS_DIR="$(cd "$(dirname "$0")/.." && pwd)"
 CFG="${HOME}/printer_data/config"
 EXTRAS="${HOME}/klipper/klippy/extras"
 PC="${CFG}/printer.cfg"
-log(){ echo "[woloong-afc] $*"; }
+AFC_SRC="${KS_DIR}/afc"
+VAR="${CFG}/AFC/AFC.var.unit"
+MR="http://127.0.0.1:7125"
+INCLUDE_LINE='[include AFC/*.cfg]'
 
-[ -f "${PC}" ] || { log "no printer.cfg, skip"; exit 0; }
-grep -qE '^\[extruder' "${PC}" || { log "no extruder, skip"; exit 0; }
-[ -d "${KS_DIR}/afc/extras" ] || { log "no afc extras, skip"; exit 0; }
+log()  { printf '[woloong-afc] %s\n' "$*"; }
+warn() { printf '[woloong-afc] WARN: %s\n' "$*" >&2; }
+die()  { printf '[woloong-afc] FAIL: %s\n' "$*" >&2; exit 1; }
 
-mkdir -p "${EXTRAS}" "${CFG}/AFC" "${CFG}/AFC/macros"
-for f in "${KS_DIR}"/afc/extras/*.py; do
-  [ -f "${f}" ] || continue
-  [ "$(basename "${f}")" = "__init__.py" ] && continue
-  cp -f "${f}" "${EXTRAS}/"
+# 真正的挤出机段：[extruder] 或 [extruder1]/[extruder2]...
+# 不匹配 [extruder_stepper x]（它不创建 toolhead 挤出机）或注释行。
+has_extruder() {
+  grep -qE '^[[:space:]]*\[extruder[0-9]*\]([[:space:]]|$)' "${PC}"
+}
+include_present() {
+  grep -qE '^\[include[[:space:]]+AFC/\*\.cfg\][[:space:]]*$' "${PC}"
+}
+
+[ -f "${PC}" ] || die "printer.cfg not found: ${PC}"
+[ -d "${AFC_SRC}/extras" ] || die "AFC extras missing in KSC checkout: ${AFC_SRC}/extras"
+[ -d "${AFC_SRC}/config" ] || die "AFC config missing in KSC checkout: ${AFC_SRC}/config"
+
+mkdir -p "${EXTRAS}" || die "cannot create ${EXTRAS}"
+mkdir -p "${CFG}/AFC/macros" || die "cannot create ${CFG}/AFC/macros"
+
+# ---- 1) klippy extras（逐文件 cp + 逐文件 cmp 校验）-----------------------
+n_extras=0
+for f in "${AFC_SRC}"/extras/*.py; do
+  [ -f "$f" ] || continue
+  b="$(basename "$f")"
+  if [ "$b" = "__init__.py" ]; then
+    continue
+  fi
+  dst="${EXTRAS}/${b}"
+  cp -f "$f" "$dst" || die "cp failed: $f -> $dst"
+  cmp -s "$f" "$dst" || die "post-copy verify failed: $dst"
+  n_extras=$((n_extras + 1))
 done
-cp -f "${KS_DIR}"/afc/config/AFC*.cfg "${CFG}/AFC/" 2>/dev/null || true
-cp -f "${KS_DIR}"/afc/config/macros/*.cfg "${CFG}/AFC/macros/" 2>/dev/null || true
-if [ ! -f "${CFG}/AFC/AFC.var.unit" ]; then
-  cat > "${CFG}/AFC/AFC.var.unit" <<'JSON'
+(( n_extras > 0 )) || die "no AFC klippy extras (*.py) in ${AFC_SRC}/extras"
+
+# ---- 2) AFC 配置（AFC*.cfg + macros/*.cfg）--------------------------------
+n_cfg=0
+for f in "${AFC_SRC}"/config/AFC*.cfg; do
+  [ -f "$f" ] || continue
+  b="$(basename "$f")"
+  cp -f "$f" "${CFG}/AFC/${b}" || die "cp failed: $f -> ${CFG}/AFC/${b}"
+  cmp -s "$f" "${CFG}/AFC/${b}" || die "post-copy verify failed: ${CFG}/AFC/${b}"
+  n_cfg=$((n_cfg + 1))
+done
+(( n_cfg > 0 )) || die "no AFC config (AFC*.cfg) in ${AFC_SRC}/config"
+
+n_macro=0
+for f in "${AFC_SRC}"/config/macros/*.cfg; do
+  [ -f "$f" ] || continue
+  b="$(basename "$f")"
+  cp -f "$f" "${CFG}/AFC/macros/${b}" || die "cp failed: $f -> ${CFG}/AFC/macros/${b}"
+  cmp -s "$f" "${CFG}/AFC/macros/${b}" || die "post-copy verify failed: ${CFG}/AFC/macros/${b}"
+  n_macro=$((n_macro + 1))
+done
+(( n_macro > 0 )) || die "no AFC macros (macros/*.cfg) in ${AFC_SRC}/config"
+
+# ---- 3) AFC.var.unit（首次生成；已存在则不覆盖用户数据）------------------
+if [ ! -f "${VAR}" ]; then
+  cat > "${VAR}" <<'JSON' || die "write failed: ${VAR} (read-only?)"
 {
   "system": {
     "current_load": null,
@@ -33,18 +107,120 @@ if [ ! -f "${CFG}/AFC/AFC.var.unit" ]; then
 }
 JSON
 fi
-# Moonraker stats namespace
+[ -s "${VAR}" ] || die "AFC.var.unit missing or empty: ${VAR}"
+if command -v python3 >/dev/null 2>&1; then
+  python3 -c 'import json,sys; d=json.load(open(sys.argv[1], encoding="utf-8")); assert isinstance(d, dict)' "${VAR}" \
+    || die "invalid AFC.var.unit (not a JSON object): ${VAR}"
+else
+  grep -q '"system"' "${VAR}" || die "invalid AFC.var.unit (missing system): ${VAR}"
+fi
+
+# ---- 4) 关闭未配置坐标的宏（默认 -99 会刷 AFC ERROR）---------------------
+if [ -f "${CFG}/AFC/AFC.cfg" ]; then
+  sed -i -E 's/^(tool_cut|park|poop|kick|wipe): True/\1: False/' "${CFG}/AFC/AFC.cfg" \
+    || die "failed to update ${CFG}/AFC/AFC.cfg (read-only?)"
+fi
+
+# ---- 5) include：有挤出机才启用；无挤出机则确保关闭 ----------------------
+NEW_INCLUDE=0
+if has_extruder; then
+  if ! include_present; then
+    printf '\n%s\n' "${INCLUDE_LINE}" >> "${PC}" || die "write failed: ${PC} (read-only?)"
+    if ! include_present; then
+      die "post-write verify failed: ${INCLUDE_LINE} not in ${PC}"
+    fi
+    NEW_INCLUDE=1
+  fi
+else
+  if include_present; then
+    sed -i -E '\|^\[include[[:space:]]+AFC/\*\.cfg\][[:space:]]*$|d' "${PC}" \
+      || die "failed to disable AFC include in ${PC} (read-only?)"
+    if include_present; then
+      die "post-write verify failed: AFC include still in ${PC}"
+    fi
+    log "printer.cfg has no [extruder]: removed ${INCLUDE_LINE}"
+  fi
+fi
+
+# ---- 6) 首次启用后重启 Klipper，让 [afc] 在 KSC 启动前生效 ----------------
+# 只在「本次新加 include」时做；正在打印/暂停时绝不重启（保护打印）。
+klipper_reload_for_afc() {
+  local state ps i
+  command -v curl >/dev/null 2>&1 || { warn "curl unavailable: [afc] will load on next Klipper start"; return 0; }
+  state="$(curl -fsS -m 3 "${MR}/printer/info" 2>/dev/null \
+    | sed -n 's/.*"state"[[:space:]]*:[[:space:]]*"\([^"]*\)".*/\1/p' | head -n 1 || true)"
+  if [ "${state}" != "ready" ]; then
+    warn "Klipper state=${state:-unknown}: [afc] will load on next Klipper start"
+    return 0
+  fi
+  ps="$(curl -fsS -m 3 "${MR}/printer/objects/query?print_stats" 2>/dev/null \
+    | sed -n 's/.*"state"[[:space:]]*:[[:space:]]*"\([^"]*\)".*/\1/p' | head -n 1 || true)"
+  if [ "${ps}" = "printing" ] || [ "${ps}" = "paused" ]; then
+    warn "print is ${ps}: skip Klipper reload ([afc] loads on next Klipper restart)"
+    return 0
+  fi
+  log "reloading Klipper so [afc] becomes active ..."
+  curl -fsS -m 5 -X POST "${MR}/machine/services/restart?service=klipper" >/dev/null 2>&1 || {
+    warn "Moonraker restart request failed: [afc] will load on next Klipper start"
+    return 0
+  }
+  i=0
+  while [ "${i}" -lt 30 ]; do
+    if curl -fsS -m 3 "${MR}/printer/objects/query?configfile" 2>/dev/null \
+      | grep -qE '"afc"[[:space:]]*:[[:space:]]*\{'; then
+      log "Klipper reloaded: [afc] section active"
+      return 0
+    fi
+    i=$((i + 1))
+    sleep 1
+  done
+  warn "[afc] not visible after 30s: check Klipper log / AFC configuration"
+  return 0
+}
+
+if [ "${NEW_INCLUDE}" = "1" ]; then
+  if [ "${WO_AFC_KLIPPER_RESTART:-1}" = "0" ]; then
+    warn "WO_AFC_KLIPPER_RESTART=0: [afc] will load on next Klipper start"
+  else
+    klipper_reload_for_afc
+  fi
+fi
+
+# ---- 7) Moonraker 统计命名空间（非致命：仅避免 AFC 首次查询 404 红字）----
 if command -v curl >/dev/null 2>&1; then
-  curl -s -m 5 -X POST "http://127.0.0.1:7125/server/database/item" \
+  curl -s -m 5 -X POST "${MR}/server/database/item" \
     -H "Content-Type: application/json" \
     -d '{"namespace":"afc_stats","key":"init","value":{}}' >/dev/null 2>&1 || true
 fi
-# Disable unconfigured AFC macros
-if [ -f "$CFG/AFC/AFC.cfg" ]; then
-  sed -i -E 's/^(tool_cut|park|poop|kick|wipe): True/\1: False/' "$CFG/AFC/AFC.cfg" || true
+
+# ---- 8) 安装后四项校验（任一失败 -> 非零退出，绝不打印成功）--------------
+# 1/4
+[ -s "${EXTRAS}/AFC.py" ] || die "verify 1/4 failed: ${EXTRAS}/AFC.py missing/empty"
+cmp -s "${AFC_SRC}/extras/AFC.py" "${EXTRAS}/AFC.py" || die "verify 1/4 failed: AFC.py differs from package"
+# 2/4
+[ -s "${CFG}/AFC/AFC.cfg" ] || die "verify 2/4 failed: ${CFG}/AFC/AFC.cfg missing/empty"
+grep -qE '^\[AFC\]' "${CFG}/AFC/AFC.cfg" || die "verify 2/4 failed: AFC.cfg has no [AFC] section"
+# 3/4
+if has_extruder; then
+  include_present || die "verify 3/4 failed: printer.cfg missing ${INCLUDE_LINE}"
+else
+  if include_present; then
+    die "verify 3/4 failed: ${INCLUDE_LINE} present without [extruder]"
+  fi
 fi
-if ! grep -qE '^\[include AFC/\*\.cfg\]' "${PC}"; then
-  printf '\n[include AFC/*.cfg]\n' >> "${PC}"
+# 4/4
+[ -s "${VAR}" ] || die "verify 4/4 failed: ${VAR} missing/empty"
+
+# ---- 9) 成功日志（仅在四项校验全部通过之后）------------------------------
+if [ "$(id -u)" = "0" ]; then
+  chown -R 1000:1000 "${CFG}/AFC" "${EXTRAS}" 2>/dev/null || true
 fi
-chown -R 1000:1000 "${CFG}/AFC" "${EXTRAS}" 2>/dev/null || true
-log "AFC addon installed"
+
+if has_extruder; then
+  log "AFC addon installed (4/4 checks: AFC.py, AFC.cfg, ${INCLUDE_LINE}, AFC.var.unit)"
+else
+  log "AFC materials placed (4/4 checks: AFC.py, AFC.cfg, include deferred, AFC.var.unit)"
+  log "printer.cfg has no [extruder]: AFC stays disabled and its menu button stays hidden"
+  log "after configuring [extruder] in the web UI, restart the KlipperScreen service (Mainsail/Fluidd service panel -> KlipperScreen -> Restart) to enable AFC"
+fi
+exit 0

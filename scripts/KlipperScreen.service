@@ -19,7 +19,9 @@ User=KS_USER
 SupplementaryGroups=klipperscreen
 WorkingDirectory=KS_DIR
 Environment="KS_XCLIENT=KS_ENV/bin/python KS_DIR/screen.py" BACKEND=KS_BACKEND
-ExecStartPre="KS_DIR/scripts/woloong-afc-install.sh"
+# AFC 落位失败（如配置目录只读）不拖垮 KSC 启动：带 '-' 忽略退出码，
+# 但脚本自身仍 fail-fast（非零退出 + journal 里 FAIL，不再假成功）
+ExecStartPre=-"KS_DIR/scripts/woloong-afc-install.sh"
 ExecStart="KS_DIR/scripts/KlipperScreen-start.sh"
 
 # Log this user with utmp, letting it show up with commands 'w' and
