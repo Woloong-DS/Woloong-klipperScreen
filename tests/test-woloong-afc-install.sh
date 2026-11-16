@@ -1,18 +1,20 @@
 #!/bin/bash
 # ============================================================================
-# 夹具：woloong-afc-install.sh（AFC 首启落位 / fail-fast / afc_stats）
+# 夹具：woloong-afc-install.sh（AFC 首启落位 / fail-fast / Moonraker namespaces）
 #
 # 覆盖：
-#   1) 无 [extruder]：物料落位，include 必须关闭（不打印 installed；不碰 DB）
-#   2) 有 [extruder]：四项校验 + afc_stats namespace + Klipper reload；幂等
-#   2b) 打印中：include 照写，但不重启 Klipper；namespace 仍要就绪
-#   2c) [afc] 已加载但 namespace 缺失 -> 修复（KSC 启动修复路径）
-#   2d) namespace 已存在 -> 幂等（不重复 POST）
-#   2e) Moonraker 不可达（[afc] 已加载修复路径）-> 非零退出，不假成功
-#   2f) Moonraker 不可达（首次安装 include 路径）-> 非零退出，不假成功
+#   1) 无 [extruder]：物料落位，include 关闭（不打印 installed；不碰 DB）
+#   2) 有 [extruder]：四项 + afc_stats + lane_data + Klipper reload；幂等
+#   2b) 打印中：include 照写，但不重启 Klipper；两个 namespace 仍就绪
+#   2c) [afc] 已加载但 afc_stats/lane_data 缺失 -> 两个都补建
+#   2d) 两个 namespace 已存在 -> 幂等（不重复 POST）
+#   2e) Moonraker 不可达（[afc] 已加载）-> 非零退出，不假成功
+#   2f) Moonraker 不可达（首次安装 include）-> 非零退出，不假成功
+#   2g) watcher：AFC 清空 lane_data / namespace 丢失后重建（两个都覆盖）
+#   2h) watcher：Moonraker 不可达 -> 不崩、不假成功（后台维护尽力而为）
 #   3) printer.cfg 只读：非零退出，不打印 installed
 #   4) cp 失败：非零退出，不打印 installed，include 不落
-#   5) known-bad（1627 旧脚本）cp 失败：必须被「成功后四项校验」判据抓住
+#   5) known-bad（1627 旧脚本）cp 失败：必须被「成功后校验」判据抓住
 #   6) known-bad（1627 旧脚本）printer.cfg 只读：必须被抓住
 #   7) service 模板：ExecStartPre 带 '-'（失败不拖垮 KSC 启动）
 #
@@ -42,7 +44,7 @@ ck_not() { local d="$1"; shift; if "$@" >/dev/null 2>&1; then bad "$d"; else ok 
 
 CASE=""; KS=""; H=""; BIN=""; CFG=""; EXTRAS=""; PC=""
 
-# Moonraker 桩：用 state 文件模拟 namespace / [afc] / 打印状态 / 可达性。
+# Moonraker 桩：state 文件模拟 namespace / [afc] / 打印状态 / 可达性。
 write_fake_curl() {
   cat > "$BIN/curl" <<EOF
 #!/bin/sh
@@ -50,6 +52,7 @@ echo "\$*" >> "$CASE/curl.log"
 if [ -f "$CASE/moonraker-down" ]; then
   exit 7
 fi
+ns=""
 case "\$*" in
   *machine/services/restart*)
     echo x >> "$CASE/restart.log"
@@ -57,13 +60,21 @@ case "\$*" in
     exit 0 ;;
   *server/database/item*)
     if printf '%s' "\$*" | grep -q -- '-X POST'; then
-      echo "\$*" >> "$CASE/db-post.log"
-      : > "$CASE/afc-stats"
-      printf '%s\n' '{"result":{"namespace":"afc_stats","key":"init","value":{}}}'
+      case "\$*" in
+        *'"key":"__woloong_init__"'*) ns=lane_data ;;
+        *'"key":"init"'*) ns=afc_stats ;;
+      esac
+      echo "\$ns" >> "$CASE/db-post.log"
+      : > "$CASE/ns-\$ns"
+      printf '{"result":{"namespace":"%s","key":"init","value":{}}}\n' "\$ns"
       exit 0
     fi
-    if [ -f "$CASE/afc-stats" ]; then
-      printf '%s\n' '{"result":{"namespace":"afc_stats","key":null,"value":{}}}'
+    case "\$*" in
+      *namespace=afc_stats*) ns=afc_stats ;;
+      *namespace=lane_data*) ns=lane_data ;;
+    esac
+    if [ -n "\$ns" ] && [ -f "$CASE/ns-\$ns" ]; then
+      printf '{"result":{"namespace":"%s","key":null,"value":{}}}\n' "\$ns"
       exit 0
     fi
     exit 22 ;;
@@ -142,9 +153,16 @@ EOF
 
 run_installer() {
   OUT="$(HOME="$H" PATH="$BIN:$PATH" WO_AFC_MOONRAKER_WAIT="${WO_AFC_MOONRAKER_WAIT:-0}" \
-    bash "$KS/scripts/woloong-afc-install.sh" 2>&1)"
+    WO_AFC_NS_WATCH=0 bash "$KS/scripts/woloong-afc-install.sh" 2>&1)"
   RC=$?
   printf '%s\n' "$OUT" > "$CASE/out.log"
+}
+
+run_watcher_once() {
+  OUT="$(HOME="$H" PATH="$BIN:$PATH" WO_AFC_MOONRAKER_WAIT=0 \
+    WO_AFC_NS_WATCH_ITERATIONS=1 bash "$KS/scripts/woloong-afc-install.sh" --ns-watch 2>&1)"
+  RC=$?
+  printf '%s\n' "$OUT" > "$CASE/watch.log"
 }
 
 make_failing_cp() {
@@ -166,10 +184,10 @@ EOF
 
 has_include() { grep -qF '[include AFC/*.cfg]' "$PC"; }
 no_include()  { if grep -qF '[include AFC/*.cfg]' "$PC"; then return 1; fi; return 0; }
-stats_present() { test -f "$CASE/afc-stats"; }
-stats_posted()  { test -f "$CASE/db-post.log"; }
+ns_present()  { test -f "$CASE/ns-$1"; }
+ns_posted()   { test -f "$CASE/db-post.log"; }
 
-# 「成功后四项校验」判据：日志只说成功不算，必须文件 + include + afc_stats 真的在
+# 「成功后校验」判据：日志只说成功不算，必须文件 + include + 两个 namespace 真的在
 installed_ok() {
   local rc="$1" out="$2"
   [ "$rc" -eq 0 ] || return 1
@@ -180,7 +198,8 @@ installed_ok() {
   grep -q '^\[AFC\]' "$CFG/AFC/AFC.cfg" || return 1
   grep -qF '[include AFC/*.cfg]' "$PC" || return 1
   [ -s "$CFG/AFC/AFC.var.unit" ] || return 1
-  stats_present || return 1
+  ns_present afc_stats || return 1
+  ns_present lane_data || return 1
   return 0
 }
 
@@ -193,12 +212,13 @@ deferred_ok() {
   [ -s "$CFG/AFC/AFC.cfg" ] || return 1
   [ -s "$CFG/AFC/AFC.var.unit" ] || return 1
   if grep -qF '[include AFC/*.cfg]' "$PC"; then return 1; fi
-  if stats_present; then return 1; fi
+  if ns_present afc_stats; then return 1; fi
+  if ns_present lane_data; then return 1; fi
   return 0
 }
 
 # ---------------------------------------------------------------------------
-h "fixture 1: 无 [extruder] -> 物料落位、include 关闭、不碰 afc_stats"
+h "fixture 1: 无 [extruder] -> 物料落位、include 关闭、不碰 namespace"
 new_case no-extruder
 write_cfg_no_extruder
 run_installer
@@ -208,7 +228,7 @@ ck "AFC.py 已落位" test -s "$EXTRAS/AFC.py"
 ck "AFC.cfg 已落位" test -s "$CFG/AFC/AFC.cfg"
 ck "AFC.var.unit 已生成" test -s "$CFG/AFC/AFC.var.unit"
 ck "include 未启用" no_include
-ck_not "AFC 未启用时不初始化 namespace" stats_posted
+ck_not "AFC 未启用时不初始化 namespace" ns_posted
 ck "输出说明按钮仍隐藏" grep -qF 'menu button stays hidden' "$CASE/out.log"
 ck "输出给出重新触发动作（Web 服务面板重启 KSC）" grep -qF 'KlipperScreen service' "$CASE/out.log"
 printf '\n[include AFC/*.cfg]\n' >> "$PC"
@@ -216,25 +236,27 @@ run_installer
 ck "遗留 include 在无 [extruder] 时被关闭（退出码 0）" test "$RC" -eq 0
 ck "遗留 include 已移除" no_include
 ck "输出说明已移除 include" grep -qF 'removed [include AFC/*.cfg]' "$CASE/out.log"
-ck_not "移除遗留 include 时仍不碰 namespace" stats_posted
+ck_not "移除遗留 include 时仍不碰 namespace" ns_posted
 
 # ---------------------------------------------------------------------------
-h "fixture 2: 有 [extruder] -> 四项 + afc_stats + Klipper reload + 幂等"
+h "fixture 2: 有 [extruder] -> 四项 + 两个 namespace + Klipper reload + 幂等"
 new_case with-extruder
 write_cfg_with_extruder
 run_installer
-ck "installed_ok（rc0 + installed + 四项 + stats）" installed_ok "$RC" "$OUT"
+ck "installed_ok（rc0 + installed + 四项 + 两个 namespace）" installed_ok "$RC" "$OUT"
 ck "输出含 4/4" grep -qF '4/4' "$CASE/out.log"
-ck "afc_stats namespace 已创建" stats_present
-ck "输出说明 namespace created" grep -qF 'afc_stats namespace created' "$CASE/out.log"
+ck "afc_stats namespace 已创建" ns_present afc_stats
+ck "lane_data namespace 已创建" ns_present lane_data
+ck "输出说明 afc_stats created" grep -qF 'afc_stats namespace created' "$CASE/out.log"
+ck "输出说明 lane_data created" grep -qF 'lane_data namespace created' "$CASE/out.log"
 ck "已请求 Moonraker 重启 Klipper" test -s "$CASE/restart.log"
 ck "等待到 [afc] active" grep -qF '[afc] section active' "$CASE/out.log"
-ck "namespace 初始化发生在 Klipper 重启之前" awk '/server\/database\/item/ && /-X POST/ {p=NR} /machine\/services\/restart/ {r=NR} END {exit !(p && r && p < r)}' "$CASE/curl.log"
+ck "两个 namespace 都初始化在 Klipper 重启之前" awk '/server\/database\/item/ && /-X POST/ {p=NR} /machine\/services\/restart/ {r=NR} END {exit !(p && r && p < r)}' "$CASE/curl.log"
 ck "include 已写入一行" test "$(grep -cF '[include AFC/*.cfg]' "$PC")" -eq 1
 run_installer
 ck "第二次退出码 0" test "$RC" -eq 0
 ck "第二次未再重启 Klipper" test "$(wc -l < "$CASE/restart.log")" -eq 1
-ck "第二次未重复 POST namespace" test "$(wc -l < "$CASE/db-post.log")" -eq 1
+ck "第二次未重复 POST namespace" test "$(wc -l < "$CASE/db-post.log")" -eq 2
 ck "include 仍只有一行（幂等）" test "$(grep -cF '[include AFC/*.cfg]' "$PC")" -eq 1
 
 # ---------------------------------------------------------------------------
@@ -245,36 +267,41 @@ printf 'printing\n' > "$CASE/print-state"
 run_installer
 ck "退出码 0（include 照常写入）" test "$RC" -eq 0
 ck "installed_ok" installed_ok "$RC" "$OUT"
-ck "afc_stats namespace 已创建" stats_present
+ck "afc_stats namespace 已创建" ns_present afc_stats
+ck "lane_data namespace 已创建" ns_present lane_data
 ck_not "未请求重启 Klipper" test -s "$CASE/restart.log"
 ck "输出说明正在打印、跳过 reload" grep -qF 'skip Klipper reload' "$CASE/out.log"
 
 # ---------------------------------------------------------------------------
-h "fixture 2c: [afc] 已加载但 namespace 缺失 -> 修复"
-new_case stats-repair
+h "fixture 2c: [afc] 已加载但两个 namespace 缺失 -> 都补建"
+new_case ns-repair
 write_cfg_with_extruder
 printf '\n[include AFC/*.cfg]\n' >> "$PC"
 : > "$CASE/afc-active"
 run_installer
 ck "退出码 0" test "$RC" -eq 0
-ck "installed_ok（修复后四项 + stats）" installed_ok "$RC" "$OUT"
-ck "afc_stats namespace 已补建" stats_present
-ck "输出说明 created" grep -qF 'afc_stats namespace created' "$CASE/out.log"
+ck "installed_ok（修复后四项 + 两个 namespace）" installed_ok "$RC" "$OUT"
+ck "afc_stats 已补建" ns_present afc_stats
+ck "lane_data 已补建" ns_present lane_data
+ck "输出说明 afc_stats created" grep -qF 'afc_stats namespace created' "$CASE/out.log"
+ck "输出说明 lane_data created" grep -qF 'lane_data namespace created' "$CASE/out.log"
 ck "输出说明检测到 [afc]" grep -qF '[afc] loaded' "$CASE/out.log"
 ck_not "include 已存在时不重启 Klipper" test -s "$CASE/restart.log"
 
 # ---------------------------------------------------------------------------
-h "fixture 2d: namespace 已存在 -> 幂等（不重复 POST）"
-new_case stats-existing
+h "fixture 2d: 两个 namespace 已存在 -> 幂等（不重复 POST）"
+new_case ns-existing
 write_cfg_with_extruder
 printf '\n[include AFC/*.cfg]\n' >> "$PC"
 : > "$CASE/afc-active"
-: > "$CASE/afc-stats"
+: > "$CASE/ns-afc_stats"
+: > "$CASE/ns-lane_data"
 run_installer
 ck "退出码 0" test "$RC" -eq 0
 ck "installed_ok" installed_ok "$RC" "$OUT"
-ck "输出说明 existing" grep -qF 'afc_stats namespace ready (existing)' "$CASE/out.log"
-ck_not "未重复 POST namespace" stats_posted
+ck "输出说明 afc_stats existing" grep -qF 'afc_stats namespace ready (existing)' "$CASE/out.log"
+ck "输出说明 lane_data existing" grep -qF 'lane_data namespace ready (existing)' "$CASE/out.log"
+ck_not "未重复 POST namespace" ns_posted
 ck_not "未重启 Klipper" test -s "$CASE/restart.log"
 
 # ---------------------------------------------------------------------------
@@ -288,7 +315,8 @@ run_installer
 ck "退出码非零" test "$RC" -ne 0
 ck "输出含 ERROR Moonraker unreachable" grep -qF 'ERROR: afc_stats namespace NOT initialized: Moonraker unreachable' "$CASE/out.log"
 ck_not "输出不含 AFC addon installed" grep -qF 'AFC addon installed' "$CASE/out.log"
-ck_not "未创建 namespace" stats_present
+ck_not "未创建 afc_stats" ns_present afc_stats
+ck_not "未创建 lane_data" ns_present lane_data
 ck_not "未重启 Klipper" test -s "$CASE/restart.log"
 
 # ---------------------------------------------------------------------------
@@ -302,6 +330,30 @@ ck "输出含 ERROR Moonraker unreachable" grep -qF 'ERROR: afc_stats namespace 
 ck_not "输出不含 AFC addon installed" grep -qF 'AFC addon installed' "$CASE/out.log"
 ck "include 已写入（物料阶段完成，但未激活 AFC）" has_include
 ck_not "未重启 Klipper" test -s "$CASE/restart.log"
+
+# ---------------------------------------------------------------------------
+h "fixture 2g: watcher 在 AFC 清空 namespace 后重建（afc_stats + lane_data）"
+new_case ns-watch-recreate
+write_cfg_with_extruder
+printf '\n[include AFC/*.cfg]\n' >> "$PC"
+: > "$CASE/afc-active"
+: > "$CASE/ns-afc_stats"
+: > "$CASE/ns-lane_data"
+rm -f "$CASE/ns-afc_stats" "$CASE/ns-lane_data"
+run_watcher_once
+ck "watcher 退出码 0" test "$RC" -eq 0
+ck "afc_stats 已重建" ns_present afc_stats
+ck "lane_data 已重建" ns_present lane_data
+ck "重建时未重启 Klipper" test ! -s "$CASE/restart.log"
+
+# ---------------------------------------------------------------------------
+h "fixture 2h: watcher 在 Moonraker 不可达时不崩、不假成功"
+new_case ns-watch-down
+: > "$CASE/moonraker-down"
+run_watcher_once
+ck "watcher 退出码 0（后台维护尽力而为）" test "$RC" -eq 0
+ck_not "未创建 afc_stats" ns_present afc_stats
+ck_not "未创建 lane_data" ns_present lane_data
 
 # ---------------------------------------------------------------------------
 h "fixture 3: printer.cfg 只读 -> 非零退出、不得假成功"

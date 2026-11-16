@@ -427,8 +427,8 @@
     },
     {
       "path": "scripts/woloong-afc-install.sh",
-      "sha256": "d32772a2605f40df9347016e4e71fcbf6bab0e3762aa595265e566d14d60ed84",
-      "bytes": 12771,
+      "sha256": "efb3cfceabe1e214ae9b07b6b69dc881aed4080bab12f3d822513bea04c37be2",
+      "bytes": 15543,
       "kind": "custom-file"
     },
     {

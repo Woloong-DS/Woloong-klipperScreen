@@ -10,9 +10,10 @@
 #       会让整机 shutdown，所以不能只凭「物料在」就启用 include）
 #   3) 首次追加 include 后，经 Moonraker 重启 Klipper 并等待 [afc] 生效，
 #      这样随后启动的 KSC 能把 AFC 菜单渲染出来（否则要再重启一次 KSC）。
-#   4) 确保 Moonraker 的 afc_stats namespace：安装/重启用 include 的路径、
-#      以及 KSC 启动时发现 [afc] 已加载的修复路径，都必须幂等初始化。
-#      Moonraker 不可达 -> ERROR + 非零退出，绝不打印 installed（不假成功）。
+#   4) 确保 AFC 需要的 Moonraker namespaces：afc_stats（统计）与 lane_data
+#      （每 lane 数据）。安装/启用 include、KSC 启动发现 [afc]、Klipper reload
+#      之前都必须就绪；lane_data 被 AFC 的 PREP 清空后由 KSC 运行期 watcher
+#      重建。Moonraker 不可达 -> ERROR + 非零退出，绝不打印 installed。
 #
 # 触发路径（用户不需要手工跑本脚本）：
 #   · Web（Mainsail/Fluidd）：服务面板 -> KlipperScreen -> Restart
@@ -24,8 +25,8 @@
 #     触发本脚本；首启后请用上面的 Web 服务面板动作（或 KIAUH 更新）。
 #
 # 失败语义（AFC-FALSE-SUCCESS，2026-11-15）：
-#   cp / 写 printer.cfg / 写 AFC.var.unit / 四项校验 / afc_stats namespace
-#   任一失败 -> **非零退出**，且绝不打印 "AFC addon installed"。
+#   cp / 写 printer.cfg / 写 AFC.var.unit / 四项校验 / afc_stats/lane_data
+#   namespace 任一失败 -> **非零退出**，且绝不打印 "AFC addon installed"。
 #   服务单元里 ExecStartPre 带 '-' 前缀，所以配置目录只读时 KSC 仍能启动
 #   （失败留在 journal，不再假成功）；namespace 失败会在下次 KSC 启动时重试。
 # ============================================================================
@@ -54,12 +55,26 @@ include_present() {
   grep -qE '^\[include[[:space:]]+AFC/\*\.cfg\][[:space:]]*$' "${PC}"
 }
 
-# ---- afc_stats namespace（AFC 运行时查询 Moonraker DB；缺失 -> 404 红字）----
+# ---- Moonraker namespaces（AFC 运行时 DB；缺失 -> AFC.log 404）-------------
+# AFC 实际使用：
+#   afc_stats : GET ?namespace=afc_stats（统计值；哨兵 key=init）
+#   lane_data : GET ?namespace=lane_data（每 lane 数据）；AFC.delete_lane_data()
+#               在每个 PREP 删除该 namespace 的**全部 key** -> Moonraker 丢弃
+#               空 namespace -> 下一次 PREP 又 404。
+# 因此：安装/启动时先建两个 namespace；KSC 运行期间再跑一个轻量 watcher，
+# 在 AFC 清理后立刻把 lane_data 重建（否则 Klipper 每次 restart 都会 404）。
 MR_WAIT="${WO_AFC_MOONRAKER_WAIT:-20}"   # 秒；0 = 只尝试一次（夹具用）
 case "${MR_WAIT}" in
   ''|*[!0-9]*) MR_WAIT=20 ;;   # 非数字环境变量回退默认，避免死循环
 esac
 AFCS_NS="afc_stats"
+AFCS_KEY="init"
+LANE_NS="lane_data"
+LANE_KEY="__woloong_init__"
+NS_WATCH_INTERVAL="${WO_AFC_NS_WATCH_INTERVAL:-2}"
+case "${NS_WATCH_INTERVAL}" in
+  ''|*[!0-9]*) NS_WATCH_INTERVAL=2 ;;
+esac
 
 moonraker_up() {
   curl -fsS -m 3 "${MR}/server/info" >/dev/null 2>&1
@@ -87,39 +102,105 @@ afc_loaded() {
     | grep -qE '"afc"[[:space:]]*:[[:space:]]*\{'
 }
 
-# 与 AFC_utils.get_afc_stats() 相同的查询：namespace-only GET
-afc_stats_namespace_ok() {
-  curl -fsS -m 3 "${MR}/server/database/item?namespace=${AFCS_NS}" 2>/dev/null \
-    | grep -qE "\"namespace\"[[:space:]]*:[[:space:]]*\"${AFCS_NS}\""
+# 与 AFC 相同的 namespace-only GET（AFC_utils 的 get_afc_stats / delete_lane_data）
+ns_ok() {
+  local ns="$1"
+  curl -fsS -m 3 "${MR}/server/database/item?namespace=${ns}" 2>/dev/null \
+    | grep -qE "\"namespace\"[[:space:]]*:[[:space:]]*\"${ns}\""
+}
+
+ns_create() {
+  local ns="$1" key="$2"
+  curl -fsS -m 5 -X POST "${MR}/server/database/item" \
+    -H "Content-Type: application/json" \
+    -d "{\"namespace\":\"${ns}\",\"key\":\"${key}\",\"value\":{}}" >/dev/null 2>&1
 }
 
 # 幂等确保 namespace；不可达/失败返回非零（调用方必须 die）
-ensure_afc_stats() {
+ensure_ns() {
+  local ns="$1" key="$2" label="$3"
   if ! command -v curl >/dev/null 2>&1; then
-    error "afc_stats namespace NOT initialized: curl unavailable"
+    error "${label} namespace NOT initialized: curl unavailable"
     return 1
   fi
   if ! wait_for_moonraker; then
-    error "afc_stats namespace NOT initialized: Moonraker unreachable at ${MR} (waited ${MR_WAIT}s)"
+    error "${label} namespace NOT initialized: Moonraker unreachable at ${MR} (waited ${MR_WAIT}s)"
     return 1
   fi
-  if afc_stats_namespace_ok; then
-    log "afc_stats namespace ready (existing)"
+  if ns_ok "${ns}"; then
+    log "${label} namespace ready (existing)"
     return 0
   fi
-  if ! curl -fsS -m 5 -X POST "${MR}/server/database/item" \
-      -H "Content-Type: application/json" \
-      -d "{\"namespace\":\"${AFCS_NS}\",\"key\":\"init\",\"value\":{}}" >/dev/null 2>&1; then
-    error "afc_stats namespace NOT initialized: POST /server/database/item failed"
+  if ! ns_create "${ns}" "${key}"; then
+    error "${label} namespace NOT initialized: POST /server/database/item failed"
     return 1
   fi
-  if ! afc_stats_namespace_ok; then
-    error "afc_stats namespace NOT initialized: verification GET failed"
+  if ! ns_ok "${ns}"; then
+    error "${label} namespace NOT initialized: verification GET failed"
     return 1
   fi
-  log "afc_stats namespace created"
+  log "${label} namespace created"
   return 0
 }
+
+# ---- 轻量 watcher：AFC 每次 PREP 清空 lane_data 后把它重建 ------------------
+ns_watch_log() {
+  if command -v logger >/dev/null 2>&1; then
+    logger -t woloong-afc "$*" 2>/dev/null || true
+  fi
+}
+
+ensure_ns_quiet() {
+  local ns="$1" key="$2"
+  if ns_ok "${ns}"; then
+    return 0
+  fi
+  if ns_create "${ns}" "${key}" && ns_ok "${ns}"; then
+    ns_watch_log "${ns} namespace re-created (AFC cleanup / Moonraker drop)"
+    return 0
+  fi
+  ns_watch_log "WARN: ${ns} namespace re-create failed"
+  return 1
+}
+
+ns_watch_loop() {
+  local i=0 iters="${WO_AFC_NS_WATCH_ITERATIONS:-0}"
+  case "${iters}" in
+    ''|*[!0-9]*) iters=0 ;;
+  esac
+  while :; do
+    if moonraker_up; then
+      ensure_ns_quiet "${AFCS_NS}" "${AFCS_KEY}" || true
+      ensure_ns_quiet "${LANE_NS}" "${LANE_KEY}" || true
+    fi
+    i=$((i + 1))
+    if [ "${iters}" -gt 0 ] && [ "${i}" -ge "${iters}" ]; then
+      return 0
+    fi
+    sleep "${NS_WATCH_INTERVAL}"
+  done
+}
+
+start_ns_watch() {
+  [ "${WO_AFC_NS_WATCH:-1}" = "1" ] || return 0
+  local pf="${HOME}/printer_data/.woloong-afc-ns.pid" old=""
+  if [ -f "${pf}" ]; then
+    old="$(cat "${pf}" 2>/dev/null || true)"
+  fi
+  if [ -n "${old}" ] && [ -r "/proc/${old}/cmdline" ] \
+     && tr '\0' ' ' < "/proc/${old}/cmdline" 2>/dev/null | grep -q -- '--ns-watch'; then
+    return 0
+  fi
+  nohup bash "${KS_DIR}/scripts/woloong-afc-install.sh" --ns-watch >/dev/null 2>&1 &
+  printf '%s\n' "$!" > "${pf}" 2>/dev/null || true
+}
+
+# watcher 模式：不落位物料，只维护 namespace（KSC 运行期间常驻）
+if [ "${1:-}" = "--ns-watch" ]; then
+  ns_watch_loop
+  exit 0
+fi
+
 
 [ -f "${PC}" ] || die "printer.cfg not found: ${PC}"
 [ -d "${AFC_SRC}/extras" ] || die "AFC extras missing in KSC checkout: ${AFC_SRC}/extras"
@@ -268,18 +349,23 @@ fi
 # 4/4
 [ -s "${VAR}" ] || die "verify 4/4 failed: ${VAR} missing/empty"
 
-# ---- 8) afc_stats namespace：任何启用 [afc] 的路径都幂等确保 ----------------
+# ---- 8) AFC 需要的 Moonraker namespaces：任何启用 [afc] 的路径都幂等确保 ----
 # 覆盖两条路径：
 #   a) 本次/之前写入 include 且 [extruder] 已配置（AFC 即将或已经加载）
-#   b) KSC 启动时检测到 Klipper 已加载 [afc]（1610-u 的修复路径）
-# Moonraker 不可达 / API 失败 -> ensure 返回非零 -> die（不打印 installed）。
+#   b) KSC 启动时检测到 Klipper 已加载 [afc]（修复路径）
+# afc_stats + lane_data 缺失都会让 AFC.log 刷 404；lane_data 还会被 AFC 的
+# delete_lane_data() 在每次 PREP 清空，所以还要启动 watcher 持续重建。
 AFC_ACTIVE=0
 if afc_loaded; then
   AFC_ACTIVE=1
-  log "[afc] loaded: ensuring afc_stats namespace"
+  log "[afc] loaded: ensuring afc_stats/lane_data namespaces"
 fi
 if [ "${AFC_ACTIVE}" = "1" ] || { has_extruder && include_present; }; then
-  ensure_afc_stats || die "afc_stats namespace NOT initialized (Moonraker unreachable?)"
+  ensure_ns "${AFCS_NS}" "${AFCS_KEY}" "${AFCS_NS}" \
+    || die "afc_stats namespace NOT initialized (Moonraker unreachable?)"
+  ensure_ns "${LANE_NS}" "${LANE_KEY}" "${LANE_NS}" \
+    || die "lane_data namespace NOT initialized (Moonraker unreachable?)"
+  start_ns_watch
 fi
 
 # ---- 9) 首次启用后重启 Klipper，让 [afc] 在 KSC 启动前生效 ----------------
@@ -298,7 +384,7 @@ if [ "$(id -u)" = "0" ]; then
 fi
 
 if has_extruder; then
-  log "AFC addon installed (4/4 checks: AFC.py, AFC.cfg, ${INCLUDE_LINE}, AFC.var.unit; afc_stats namespace ready)"
+  log "AFC addon installed (4/4 checks: AFC.py, AFC.cfg, ${INCLUDE_LINE}, AFC.var.unit; afc_stats/lane_data namespaces ready)"
 else
   log "AFC materials placed (4/4 checks: AFC.py, AFC.cfg, include deferred, AFC.var.unit)"
   log "printer.cfg has no [extruder]: AFC stays disabled and its menu button stays hidden"
