@@ -1,10 +1,15 @@
 #!/bin/bash
 # ============================================================================
-# 夹具：woloong-afc-install.sh（AFC 首启落位 / fail-fast）
+# 夹具：woloong-afc-install.sh（AFC 首启落位 / fail-fast / afc_stats）
 #
 # 覆盖：
-#   1) 无 [extruder]：物料落位，include 必须关闭（且不打印 installed）
-#   2) 有 [extruder]：四项校验全绿 + Klipper reload；二次执行幂等
+#   1) 无 [extruder]：物料落位，include 必须关闭（不打印 installed；不碰 DB）
+#   2) 有 [extruder]：四项校验 + afc_stats namespace + Klipper reload；幂等
+#   2b) 打印中：include 照写，但不重启 Klipper；namespace 仍要就绪
+#   2c) [afc] 已加载但 namespace 缺失 -> 修复（KSC 启动修复路径）
+#   2d) namespace 已存在 -> 幂等（不重复 POST）
+#   2e) Moonraker 不可达（[afc] 已加载修复路径）-> 非零退出，不假成功
+#   2f) Moonraker 不可达（首次安装 include 路径）-> 非零退出，不假成功
 #   3) printer.cfg 只读：非零退出，不打印 installed
 #   4) cp 失败：非零退出，不打印 installed，include 不落
 #   5) known-bad（1627 旧脚本）cp 失败：必须被「成功后四项校验」判据抓住
@@ -37,6 +42,56 @@ ck_not() { local d="$1"; shift; if "$@" >/dev/null 2>&1; then bad "$d"; else ok 
 
 CASE=""; KS=""; H=""; BIN=""; CFG=""; EXTRAS=""; PC=""
 
+# Moonraker 桩：用 state 文件模拟 namespace / [afc] / 打印状态 / 可达性。
+write_fake_curl() {
+  cat > "$BIN/curl" <<EOF
+#!/bin/sh
+echo "\$*" >> "$CASE/curl.log"
+if [ -f "$CASE/moonraker-down" ]; then
+  exit 7
+fi
+case "\$*" in
+  *machine/services/restart*)
+    echo x >> "$CASE/restart.log"
+    : > "$CASE/afc-active"
+    exit 0 ;;
+  *server/database/item*)
+    if printf '%s' "\$*" | grep -q -- '-X POST'; then
+      echo "\$*" >> "$CASE/db-post.log"
+      : > "$CASE/afc-stats"
+      printf '%s\n' '{"result":{"namespace":"afc_stats","key":"init","value":{}}}'
+      exit 0
+    fi
+    if [ -f "$CASE/afc-stats" ]; then
+      printf '%s\n' '{"result":{"namespace":"afc_stats","key":null,"value":{}}}'
+      exit 0
+    fi
+    exit 22 ;;
+  *server/info*)
+    printf '%s\n' '{"result":{"klippy_connected":true}}'
+    exit 0 ;;
+  *objects/query*configfile*)
+    if [ -f "$CASE/afc-active" ]; then
+      printf '%s\n' '{"result":{"status":{"configfile":{"config":{"afc":{}}}}}}}'
+    else
+      printf '%s\n' '{"result":{"status":{"configfile":{"config":{}}}}}'
+    fi
+    exit 0 ;;
+  *print_stats*)
+    state=ready
+    if [ -f "$CASE/print-state" ]; then state="\$(cat "$CASE/print-state")"; fi
+    printf '{"result":{"status":{"print_stats":{"state":"%s"}}}}' "\$state"
+    exit 0 ;;
+  *printer/info*)
+    printf '%s\n' '{"result":{"status":{"state":"ready"}}}'
+    exit 0 ;;
+  *)
+    exit 0 ;;
+esac
+EOF
+  chmod +x "$BIN/curl"
+}
+
 new_case() {
   CASE="$TMPROOT/$1"
   KS="$CASE/ks"
@@ -50,12 +105,7 @@ new_case() {
   CFG="$H/printer_data/config"
   EXTRAS="$H/klipper/klippy/extras"
   PC="$CFG/printer.cfg"
-  # 默认 curl 桩：不发网络请求
-  cat > "$BIN/curl" <<'EOF'
-#!/bin/sh
-exit 0
-EOF
-  chmod +x "$BIN/curl"
+  write_fake_curl
 }
 
 write_cfg_no_extruder() {
@@ -91,65 +141,10 @@ EOF
 }
 
 run_installer() {
-  OUT="$(HOME="$H" PATH="$BIN:$PATH" bash "$KS/scripts/woloong-afc-install.sh" 2>&1)"
+  OUT="$(HOME="$H" PATH="$BIN:$PATH" WO_AFC_MOONRAKER_WAIT="${WO_AFC_MOONRAKER_WAIT:-0}" \
+    bash "$KS/scripts/woloong-afc-install.sh" 2>&1)"
   RC=$?
   printf '%s\n' "$OUT" > "$CASE/out.log"
-}
-
-make_fake_curl_smart() {
-  cat > "$BIN/curl" <<EOF
-#!/bin/sh
-case "\$*" in
-  *machine/services/restart*)
-    echo x >> "$CASE/restart.log"
-    : > "$CASE/afc-active"
-    exit 0 ;;
-  *objects/query*configfile*)
-    if [ -f "$CASE/afc-active" ]; then
-      printf '%s\n' '{"result":{"status":{"configfile":{"config":{"afc":{}}}}}}}'
-    else
-      printf '%s\n' '{"result":{"status":{"configfile":{"config":{}}}}}'
-    fi
-    exit 0 ;;
-  *print_stats*)
-    printf '%s\n' '{"result":{"status":{"print_stats":{"state":"ready"}}}}'
-    exit 0 ;;
-  *printer/info*)
-    printf '%s\n' '{"result":{"status":{"state":"ready"}}}'
-    exit 0 ;;
-  *)
-    exit 0 ;;
-esac
-EOF
-  chmod +x "$BIN/curl"
-}
-
-make_fake_curl_printing() {
-  cat > "$BIN/curl" <<EOF
-#!/bin/sh
-case "\$*" in
-  *machine/services/restart*)
-    echo x >> "$CASE/restart.log"
-    : > "$CASE/afc-active"
-    exit 0 ;;
-  *objects/query*configfile*)
-    if [ -f "$CASE/afc-active" ]; then
-      printf '%s\n' '{"result":{"status":{"configfile":{"config":{"afc":{}}}}}}}'
-    else
-      printf '%s\n' '{"result":{"status":{"configfile":{"config":{}}}}}'
-    fi
-    exit 0 ;;
-  *print_stats*)
-    printf '%s\n' '{"result":{"status":{"print_stats":{"state":"printing"}}}}'
-    exit 0 ;;
-  *printer/info*)
-    printf '%s\n' '{"result":{"status":{"state":"ready"}}}'
-    exit 0 ;;
-  *)
-    exit 0 ;;
-esac
-EOF
-  chmod +x "$BIN/curl"
 }
 
 make_failing_cp() {
@@ -171,8 +166,10 @@ EOF
 
 has_include() { grep -qF '[include AFC/*.cfg]' "$PC"; }
 no_include()  { if grep -qF '[include AFC/*.cfg]' "$PC"; then return 1; fi; return 0; }
+stats_present() { test -f "$CASE/afc-stats"; }
+stats_posted()  { test -f "$CASE/db-post.log"; }
 
-# 「成功后四项校验」判据：日志只说成功不算，必须文件真的在
+# 「成功后四项校验」判据：日志只说成功不算，必须文件 + include + afc_stats 真的在
 installed_ok() {
   local rc="$1" out="$2"
   [ "$rc" -eq 0 ] || return 1
@@ -183,6 +180,7 @@ installed_ok() {
   grep -q '^\[AFC\]' "$CFG/AFC/AFC.cfg" || return 1
   grep -qF '[include AFC/*.cfg]' "$PC" || return 1
   [ -s "$CFG/AFC/AFC.var.unit" ] || return 1
+  stats_present || return 1
   return 0
 }
 
@@ -195,20 +193,22 @@ deferred_ok() {
   [ -s "$CFG/AFC/AFC.cfg" ] || return 1
   [ -s "$CFG/AFC/AFC.var.unit" ] || return 1
   if grep -qF '[include AFC/*.cfg]' "$PC"; then return 1; fi
+  if stats_present; then return 1; fi
   return 0
 }
 
 # ---------------------------------------------------------------------------
-h "fixture 1: 无 [extruder] -> 物料落位、include 关闭"
+h "fixture 1: 无 [extruder] -> 物料落位、include 关闭、不碰 afc_stats"
 new_case no-extruder
 write_cfg_no_extruder
 run_installer
 ck "退出码 0" test "$RC" -eq 0
-ck "deferred_ok（物料在 + include 关闭 + 不打印 installed）" deferred_ok "$RC" "$OUT"
+ck "deferred_ok（物料在 + include 关闭 + 无 installed + 无 namespace）" deferred_ok "$RC" "$OUT"
 ck "AFC.py 已落位" test -s "$EXTRAS/AFC.py"
 ck "AFC.cfg 已落位" test -s "$CFG/AFC/AFC.cfg"
 ck "AFC.var.unit 已生成" test -s "$CFG/AFC/AFC.var.unit"
 ck "include 未启用" no_include
+ck_not "AFC 未启用时不初始化 namespace" stats_posted
 ck "输出说明按钮仍隐藏" grep -qF 'menu button stays hidden' "$CASE/out.log"
 ck "输出给出重新触发动作（Web 服务面板重启 KSC）" grep -qF 'KlipperScreen service' "$CASE/out.log"
 printf '\n[include AFC/*.cfg]\n' >> "$PC"
@@ -216,33 +216,92 @@ run_installer
 ck "遗留 include 在无 [extruder] 时被关闭（退出码 0）" test "$RC" -eq 0
 ck "遗留 include 已移除" no_include
 ck "输出说明已移除 include" grep -qF 'removed [include AFC/*.cfg]' "$CASE/out.log"
+ck_not "移除遗留 include 时仍不碰 namespace" stats_posted
 
 # ---------------------------------------------------------------------------
-h "fixture 2: 有 [extruder] -> 四项校验全绿 + Klipper reload + 幂等"
+h "fixture 2: 有 [extruder] -> 四项 + afc_stats + Klipper reload + 幂等"
 new_case with-extruder
 write_cfg_with_extruder
-make_fake_curl_smart
 run_installer
-ck "installed_ok（rc0 + installed + 四项）" installed_ok "$RC" "$OUT"
+ck "installed_ok（rc0 + installed + 四项 + stats）" installed_ok "$RC" "$OUT"
 ck "输出含 4/4" grep -qF '4/4' "$CASE/out.log"
+ck "afc_stats namespace 已创建" stats_present
+ck "输出说明 namespace created" grep -qF 'afc_stats namespace created' "$CASE/out.log"
 ck "已请求 Moonraker 重启 Klipper" test -s "$CASE/restart.log"
 ck "等待到 [afc] active" grep -qF '[afc] section active' "$CASE/out.log"
+ck "namespace 初始化发生在 Klipper 重启之前" awk '/server\/database\/item/ && /-X POST/ {p=NR} /machine\/services\/restart/ {r=NR} END {exit !(p && r && p < r)}' "$CASE/curl.log"
 ck "include 已写入一行" test "$(grep -cF '[include AFC/*.cfg]' "$PC")" -eq 1
 run_installer
 ck "第二次退出码 0" test "$RC" -eq 0
 ck "第二次未再重启 Klipper" test "$(wc -l < "$CASE/restart.log")" -eq 1
+ck "第二次未重复 POST namespace" test "$(wc -l < "$CASE/db-post.log")" -eq 1
 ck "include 仍只有一行（幂等）" test "$(grep -cF '[include AFC/*.cfg]' "$PC")" -eq 1
 
 # ---------------------------------------------------------------------------
-h "fixture 2b: 打印中不重启 Klipper（保护打印）"
+h "fixture 2b: 打印中不重启 Klipper（保护打印），namespace 仍就绪"
 new_case printing-guard
 write_cfg_with_extruder
-make_fake_curl_printing
+printf 'printing\n' > "$CASE/print-state"
 run_installer
 ck "退出码 0（include 照常写入）" test "$RC" -eq 0
 ck "installed_ok" installed_ok "$RC" "$OUT"
+ck "afc_stats namespace 已创建" stats_present
 ck_not "未请求重启 Klipper" test -s "$CASE/restart.log"
 ck "输出说明正在打印、跳过 reload" grep -qF 'skip Klipper reload' "$CASE/out.log"
+
+# ---------------------------------------------------------------------------
+h "fixture 2c: [afc] 已加载但 namespace 缺失 -> 修复"
+new_case stats-repair
+write_cfg_with_extruder
+printf '\n[include AFC/*.cfg]\n' >> "$PC"
+: > "$CASE/afc-active"
+run_installer
+ck "退出码 0" test "$RC" -eq 0
+ck "installed_ok（修复后四项 + stats）" installed_ok "$RC" "$OUT"
+ck "afc_stats namespace 已补建" stats_present
+ck "输出说明 created" grep -qF 'afc_stats namespace created' "$CASE/out.log"
+ck "输出说明检测到 [afc]" grep -qF '[afc] loaded' "$CASE/out.log"
+ck_not "include 已存在时不重启 Klipper" test -s "$CASE/restart.log"
+
+# ---------------------------------------------------------------------------
+h "fixture 2d: namespace 已存在 -> 幂等（不重复 POST）"
+new_case stats-existing
+write_cfg_with_extruder
+printf '\n[include AFC/*.cfg]\n' >> "$PC"
+: > "$CASE/afc-active"
+: > "$CASE/afc-stats"
+run_installer
+ck "退出码 0" test "$RC" -eq 0
+ck "installed_ok" installed_ok "$RC" "$OUT"
+ck "输出说明 existing" grep -qF 'afc_stats namespace ready (existing)' "$CASE/out.log"
+ck_not "未重复 POST namespace" stats_posted
+ck_not "未重启 Klipper" test -s "$CASE/restart.log"
+
+# ---------------------------------------------------------------------------
+h "fixture 2e: Moonraker 不可达（[afc] 已加载）-> 非零退出、不假成功"
+new_case moonraker-down-repair
+write_cfg_with_extruder
+printf '\n[include AFC/*.cfg]\n' >> "$PC"
+: > "$CASE/afc-active"
+: > "$CASE/moonraker-down"
+run_installer
+ck "退出码非零" test "$RC" -ne 0
+ck "输出含 ERROR Moonraker unreachable" grep -qF 'ERROR: afc_stats namespace NOT initialized: Moonraker unreachable' "$CASE/out.log"
+ck_not "输出不含 AFC addon installed" grep -qF 'AFC addon installed' "$CASE/out.log"
+ck_not "未创建 namespace" stats_present
+ck_not "未重启 Klipper" test -s "$CASE/restart.log"
+
+# ---------------------------------------------------------------------------
+h "fixture 2f: Moonraker 不可达（首次写 include）-> 非零退出、不假成功"
+new_case moonraker-down-install
+write_cfg_with_extruder
+: > "$CASE/moonraker-down"
+run_installer
+ck "退出码非零" test "$RC" -ne 0
+ck "输出含 ERROR Moonraker unreachable" grep -qF 'ERROR: afc_stats namespace NOT initialized: Moonraker unreachable' "$CASE/out.log"
+ck_not "输出不含 AFC addon installed" grep -qF 'AFC addon installed' "$CASE/out.log"
+ck "include 已写入（物料阶段完成，但未激活 AFC）" has_include
+ck_not "未重启 Klipper" test -s "$CASE/restart.log"
 
 # ---------------------------------------------------------------------------
 h "fixture 3: printer.cfg 只读 -> 非零退出、不得假成功"

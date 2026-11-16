@@ -10,6 +10,9 @@
 #       会让整机 shutdown，所以不能只凭「物料在」就启用 include）
 #   3) 首次追加 include 后，经 Moonraker 重启 Klipper 并等待 [afc] 生效，
 #      这样随后启动的 KSC 能把 AFC 菜单渲染出来（否则要再重启一次 KSC）。
+#   4) 确保 Moonraker 的 afc_stats namespace：安装/重启用 include 的路径、
+#      以及 KSC 启动时发现 [afc] 已加载的修复路径，都必须幂等初始化。
+#      Moonraker 不可达 -> ERROR + 非零退出，绝不打印 installed（不假成功）。
 #
 # 触发路径（用户不需要手工跑本脚本）：
 #   · Web（Mainsail/Fluidd）：服务面板 -> KlipperScreen -> Restart
@@ -21,9 +24,10 @@
 #     触发本脚本；首启后请用上面的 Web 服务面板动作（或 KIAUH 更新）。
 #
 # 失败语义（AFC-FALSE-SUCCESS，2026-11-15）：
-#   cp / 写 printer.cfg / 写 AFC.var.unit / 四项校验 任一失败 -> **非零退出**，
-#   且绝不打印 "AFC addon installed"。服务单元里 ExecStartPre 带 '-' 前缀，
-#   所以配置目录只读时 KSC 仍能启动（失败留在 journal，不再假成功）。
+#   cp / 写 printer.cfg / 写 AFC.var.unit / 四项校验 / afc_stats namespace
+#   任一失败 -> **非零退出**，且绝不打印 "AFC addon installed"。
+#   服务单元里 ExecStartPre 带 '-' 前缀，所以配置目录只读时 KSC 仍能启动
+#   （失败留在 journal，不再假成功）；namespace 失败会在下次 KSC 启动时重试。
 # ============================================================================
 set -euo pipefail
 
@@ -36,9 +40,10 @@ VAR="${CFG}/AFC/AFC.var.unit"
 MR="http://127.0.0.1:7125"
 INCLUDE_LINE='[include AFC/*.cfg]'
 
-log()  { printf '[woloong-afc] %s\n' "$*"; }
-warn() { printf '[woloong-afc] WARN: %s\n' "$*" >&2; }
-die()  { printf '[woloong-afc] FAIL: %s\n' "$*" >&2; exit 1; }
+log()   { printf '[woloong-afc] %s\n' "$*"; }
+warn()  { printf '[woloong-afc] WARN: %s\n' "$*" >&2; }
+error() { printf '[woloong-afc] ERROR: %s\n' "$*" >&2; }
+die()   { printf '[woloong-afc] FAIL: %s\n' "$*" >&2; exit 1; }
 
 # 真正的挤出机段：[extruder] 或 [extruder1]/[extruder2]...
 # 不匹配 [extruder_stepper x]（它不创建 toolhead 挤出机）或注释行。
@@ -47,6 +52,73 @@ has_extruder() {
 }
 include_present() {
   grep -qE '^\[include[[:space:]]+AFC/\*\.cfg\][[:space:]]*$' "${PC}"
+}
+
+# ---- afc_stats namespace（AFC 运行时查询 Moonraker DB；缺失 -> 404 红字）----
+MR_WAIT="${WO_AFC_MOONRAKER_WAIT:-20}"   # 秒；0 = 只尝试一次（夹具用）
+case "${MR_WAIT}" in
+  ''|*[!0-9]*) MR_WAIT=20 ;;   # 非数字环境变量回退默认，避免死循环
+esac
+AFCS_NS="afc_stats"
+
+moonraker_up() {
+  curl -fsS -m 3 "${MR}/server/info" >/dev/null 2>&1
+}
+
+wait_for_moonraker() {
+  local i=0
+  command -v curl >/dev/null 2>&1 || return 1
+  while :; do
+    if moonraker_up; then
+      return 0
+    fi
+    if [ "${i}" -ge "${MR_WAIT}" ]; then
+      return 1
+    fi
+    i=$((i + 1))
+    sleep 1
+  done
+}
+
+# Klipper 当前是否已加载 [afc]（configfile.config 的段名是小写）
+afc_loaded() {
+  command -v curl >/dev/null 2>&1 || return 1
+  curl -fsS -m 3 "${MR}/printer/objects/query?configfile" 2>/dev/null \
+    | grep -qE '"afc"[[:space:]]*:[[:space:]]*\{'
+}
+
+# 与 AFC_utils.get_afc_stats() 相同的查询：namespace-only GET
+afc_stats_namespace_ok() {
+  curl -fsS -m 3 "${MR}/server/database/item?namespace=${AFCS_NS}" 2>/dev/null \
+    | grep -qE "\"namespace\"[[:space:]]*:[[:space:]]*\"${AFCS_NS}\""
+}
+
+# 幂等确保 namespace；不可达/失败返回非零（调用方必须 die）
+ensure_afc_stats() {
+  if ! command -v curl >/dev/null 2>&1; then
+    error "afc_stats namespace NOT initialized: curl unavailable"
+    return 1
+  fi
+  if ! wait_for_moonraker; then
+    error "afc_stats namespace NOT initialized: Moonraker unreachable at ${MR} (waited ${MR_WAIT}s)"
+    return 1
+  fi
+  if afc_stats_namespace_ok; then
+    log "afc_stats namespace ready (existing)"
+    return 0
+  fi
+  if ! curl -fsS -m 5 -X POST "${MR}/server/database/item" \
+      -H "Content-Type: application/json" \
+      -d "{\"namespace\":\"${AFCS_NS}\",\"key\":\"init\",\"value\":{}}" >/dev/null 2>&1; then
+    error "afc_stats namespace NOT initialized: POST /server/database/item failed"
+    return 1
+  fi
+  if ! afc_stats_namespace_ok; then
+    error "afc_stats namespace NOT initialized: verification GET failed"
+    return 1
+  fi
+  log "afc_stats namespace created"
+  return 0
 }
 
 [ -f "${PC}" ] || die "printer.cfg not found: ${PC}"
@@ -178,22 +250,7 @@ klipper_reload_for_afc() {
   return 0
 }
 
-if [ "${NEW_INCLUDE}" = "1" ]; then
-  if [ "${WO_AFC_KLIPPER_RESTART:-1}" = "0" ]; then
-    warn "WO_AFC_KLIPPER_RESTART=0: [afc] will load on next Klipper start"
-  else
-    klipper_reload_for_afc
-  fi
-fi
-
-# ---- 7) Moonraker 统计命名空间（非致命：仅避免 AFC 首次查询 404 红字）----
-if command -v curl >/dev/null 2>&1; then
-  curl -s -m 5 -X POST "${MR}/server/database/item" \
-    -H "Content-Type: application/json" \
-    -d '{"namespace":"afc_stats","key":"init","value":{}}' >/dev/null 2>&1 || true
-fi
-
-# ---- 8) 安装后四项校验（任一失败 -> 非零退出，绝不打印成功）--------------
+# ---- 7) 安装后四项校验（任一失败 -> 非零退出，绝不打印成功）--------------
 # 1/4
 [ -s "${EXTRAS}/AFC.py" ] || die "verify 1/4 failed: ${EXTRAS}/AFC.py missing/empty"
 cmp -s "${AFC_SRC}/extras/AFC.py" "${EXTRAS}/AFC.py" || die "verify 1/4 failed: AFC.py differs from package"
@@ -211,13 +268,37 @@ fi
 # 4/4
 [ -s "${VAR}" ] || die "verify 4/4 failed: ${VAR} missing/empty"
 
-# ---- 9) 成功日志（仅在四项校验全部通过之后）------------------------------
+# ---- 8) afc_stats namespace：任何启用 [afc] 的路径都幂等确保 ----------------
+# 覆盖两条路径：
+#   a) 本次/之前写入 include 且 [extruder] 已配置（AFC 即将或已经加载）
+#   b) KSC 启动时检测到 Klipper 已加载 [afc]（1610-u 的修复路径）
+# Moonraker 不可达 / API 失败 -> ensure 返回非零 -> die（不打印 installed）。
+AFC_ACTIVE=0
+if afc_loaded; then
+  AFC_ACTIVE=1
+  log "[afc] loaded: ensuring afc_stats namespace"
+fi
+if [ "${AFC_ACTIVE}" = "1" ] || { has_extruder && include_present; }; then
+  ensure_afc_stats || die "afc_stats namespace NOT initialized (Moonraker unreachable?)"
+fi
+
+# ---- 9) 首次启用后重启 Klipper，让 [afc] 在 KSC 启动前生效 ----------------
+# 只在「本次新加 include」时做；正在打印/暂停时绝不重启（保护打印）。
+if [ "${NEW_INCLUDE}" = "1" ]; then
+  if [ "${WO_AFC_KLIPPER_RESTART:-1}" = "0" ]; then
+    warn "WO_AFC_KLIPPER_RESTART=0: [afc] will load on next Klipper start"
+  else
+    klipper_reload_for_afc
+  fi
+fi
+
+# ---- 10) 成功日志（仅在四项校验 + namespace 全部通过之后）-----------------
 if [ "$(id -u)" = "0" ]; then
   chown -R 1000:1000 "${CFG}/AFC" "${EXTRAS}" 2>/dev/null || true
 fi
 
 if has_extruder; then
-  log "AFC addon installed (4/4 checks: AFC.py, AFC.cfg, ${INCLUDE_LINE}, AFC.var.unit)"
+  log "AFC addon installed (4/4 checks: AFC.py, AFC.cfg, ${INCLUDE_LINE}, AFC.var.unit; afc_stats namespace ready)"
 else
   log "AFC materials placed (4/4 checks: AFC.py, AFC.cfg, include deferred, AFC.var.unit)"
   log "printer.cfg has no [extruder]: AFC stays disabled and its menu button stays hidden"
