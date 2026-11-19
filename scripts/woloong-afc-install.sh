@@ -34,7 +34,6 @@ set -euo pipefail
 
 KS_DIR="$(cd "$(dirname "$0")/.." && pwd)"
 CFG="${HOME}/printer_data/config"
-EXTRAS="${HOME}/klipper/klippy/extras"
 PC="${CFG}/printer.cfg"
 AFC_SRC="${KS_DIR}/afc"
 VAR="${CFG}/AFC/AFC.var.unit"
@@ -46,6 +45,22 @@ warn()  { printf '[woloong-afc] WARN: %s\n' "$*" >&2; }
 error() { printf '[woloong-afc] ERROR: %s\n' "$*" >&2; }
 die()   { printf '[woloong-afc] FAIL: %s\n' "$*" >&2; exit 1; }
 
+# Klipper 实体仓库：Woloong 镜像为 ~/woloong-klipper（~/klipper 只是兼容软链）。
+# 必须在真实仓库上写 .git/info/exclude，避免 AFC extras 被判 dirty。
+KLIPPER_DIR=""
+for _cand in "${HOME}/woloong-klipper" "${HOME}/klipper"; do
+  if [ -d "${_cand}/klippy/extras" ]; then
+    KLIPPER_DIR="${_cand}"
+    break
+  fi
+done
+# 安装必须找到 Klipper；卸载允许没有 Klipper（此时只做 include/exclude 清理）
+if [ -n "${KLIPPER_DIR}" ]; then
+  EXTRAS="${KLIPPER_DIR}/klippy/extras"
+else
+  EXTRAS=""
+fi
+
 # 真正的挤出机段：[extruder] 或 [extruder1]/[extruder2]...
 # 不匹配 [extruder_stepper x]（它不创建 toolhead 挤出机）或注释行。
 has_extruder() {
@@ -53,6 +68,81 @@ has_extruder() {
 }
 include_present() {
   grep -qE '^\[include[[:space:]]+AFC/\*\.cfg\][[:space:]]*$' "${PC}"
+}
+
+# ---- Klipper .git/info/exclude（AFC extras 属正常部署，但不得判 dirty）----
+# 精确模式：只忽略 AFC 包安装的 extras，不影响用户的其它未跟踪文件。
+AFC_EXCLUDE_BEGIN='# >>> woloong-afc extras (managed by woloong-afc-install.sh)'
+AFC_EXCLUDE_END='# <<< woloong-afc extras'
+AFC_EXCLUDE_PATTERN_AFC='klippy/extras/AFC*.py'
+AFC_EXCLUDE_PATTERN_TEMP='klippy/extras/temperature_oams.py'
+
+klipper_has_git() {
+  [ -d "${KLIPPER_DIR}/.git" ]
+}
+
+klipper_exclude_file() {
+  printf '%s/.git/info/exclude' "${KLIPPER_DIR}"
+}
+
+# 安装/启用 extras 时调用；幂等。写失败 -> die（否则仓库会被判 dirty）
+add_afc_exclude() {
+  if ! klipper_has_git; then
+    warn "Klipper 仓库无 .git（${KLIPPER_DIR}）；跳过 exclude，git status 不适用"
+    return 0
+  fi
+  local ex
+  ex="$(klipper_exclude_file)"
+  mkdir -p "$(dirname "${ex}")" || die "cannot create ${ex} dir"
+  [ -f "${ex}" ] || : > "${ex}" || die "cannot create ${ex}"
+  if grep -qF "${AFC_EXCLUDE_BEGIN}" "${ex}"; then
+    if ! grep -qxF "${AFC_EXCLUDE_PATTERN_AFC}" "${ex}" \
+       || ! grep -qxF "${AFC_EXCLUDE_PATTERN_TEMP}" "${ex}"; then
+      die "exclude managed block incomplete: ${ex}"
+    fi
+    log "AFC extras 已在 .git/info/exclude（幂等）"
+    return 0
+  fi
+  {
+    printf '\n%s\n' "${AFC_EXCLUDE_BEGIN}"
+    printf '%s\n' "${AFC_EXCLUDE_PATTERN_AFC}"
+    printf '%s\n' "${AFC_EXCLUDE_PATTERN_TEMP}"
+    printf '%s\n' "${AFC_EXCLUDE_END}"
+  } >> "${ex}" || die "write failed: ${ex}"
+  grep -qxF "${AFC_EXCLUDE_PATTERN_AFC}" "${ex}" || die "exclude verify failed: AFC pattern"
+  grep -qxF "${AFC_EXCLUDE_PATTERN_TEMP}" "${ex}" || die "exclude verify failed: temperature_oams"
+  log "已写 ${ex}（AFC*.py + temperature_oams.py；精确模式）"
+  return 0
+}
+
+# 卸载时撤销：只删本工具的 managed block 与两条精确模式，保留用户其它条目
+remove_afc_exclude() {
+  if ! klipper_has_git; then
+    warn "Klipper 仓库无 .git（${KLIPPER_DIR}）；跳过 exclude 撤销"
+    return 0
+  fi
+  local ex tmp
+  ex="$(klipper_exclude_file)"
+  [ -f "${ex}" ] || return 0
+  tmp="$(mktemp "${ex}.XXXXXX")" || die "mktemp failed: ${ex}"
+  awk -v b="${AFC_EXCLUDE_BEGIN}" -v e="${AFC_EXCLUDE_END}" \
+      -v p1="${AFC_EXCLUDE_PATTERN_AFC}" -v p2="${AFC_EXCLUDE_PATTERN_TEMP}" '
+    $0 == b {skip=1; next}
+    $0 == e {skip=0; next}
+    skip {next}
+    $0 == p1 {next}
+    $0 == p2 {next}
+    {print}
+  ' "${ex}" > "${tmp}" || { rm -f "${tmp}"; die "awk failed: ${ex}"; }
+  cat "${tmp}" > "${ex}" || { rm -f "${tmp}"; die "write failed: ${ex}"; }
+  rm -f "${tmp}"
+  if grep -qxF "${AFC_EXCLUDE_PATTERN_AFC}" "${ex}" \
+     || grep -qxF "${AFC_EXCLUDE_PATTERN_TEMP}" "${ex}" \
+     || grep -qF "${AFC_EXCLUDE_BEGIN}" "${ex}"; then
+    die "exclude revoke verify failed: ${ex}"
+  fi
+  log "已撤销 ${ex} 的 AFC exclude 条目"
+  return 0
 }
 
 # ---- Moonraker namespaces（AFC 运行时 DB；缺失 -> AFC.log 404）-------------
@@ -195,7 +285,66 @@ start_ns_watch() {
   printf '%s\n' "$!" > "${pf}" 2>/dev/null || true
 }
 
+# ---- 卸载：撤 include / 删本包原样 extras / 撤销 exclude --------------------
+# 关键顺序：先撤 include，再删 extras；否则 [afc] 无实现会导致 Klipper halted。
+# 只删与 KSC 包逐字节一致且未被 git 跟踪的文件；用户修改/上游/跟踪文件保留。
+uninstall_afc() {
+  local pf old n=0 kept=0
+  pf="${HOME}/printer_data/.woloong-afc-ns.pid"
+  if [ -f "${pf}" ]; then
+    old="$(cat "${pf}" 2>/dev/null || true)"
+    if [ -n "${old}" ] && [ -r "/proc/${old}/cmdline" ] \
+       && tr '\0' ' ' < "/proc/${old}/cmdline" 2>/dev/null | grep -q -- '--ns-watch'; then
+      kill "${old}" 2>/dev/null || true
+    fi
+    rm -f "${pf}" 2>/dev/null || true
+  fi
+
+  if [ -f "${PC}" ] && include_present; then
+    sed -i -E '\|^\[include[[:space:]]+AFC/\*\.cfg\][[:space:]]*$|d' "${PC}" \
+      || die "failed to remove ${INCLUDE_LINE} from ${PC}"
+    if include_present; then
+      die "post-write verify failed: AFC include still in ${PC}"
+    fi
+    log "已移除 ${PC} 的 ${INCLUDE_LINE}"
+  fi
+
+  if [ -n "${EXTRAS}" ] && [ -d "${AFC_SRC}/extras" ]; then
+    for f in "${AFC_SRC}"/extras/*.py; do
+      [ -f "${f}" ] || continue
+      b="$(basename "${f}")"
+      if [ "${b}" = "__init__.py" ]; then
+        continue
+      fi
+      if [ ! -e "${EXTRAS}/${b}" ]; then
+        continue
+      fi
+      rel="klippy/extras/${b}"
+      if klipper_has_git && git -C "${KLIPPER_DIR}" ls-files --error-unmatch "${rel}" >/dev/null 2>&1; then
+        warn "保留已跟踪文件：${rel}（不删除上游/用户文件）"
+        kept=$((kept + 1))
+        continue
+      fi
+      if cmp -s "${f}" "${EXTRAS}/${b}"; then
+        rm -f "${EXTRAS}/${b}" || die "rm failed: ${EXTRAS}/${b}"
+        n=$((n + 1))
+      else
+        warn "保留用户修改过的文件：${rel}（不删除用户文件）"
+        kept=$((kept + 1))
+      fi
+    done
+  fi
+
+  remove_afc_exclude
+  log "AFC extras 已移除（${n} 个）；exclude 条目已撤销"
+  [ "${kept}" -eq 0 ] || warn "${kept} 个 AFC 文件被保留（用户修改/已跟踪）"
+  exit 0
+}
+
 # watcher 模式：不落位物料，只维护 namespace（KSC 运行期间常驻）
+if [ "${1:-}" = "--uninstall" ]; then
+  uninstall_afc
+fi
 if [ "${1:-}" = "--ns-watch" ]; then
   ns_watch_loop
   exit 0
@@ -203,6 +352,7 @@ fi
 
 
 [ -f "${PC}" ] || die "printer.cfg not found: ${PC}"
+[ -n "${EXTRAS}" ] || die "Klipper dir not found (woloong-klipper/klipper)"
 [ -d "${AFC_SRC}/extras" ] || die "AFC extras missing in KSC checkout: ${AFC_SRC}/extras"
 [ -d "${AFC_SRC}/config" ] || die "AFC config missing in KSC checkout: ${AFC_SRC}/config"
 
@@ -223,6 +373,9 @@ for f in "${AFC_SRC}"/extras/*.py; do
   n_extras=$((n_extras + 1))
 done
 (( n_extras > 0 )) || die "no AFC klippy extras (*.py) in ${AFC_SRC}/extras"
+
+# AFC extras 已落位：写 Klipper .git/info/exclude（精确模式；安装/启用路径）
+add_afc_exclude
 
 # ---- 2) AFC 配置（AFC*.cfg + macros/*.cfg）--------------------------------
 n_cfg=0

@@ -426,9 +426,15 @@
       "kind": "custom-file"
     },
     {
+      "path": "scripts/Uninstall.sh",
+      "sha256": "6f61daa782bf4ee86efac1521aaca460634960f4d455378393da72c3ce7459ef",
+      "bytes": 869,
+      "kind": "custom-file"
+    },
+    {
       "path": "scripts/woloong-afc-install.sh",
-      "sha256": "efb3cfceabe1e214ae9b07b6b69dc881aed4080bab12f3d822513bea04c37be2",
-      "bytes": 15543,
+      "sha256": "fae81a48296f06806dc26d12c41241ebcf7bca2d33da3f4f190f98ed1f451a97",
+      "bytes": 21247,
       "kind": "custom-file"
     },
     {

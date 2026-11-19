@@ -12,6 +12,11 @@
 #   2f) Moonraker 不可达（首次安装 include）-> 非零退出，不假成功
 #   2g) watcher：AFC 清空 lane_data / namespace 丢失后重建（两个都覆盖）
 #   2h) watcher：Moonraker 不可达 -> 不崩、不假成功（后台维护尽力而为）
+#   2i) 真实 Klipper 仓库：安装后 git status 空；exclude 精确模式
+#   2j) 修改已跟踪文件仍显示 dirty（exclude 不掩盖 tracked）
+#   2k) 卸载撤销 exclude、删本包 extras、保留用户文件；不用 clean -fd
+#   2l) 用户改过的 AFC.py 卸载保留；Uninstall.sh 接线；脚本无 git clean
+#   2m) 无 [extruder] 也落位 extras -> exclude 仍写、status 空
 #   3) printer.cfg 只读：非零退出，不打印 installed
 #   4) cp 失败：非零退出，不打印 installed，include 不落
 #   5) known-bad（1627 旧脚本）cp 失败：必须被「成功后校验」判据抓住
@@ -42,7 +47,7 @@ h()   { printf '\n== %s ==\n' "$1"; }
 ck()  { local d="$1"; shift; if "$@" >/dev/null 2>&1; then ok "$d"; else bad "$d"; fi; }
 ck_not() { local d="$1"; shift; if "$@" >/dev/null 2>&1; then bad "$d"; else ok "$d"; fi; }
 
-CASE=""; KS=""; H=""; BIN=""; CFG=""; EXTRAS=""; PC=""
+CASE=""; KS=""; H=""; BIN=""; CFG=""; EXTRAS=""; PC=""; KL=""
 
 # Moonraker 桩：state 文件模拟 namespace / [afc] / 打印状态 / 可达性。
 write_fake_curl() {
@@ -110,11 +115,38 @@ new_case() {
   BIN="$CASE/bin"
   rm -rf "$CASE"
   mkdir -p "$KS/scripts" "$H/printer_data/config" "$H/klipper/klippy/extras" "$BIN"
+  KL=""
   cp "$INSTALLER" "$KS/scripts/woloong-afc-install.sh"
   chmod +x "$KS/scripts/woloong-afc-install.sh"
   cp -R "$REPO/afc" "$KS/afc"
   CFG="$H/printer_data/config"
   EXTRAS="$H/klipper/klippy/extras"
+  PC="$CFG/printer.cfg"
+  write_fake_curl
+}
+
+# 真实 Klipper 仓库（~/woloong-klipper + .git），用于 exclude/status/uninstall 夹具
+new_git_case() {
+  CASE="$TMPROOT/$1"
+  KS="$CASE/ks"
+  H="$CASE/home"
+  BIN="$CASE/bin"
+  KL="$H/woloong-klipper"
+  rm -rf "$CASE"
+  mkdir -p "$KS/scripts" "$H/printer_data/config" "$KL/klippy/extras" "$BIN"
+  cp "$INSTALLER" "$KS/scripts/woloong-afc-install.sh"
+  chmod +x "$KS/scripts/woloong-afc-install.sh"
+  cp -R "$REPO/afc" "$KS/afc"
+  git -C "$KL" init -q
+  git -C "$KL" config core.autocrlf false
+  git -C "$KL" config core.eol lf
+  git -C "$KL" config user.email fixture@woloong.local
+  git -C "$KL" config user.name fixture
+  printf '# upstream/user tracked file\n' > "$KL/klippy/extras/user_tracked.py"
+  git -C "$KL" add klippy/extras/user_tracked.py
+  git -C "$KL" commit -q -m "fixture base"
+  CFG="$H/printer_data/config"
+  EXTRAS="$KL/klippy/extras"
   PC="$CFG/printer.cfg"
   write_fake_curl
 }
@@ -165,6 +197,13 @@ run_watcher_once() {
   printf '%s\n' "$OUT" > "$CASE/watch.log"
 }
 
+run_uninstall() {
+  OUT="$(HOME="$H" PATH="$BIN:$PATH" WO_AFC_NS_WATCH=0 \
+    bash "$KS/scripts/woloong-afc-install.sh" --uninstall 2>&1)"
+  RC=$?
+  printf '%s\n' "$OUT" > "$CASE/uninstall.log"
+}
+
 make_failing_cp() {
   local real_cp
   real_cp="$(command -v cp)"
@@ -186,6 +225,13 @@ has_include() { grep -qF '[include AFC/*.cfg]' "$PC"; }
 no_include()  { if grep -qF '[include AFC/*.cfg]' "$PC"; then return 1; fi; return 0; }
 ns_present()  { test -f "$CASE/ns-$1"; }
 ns_posted()   { test -f "$CASE/db-post.log"; }
+git_clean()       { [ -z "$(git -C "$KL" status --porcelain)" ]; }
+exclude_has_afc() { grep -qxF 'klippy/extras/AFC*.py' "$KL/.git/info/exclude"; }
+exclude_has_tmp() { grep -qxF 'klippy/extras/temperature_oams.py' "$KL/.git/info/exclude"; }
+exclude_clean()   { ! grep -qF 'woloong-afc extras' "$KL/.git/info/exclude" \
+                    && ! grep -qxF 'klippy/extras/AFC*.py' "$KL/.git/info/exclude" \
+                    && ! grep -qxF 'klippy/extras/temperature_oams.py' "$KL/.git/info/exclude"; }
+
 
 # 「成功后校验」判据：日志只说成功不算，必须文件 + include + 两个 namespace 真的在
 installed_ok() {
@@ -354,6 +400,86 @@ run_watcher_once
 ck "watcher 退出码 0（后台维护尽力而为）" test "$RC" -eq 0
 ck_not "未创建 afc_stats" ns_present afc_stats
 ck_not "未创建 lane_data" ns_present lane_data
+
+# ---------------------------------------------------------------------------
+h "fixture 2i: 真实 Klipper 仓库安装后 git status 干净（AFC extras 进 exclude）"
+new_git_case git-install
+write_cfg_with_extruder
+run_installer
+ck "installed_ok" installed_ok "$RC" "$OUT"
+ck "git status --porcelain 为空" git_clean
+ck "exclude 含 AFC*.py" exclude_has_afc
+ck "exclude 含 temperature_oams.py" exclude_has_tmp
+ck "exclude 含 managed 标记" grep -qF '# >>> woloong-afc extras' "$KL/.git/info/exclude"
+ck "AFC.py 已落位" test -e "$EXTRAS/AFC.py"
+ck "temperature_oams.py 已落位" test -e "$EXTRAS/temperature_oams.py"
+ck "tracked 用户文件未被动" test -f "$KL/klippy/extras/user_tracked.py"
+run_installer
+ck "二次安装 rc0" test "$RC" -eq 0
+ck "二次安装 status 仍空" git_clean
+ck "exclude managed block 只有一处" test "$(grep -cF '# >>> woloong-afc extras' "$KL/.git/info/exclude")" -eq 1
+
+# ---------------------------------------------------------------------------
+h "fixture 2j: 修改已跟踪文件仍显示 dirty（exclude 不掩盖 tracked）"
+new_git_case git-tracked
+write_cfg_with_extruder
+run_installer
+ck "安装后 status 空" git_clean
+printf 'modified by fixture\n' >> "$KL/klippy/extras/user_tracked.py"
+ck_not "修改 tracked 后 status 非空" git_clean
+ck "status 显示 M klippy/extras/user_tracked.py" bash -c 'git -C "$1" status --porcelain | grep -q "^ M klippy/extras/user_tracked.py"' _ "$KL"
+git -C "$KL" checkout -- klippy/extras/user_tracked.py
+ck "恢复 tracked 后 status 空" git_clean
+
+# ---------------------------------------------------------------------------
+h "fixture 2k: 卸载撤销 exclude、删本包 extras、保留用户文件；不使用 clean -fd"
+new_git_case git-uninstall
+write_cfg_with_extruder
+run_installer
+ck "安装后 status 空" git_clean
+printf 'user file\n' > "$KL/klippy/extras/user_custom.py"
+ck "用户未跟踪文件可见（精确模式）" bash -c 'git -C "$1" status --porcelain | grep -q "^?? klippy/extras/user_custom.py"' _ "$KL"
+: > "$CFG/AFC/user-notes.cfg"
+run_uninstall
+ck "卸载 rc0" test "$RC" -eq 0
+ck "exclude 条目已撤销" exclude_clean
+ck_not "AFC.py 已删除" test -e "$EXTRAS/AFC.py"
+ck_not "temperature_oams.py 已删除" test -e "$EXTRAS/temperature_oams.py"
+ck "include 已移除" no_include
+ck "用户未跟踪文件仍在" test -f "$KL/klippy/extras/user_custom.py"
+ck "tracked 用户文件仍在" test -f "$KL/klippy/extras/user_tracked.py"
+ck "config/AFC 保留（用户数据）" test -f "$CFG/AFC/AFC.cfg"
+ck "config/AFC 用户文件保留" test -f "$CFG/AFC/user-notes.cfg"
+ck "卸载后 status 仅剩用户文件" bash -c '[ "$(git -C "$1" status --porcelain)" = "?? klippy/extras/user_custom.py" ]' _ "$KL"
+rm -f "$KL/klippy/extras/user_custom.py"
+ck "删除用户文件后 status 空" git_clean
+
+# ---------------------------------------------------------------------------
+h "fixture 2l: 用户改过的 AFC.py 卸载时保留；脚本不含 git clean"
+ck_not "安装/卸载脚本不含 git clean" grep -qE 'git[[:space:]]+clean' "$INSTALLER"
+ck "Uninstall.sh 调用 AFC --uninstall" grep -qF 'woloong-afc-install.sh" --uninstall' "$REPO/scripts/Uninstall.sh"
+new_git_case git-uninstall-modified
+write_cfg_with_extruder
+run_installer
+printf '\n# fixture user patch\n' >> "$EXTRAS/AFC.py"
+run_uninstall
+ck "卸载 rc0（保留用户修改文件不算失败）" test "$RC" -eq 0
+ck "用户修改的 AFC.py 保留" test -f "$EXTRAS/AFC.py"
+ck "include 已移除（不会 [afc] 无实现）" no_include
+ck "exclude 已撤销" exclude_clean
+ck "status 显示保留的 AFC.py 为 untracked" bash -c 'git -C "$1" status --porcelain | grep -q "^?? klippy/extras/AFC.py"' _ "$KL"
+
+# ---------------------------------------------------------------------------
+h "fixture 2m: 无 [extruder] 也落位 extras -> exclude 仍写、status 空"
+new_git_case git-deferred-exclude
+write_cfg_no_extruder
+run_installer
+ck "退出码 0" test "$RC" -eq 0
+ck "deferred_ok" deferred_ok "$RC" "$OUT"
+ck "git status --porcelain 为空" git_clean
+ck "exclude 含 AFC*.py" exclude_has_afc
+ck "exclude 含 temperature_oams.py" exclude_has_tmp
+ck "include 未启用" no_include
 
 # ---------------------------------------------------------------------------
 h "fixture 3: printer.cfg 只读 -> 非零退出、不得假成功"

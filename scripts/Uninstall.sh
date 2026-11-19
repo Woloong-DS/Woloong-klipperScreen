@@ -12,6 +12,12 @@ echo "* Stopping service"
 sudo systemctl stop KlipperScreen.service
 sudo systemctl disable KlipperScreen.service
 
+echo "* Removing AFC addon files (include / extras / git exclude)"
+if ! bash "$(dirname "$0")/woloong-afc-install.sh" --uninstall; then
+    echo "[ERROR] AFC cleanup failed; aborting KSC uninstall to avoid leaving [afc] without implementation"
+    exit 1
+fi
+
 echo "* Removing unit file"
 sudo rm /etc/systemd/system/KlipperScreen.service
 sudo systemctl daemon-reload
