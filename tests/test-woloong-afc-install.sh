@@ -17,6 +17,10 @@
 #   2k) 卸载撤销 exclude、删本包 extras、保留用户文件；不用 clean -fd
 #   2l) 用户改过的 AFC.py 卸载保留；Uninstall.sh 接线；脚本无 git clean
 #   2m) 无 [extruder] 也落位 extras -> exclude 仍写、status 空
+#   2n) 自愈：include 已存在 + [afc] 未加载（ready/非打印）-> 必须重启 Klipper
+#   2n-b) 自愈路径 WO_AFC_KLIPPER_RESTART=0 -> 保留开关、不重启
+#   2o) include 已存在 + [afc] 已加载 -> 不重启（幂等）
+#   2p) known-bad 旧脚本在同一 2n 场景不重启 -> 证明 2n 判据会红
 #   3) printer.cfg 只读：非零退出，不打印 installed
 #   4) cp 失败：非零退出，不打印 installed，include 不落
 #   5) known-bad（1627 旧脚本）cp 失败：必须被「成功后校验」判据抓住
@@ -190,6 +194,13 @@ run_installer() {
   printf '%s\n' "$OUT" > "$CASE/out.log"
 }
 
+run_installer_restart_off() {
+  OUT="$(HOME="$H" PATH="$BIN:$PATH" WO_AFC_MOONRAKER_WAIT="${WO_AFC_MOONRAKER_WAIT:-0}" \
+    WO_AFC_NS_WATCH=0 WO_AFC_KLIPPER_RESTART=0 bash "$KS/scripts/woloong-afc-install.sh" 2>&1)"
+  RC=$?
+  printf '%s\n' "$OUT" > "$CASE/out.log"
+}
+
 run_watcher_once() {
   OUT="$(HOME="$H" PATH="$BIN:$PATH" WO_AFC_MOONRAKER_WAIT=0 \
     WO_AFC_NS_WATCH_ITERATIONS=1 bash "$KS/scripts/woloong-afc-install.sh" --ns-watch 2>&1)"
@@ -246,6 +257,19 @@ installed_ok() {
   [ -s "$CFG/AFC/AFC.var.unit" ] || return 1
   ns_present afc_stats || return 1
   ns_present lane_data || return 1
+  return 0
+}
+
+# 2n 判据：自愈路径必须真的请求 Klipper 重启，并等到 [afc] 生效（不信日志单点）
+selfheal_reload_ok() {
+  local rc="$1" out="$2"
+  [ "$rc" -eq 0 ] || return 1
+  printf '%s' "$out" | grep -q 'Klipper reload needed:' || return 1
+  printf '%s' "$out" | grep -q 'self-heal' || return 1
+  printf '%s' "$out" | grep -q 'reloading Klipper' || return 1
+  printf '%s' "$out" | grep -qF '[afc] section active' || return 1
+  [ -s "$CASE/restart.log" ] || return 1
+  [ -f "$CASE/afc-active" ] || return 1
   return 0
 }
 
@@ -480,6 +504,69 @@ ck "git status --porcelain 为空" git_clean
 ck "exclude 含 AFC*.py" exclude_has_afc
 ck "exclude 含 temperature_oams.py" exclude_has_tmp
 ck "include 未启用" no_include
+
+# ---------------------------------------------------------------------------
+h "fixture 2n: 自愈（include 已存在 + [afc] 未加载 + ready 非打印）-> 必须重启 Klipper"
+new_case selfheal-reload
+write_cfg_with_extruder
+printf '\n[include AFC/*.cfg]\n' >> "$PC"
+ck "场景前提：include 已存在（不是本次新加）" has_include
+ck "场景前提：[afc] 尚未加载" test ! -f "$CASE/afc-active"
+run_installer
+ck "退出码 0" test "$RC" -eq 0
+ck "installed_ok（四项 + 两个 namespace）" installed_ok "$RC" "$OUT"
+ck "selfheal_reload_ok（原因 + reloading + restart.log + reload 后 afc-active）" selfheal_reload_ok "$RC" "$OUT"
+ck "日志给出 reload 原因（self-heal）" grep -qF 'self-heal' "$CASE/out.log"
+ck "restart.log 有记录" test -s "$CASE/restart.log"
+ck "只请求一次重启" test "$(wc -l < "$CASE/restart.log")" -eq 1
+ck "reload 后 afc-active 已生成" test -f "$CASE/afc-active"
+ck "reload 后输出 [afc] section active" grep -qF '[afc] section active' "$CASE/out.log"
+ck "include 仍只有一行（没有重复追加）" test "$(grep -cF '[include AFC/*.cfg]' "$PC")" -eq 1
+
+# ---------------------------------------------------------------------------
+h "fixture 2n-b: 自愈路径 WO_AFC_KLIPPER_RESTART=0 -> 保留开关、不重启"
+new_case selfheal-restart-off
+write_cfg_with_extruder
+printf '\n[include AFC/*.cfg]\n' >> "$PC"
+run_installer_restart_off
+ck "退出码 0" test "$RC" -eq 0
+ck "installed_ok" installed_ok "$RC" "$OUT"
+ck "输出说明 reload 原因" grep -qF 'Klipper reload needed:' "$CASE/out.log"
+ck "输出说明 WO_AFC_KLIPPER_RESTART=0" grep -qF 'WO_AFC_KLIPPER_RESTART=0' "$CASE/out.log"
+ck_not "未重启 Klipper" test -s "$CASE/restart.log"
+ck_not "未让 [afc] 生效（留给下次 Klipper 启动）" test -f "$CASE/afc-active"
+
+# ---------------------------------------------------------------------------
+h "fixture 2o: include 已存在 + [afc] 已加载 -> 不重启（幂等）"
+new_case selfheal-idempotent
+write_cfg_with_extruder
+printf '\n[include AFC/*.cfg]\n' >> "$PC"
+: > "$CASE/afc-active"
+run_installer
+ck "退出码 0" test "$RC" -eq 0
+ck "installed_ok" installed_ok "$RC" "$OUT"
+ck "输出说明 [afc] 已加载" grep -qF '[afc] loaded' "$CASE/out.log"
+ck_not "未判定需要 reload" grep -qF 'Klipper reload needed:' "$CASE/out.log"
+ck_not "未重启 Klipper" test -s "$CASE/restart.log"
+ck "include 仍只有一行" test "$(grep -cF '[include AFC/*.cfg]' "$PC")" -eq 1
+
+# ---------------------------------------------------------------------------
+h "fixture 2p: known-bad 旧脚本在同一 2n 场景不重启 -> 2n 判据会红"
+new_case known-bad-selfheal
+write_cfg_with_extruder
+printf '\n[include AFC/*.cfg]\n' >> "$PC"
+cp "$KNOWN_BAD" "$KS/scripts/woloong-afc-install.sh"
+run_installer
+ck "旧脚本退出码 0（假成功）" test "$RC" -eq 0
+ck "旧脚本打印 AFC addon installed" grep -qF 'AFC addon installed' "$CASE/out.log"
+ck_not "旧脚本未请求重启 Klipper（复现缺陷）" test -s "$CASE/restart.log"
+ck_not "旧脚本未让 [afc] 生效" test -f "$CASE/afc-active"
+if selfheal_reload_ok "$RC" "$OUT"; then
+  bad "known-bad 未被抓住（旧脚本也会 reload）"
+else
+  ok "known-bad 被抓住（2n 判据要求真重启）"
+  printf 'KNOWN_BAD: 旧脚本在 include 已存在 + [afc] 未加载时未重启 Klipper -> 2n 判据为红（缺陷可复现）\n'
+fi
 
 # ---------------------------------------------------------------------------
 h "fixture 3: printer.cfg 只读 -> 非零退出、不得假成功"

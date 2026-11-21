@@ -521,9 +521,27 @@ if [ "${AFC_ACTIVE}" = "1" ] || { has_extruder && include_present; }; then
   start_ns_watch
 fi
 
-# ---- 9) 首次启用后重启 Klipper，让 [afc] 在 KSC 启动前生效 ----------------
-# 只在「本次新加 include」时做；正在打印/暂停时绝不重启（保护打印）。
+# ---- 9) 按需重启 Klipper，让 [afc] 在 KSC 启动前生效 ----------------------
+# NEED_RELOAD 的两种情况：
+#   a) NEW_INCLUDE=1：本次新加 include（首装，或从「无 [extruder]」恢复）
+#   b) 自愈路径：include 已存在 + 有 [extruder]，但 klippy 还没加载 [afc]
+#      （配置/物料被逐字节复原后 include 早已存在；旧逻辑只在 NEW_INCLUDE=1
+#        时重启 -> 此路径不重启 -> klippy 无 [afc] -> KSC 菜单 enable 条件
+#        为假 -> AFC 按钮色块不显示）
+# include 不存在或没有 [extruder]：AFC 本就不该加载，绝不动 Klipper。
+# 是否真的重启仍由 klipper_reload_for_afc 内部把关：非 ready / printing /
+# paused 一律不重启（保护打印）。
+NEED_RELOAD=0
+RELOAD_REASON=""
 if [ "${NEW_INCLUDE}" = "1" ]; then
+  NEED_RELOAD=1
+  RELOAD_REASON="new [include AFC/*.cfg] in printer.cfg"
+elif has_extruder && include_present && [ "${AFC_ACTIVE}" != "1" ]; then
+  NEED_RELOAD=1
+  RELOAD_REASON="[include AFC/*.cfg] already present but Klipper has not loaded [afc] (self-heal after config restore)"
+fi
+if [ "${NEED_RELOAD}" = "1" ]; then
+  log "Klipper reload needed: ${RELOAD_REASON}"
   if [ "${WO_AFC_KLIPPER_RESTART:-1}" = "0" ]; then
     warn "WO_AFC_KLIPPER_RESTART=0: [afc] will load on next Klipper start"
   else
